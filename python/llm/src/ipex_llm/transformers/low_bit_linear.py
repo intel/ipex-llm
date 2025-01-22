@@ -659,7 +659,9 @@ class LowBitLinear(nn.Linear):
             if x_2d.size(0) == 1:
                 import xe_linear
                 result = xe_linear.linear_forward_vec(x_2d, self.weight.data,
-                    self.in_len, self.out_len, self.qtype)
+                                                      self.in_len, self.out_len, self.qtype)
+                if self.bias is not None:
+                    result += self.bias
                 return result.view(new_shape)
 
             if len(x_shape) == 3:
