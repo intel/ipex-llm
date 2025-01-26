@@ -18,17 +18,28 @@ endif()
 add_library(npu_llm STATIC IMPORTED)
 set_target_properties(npu_llm PROPERTIES IMPORTED_LOCATION ${LIBRARY_DIR}/npu_llm.lib)
 
+add_library(llama STATIC IMPORTED)
+set_target_properties(llama PROPERTIES IMPORTED_LOCATION ${LIBRARY_DIR}/llama.lib)
+
+add_library(common STATIC IMPORTED)
+set_target_properties(common PROPERTIES IMPORTED_LOCATION ${LIBRARY_DIR}/common.lib)
+
+add_library(ggml STATIC IMPORTED)
+set_target_properties(ggml PROPERTIES IMPORTED_LOCATION ${LIBRARY_DIR}/ggml.lib)
+
 set(TARGET llama-cli-npu)
 add_executable(${TARGET} llama-cli-npu.cpp)
 install(TARGETS ${TARGET} RUNTIME)
-target_link_libraries(${TARGET} PRIVATE npu_llm)
+target_link_libraries(${TARGET} PRIVATE npu_llm common llama ggml ${CMAKE_THREAD_LIBS_INIT})
 target_compile_features(${TARGET} PRIVATE cxx_std_17)
 
 add_custom_command(TARGET llama-cli-npu POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         ${LIBRARY_DIR}/npu_llm.dll
+        ${LIBRARY_DIR}/llama.dll
+        ${LIBRARY_DIR}/ggml.dll
         ${CMAKE_BINARY_DIR}/Release/
-    COMMENT "Copying npu_llm.dll to build/Release\n"
+    COMMENT "Copying npu_llm.dll llama.dll ggml.dll to build/Release\n"
 )
 
 add_custom_command(TARGET llama-cli-npu POST_BUILD
