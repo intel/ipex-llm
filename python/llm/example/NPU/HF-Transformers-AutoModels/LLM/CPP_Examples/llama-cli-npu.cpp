@@ -22,6 +22,14 @@
 #include "common.h"
 #include "npu_llm.h"
 
+#include "llamacpp/arg.h"
+#include "llamacpp/common.h"
+#include "llamacpp/log.h"
+#include "llamacpp/llama.h"
+#include <filesystem>
+#include <vector>
+#include<iostream>
+
 
 static void print_usage(int, char ** argv) {
     printf("\nexample usage:\n");
