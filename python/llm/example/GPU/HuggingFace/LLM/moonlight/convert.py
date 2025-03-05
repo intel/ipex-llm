@@ -37,11 +37,9 @@ if __name__ == '__main__':
         f_path = os.path.join(model_path, f)
         f_dst_path = os.path.join(converted_model_path, f)
 
-        print(f)
-
         if f.endswith(".safetensors"):
             save_file(load_file(f_path), f_dst_path, metadata={"format": "pt"})
-        elif not f.startswith(".") and os.path.isfile(f_path): # skip file/dir name start with .
+        elif not f.startswith(".") and os.path.isfile(f_path): # skip dir and file name started with .
             shutil.copyfile(f_path, f_dst_path)
 
     print(f"Converted model successfully saved to {converted_model_path}")

@@ -18,11 +18,11 @@ import argparse
 from huggingface_hub import snapshot_download
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Convert Moonlight model to be sucessfully loaded by transformers')
+    parser = argparse.ArgumentParser(description='Download Moonlight model')
     parser.add_argument('--repo-id', type=str, default='moonshotai/Moonlight-16B-A3B-Instruct',
-                        help='Hugging Face model repo id to download')
+                        help='Hugging Face repo id of the model to be downloaded')
     parser.add_argument('--commit-id', type=str, required=True,
-                        help='Revision of the downloaded model')
+                        help='Revision of the model to be downloaded')
     parser.add_argument('--download-dir-path', type=str,
                         help='Folder path where the model will be downloaded')
 
@@ -31,7 +31,7 @@ if __name__ == '__main__':
     repo_id = args.repo_id
     download_dir_path = args.download_dir_path
     if download_dir_path is None:
-        download_dir_path = './' + repo_id.rsplit("/", 1)[-1]
+        download_dir_path = repo_id.rsplit("/", 1)[-1]
 
     snapshot_download(repo_id=repo_id,
                       revision=args.commit_id,

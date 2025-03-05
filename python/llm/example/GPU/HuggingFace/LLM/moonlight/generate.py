@@ -32,7 +32,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
     converted_model_path = args.converted_model_path
 
-    print("start to load")
     # Load model in 4 bit,
     # which convert the relevant layers in the model into INT4 format
     model = AutoModelForCausalLM.from_pretrained(converted_model_path,
@@ -58,8 +57,6 @@ if __name__ == '__main__':
             add_generation_prompt=True,
             return_tensors="pt"
         ).to('xpu')
-
-        print(input_ids)
 
         # ipex_llm model needs a warmup, then inference time can be accurate
         output = model.generate(input_ids,
