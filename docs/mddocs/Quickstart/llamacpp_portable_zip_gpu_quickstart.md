@@ -203,12 +203,12 @@ Note:
 - Larger models and other precisions may require more resources.
 - For 1 ARC A770 platform, please reduce context length (e.g., 1024) to avoid OOM. Add this option `-c 1024` at the end of below command.
 
-Before running, you should download or copy community GGUF model to your current directory. For instance,  `DeepSeek-R1-Q4_K_M.gguf` of [DeepSeek-R1-Q4_K_M.gguf](https://huggingface.co/unsloth/DeepSeek-R1-GGUF/tree/main/DeepSeek-R1-Q4_K_M).
+Before running, you should download or copy community GGUF model to your local directory. For instance,  `DeepSeek-R1-Q4_K_M.gguf` of [DeepSeek-R1-Q4_K_M.gguf](https://huggingface.co/unsloth/DeepSeek-R1-GGUF/tree/main/DeepSeek-R1-Q4_K_M).
 
-Run `DeepSeek-R1-Q4_K_M.gguf`
+Change `/path/to/DeepSeek-R1-Q4_K_M-00001-of-00009.gguf` to your model path, then run `DeepSeek-R1-Q4_K_M.gguf`
 
 ```bash
-./flash-moe -m DeepSeek-R1-Q4_K_M-00001-of-00009.gguf --prompt "What's AI?"
+./flash-moe -m /path/to/DeepSeek-R1-Q4_K_M-00001-of-00009.gguf --prompt "What's AI?"
 ```
 
 Part of outputs
