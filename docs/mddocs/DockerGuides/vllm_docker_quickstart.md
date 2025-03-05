@@ -836,6 +836,7 @@ We can set up model serving using `IPEX-LLM` as backend using FastChat, the foll
             -e http_proxy=... \ 
             -e https_proxy=... \
             -e no_proxy="127.0.0.1,localhost" \
+            --entrypoint /bin/bash \
             $DOCKER_IMAGE
     ```
 
