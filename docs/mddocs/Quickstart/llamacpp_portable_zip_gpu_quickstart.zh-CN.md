@@ -63,8 +63,10 @@
 
 #### 运行 GGUF 模型
 
+在运行以下命令之前，请将 `PATH\TO\DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf` 更改为你的模型路径。
+
 ```cmd
-llama-cli.exe -m D:\llm-models\gguf\DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf -p "A conversation between User and Assistant. The user asks a question, and the Assistant solves it. The assistant first thinks about the reasoning process in the mind and then provides the user with the answer. The reasoning process and answer are enclosed within <think> </think> and <answer> </answer> tags, respectively, i.e., <think> reasoning process here </think> <answer> answer here </answer>. User: Question:The product of the ages of three teenagers is 4590. How old is the oldest? a. 18 b. 19 c. 15 d. 17 Assistant: <think>" -n 2048  -t 8 -e -ngl 99 --color -c 2500 --temp 0
+llama-cli.exe -m PATH\TO\DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf -p "A conversation between User and Assistant. The user asks a question, and the Assistant solves it. The assistant first thinks about the reasoning process in the mind and then provides the user with the answer. The reasoning process and answer are enclosed within <think> </think> and <answer> </answer> tags, respectively, i.e., <think> reasoning process here </think> <answer> answer here </answer>. User: Question:The product of the ages of three teenagers is 4590. How old is the oldest? a. 18 b. 19 c. 15 d. 17 Assistant: <think>" -n 2048  -t 8 -e -ngl 99 --color -c 2500 --temp 0
 ```
 
 部分输出：
@@ -144,8 +146,10 @@ llama_perf_context_print:       total time =   xxxxx.xx ms /  1385 tokens
 
 #### 运行 GGUF 模型
 
+在运行以下命令之前，请将 `PATH\TO\DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf` 更改为你的模型路径。
+
 ```bash
-llama-cli -m /llm-models/gguf/DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf -p "A conversation between User and Assistant. The user asks a question, and the Assistant solves it. The assistant first thinks about the reasoning process in the mind and then provides the user with the answer. The reasoning process and answer are enclosed within <think> </think> and <answer> </answer> tags, respectively, i.e., <think> reasoning process here </think> <answer> answer here </answer>. User: Question:The product of the ages of three teenagers is 4590. How old is the oldest? a. 18 b. 19 c. 15 d. 17 Assistant: <think>" -n 2048  -t 8 -e -ngl 99 --color -c 2500 --temp 0
+./llama-cli -m /PATH/TO/DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf -p "A conversation between User and Assistant. The user asks a question, and the Assistant solves it. The assistant first thinks about the reasoning process in the mind and then provides the user with the answer. The reasoning process and answer are enclosed within <think> </think> and <answer> </answer> tags, respectively, i.e., <think> reasoning process here </think> <answer> answer here </answer>. User: Question:The product of the ages of three teenagers is 4590. How old is the oldest? a. 18 b. 19 c. 15 d. 17 Assistant: <think>" -n 2048  -t 8 -e -ngl 99 --color -c 2500 --temp 0
 ```
 
 部分输出：
@@ -209,10 +213,10 @@ FlashMoE 是一款基于 llama.cpp 构建的命令行工具，针对 DeepSeek V3
 
 运行之前，你需要下载或复制社区的 GGUF 模型到你的当前目录。例如，[DeepSeek-R1-Q4_K_M.gguf](https://huggingface.co/unsloth/DeepSeek-R1-GGUF/tree/main/DeepSeek-R1-Q4_K_M) 的 `DeepSeek-R1-Q4_K_M.gguf`。
 
-运行 `DeepSeek-R1-Q4_K_M.gguf`
+请将 `/PATH/TO/DeepSeek-R1-Q4_K_M-00001-of-00009.gguf` 更改为您的模型路径，然后运行 `DeepSeek-R1-Q4_K_M.gguf`
 
 ```bash
-flash-moe -m DeepSeek-R1-Q4_K_M-00001-of-00009.gguf --prompt "What's AI?"
+./flash-moe -m /PATH/TO/DeepSeek-R1-Q4_K_M-00001-of-00009.gguf --prompt "What's AI?"
 ```
 
 部分输出：
@@ -283,8 +287,11 @@ If you want to use two or more deivces, please set environment like ONEAPI_DEVIC
 See https://github.com/intel/ipex-llm/blob/main/docs/mddocs/Overview/KeyFeatures/multi_gpus_selection.md for details. Exiting.
 ```
 由于 GPU 规格不同，任务将根据设备的显存进行分配。例如，iGPU（Intel UHD Graphics 770） 将承担 2/3 的计算任务，导致性能表现较差。
-因此，禁用 iGPU 可以获得最佳性能。 更多详情可以访问 [多 GPU 配置](#多-gpu-配置)  
-如果仍然希望禁用此检查，可以运行 `set SYCL_DEVICE_CHECK=0`。
+为此，你可以有以下两种选择：
+1. 禁用 iGPU 可以获得最佳性能。 更多详情可以访问 [多 GPU 配置](#多-gpu-配置)。
+2. 禁用此检查并使用所有 GPU，可以运行以下命令：  
+   - `set SYCL_DEVICE_CHECK=0` (Windows 用户)   
+   - `export SYCL_DEVICE_CHECK=0` (Linux 用户)
 
 ### 多 GPU 配置
 
@@ -300,16 +307,24 @@ Found 3 SYCL devices:
 | 1| [level_zero:gpu:1]|                Intel Arc A770 Graphics|  12.55|    512|    1024|   32| 16225M|     1.6.31907.700000|
 ```
 
-要指定 llama.cpp 使用的 Intel GPU，可以**在启动 llama.cpp 命令**之前设置环境变量 `ONEAPI_DEVICE_SELECTOR`，如下所示：  
+要指定 llama.cpp 使用的 Intel GPU，可以**在启动 llama.cpp 命令**之前设置环境变量 `ONEAPI_DEVICE_SELECTOR`，示例如下：  
 
-- **Windows** 用户：
+- 对于 **Windows** 用户：
   ```cmd
   set ONEAPI_DEVICE_SELECTOR=level_zero:0 (If you want to run on one GPU, llama.cpp will use the first GPU.) 
   set ONEAPI_DEVICE_SELECTOR="level_zero:0;level_zero:1" (If you want to run on two GPUs, llama.cpp will use the first and second GPUs.)
   ```
+- 对于 **Linux** 用户：
+  ```bash
+  export ONEAPI_DEVICE_SELECTOR=level_zero:0 (If you want to run on one GPU, llama.cpp will use the first GPU.) 
+  export ONEAPI_DEVICE_SELECTOR="level_zero:0;level_zero:1" (If you want to run on two GPUs, llama.cpp will use the first and second GPUs.)
+  ```
  
 ### 性能环境
 #### SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS
-要启用 SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS，你可以运行 `set SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS=1`。  
+要启用 SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS，你可以运行以下命令：
+- `set SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS=1`(Windows 用户)   
+- `export SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS=1`(Linux 用户)
+
 > [!NOTE]
 > 环境变量 `SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS` 用于控制是否使用即时命令列表将任务提交到 GPU。启动此变量通常可以提高性能，但也有例外情况。因此，建议你在启用和禁用该环境变量的情况下进行测试，以找到最佳的性能设置。更多相关细节请参考[此处文章](https://www.intel.com/content/www/us/en/developer/articles/guide/level-zero-immediate-command-lists.html)。  
