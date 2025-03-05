@@ -13,7 +13,7 @@ This guide demonstrates how to use [llama.cpp portable zip](https://github.com/i
 - [Windows Quickstart](#windows-quickstart)
   - [Prerequisites](#prerequisites)
   - [Step 1: Download and Unzip](#step-1-download-and-unzip)
-  - [Step 3: Runtime Configuration](#step-2-runtime-configuration)
+  - [Step 2: Runtime Configuration](#step-2-runtime-configuration)
   - [Step 3: Run GGUF models](#step-3-run-gguf-models)
 - [Linux Quickstart](#linux-quickstart)
   - [Prerequisites](#prerequisites-1)
@@ -279,8 +279,8 @@ If you want to use two or more deivces, please set environment like ONEAPI_DEVIC
 See https://github.com/intel/ipex-llm/blob/main/docs/mddocs/Overview/KeyFeatures/multi_gpus_selection.md for details. Exiting.
 ```
 Because the GPUs are not the same, the jobs will be allocated according to device's memory. Upon example, the iGPU(Intel UHD Graphics 770) will get 2/3 of the computing tasks. The performance will be quit bad. So you have below two choices: 
-- 1. Disable the iGPU will get the best performance. Visit [Multi-GPUs usage](#multi-gpus-usage) for details.  
-- 2. Disable this check and use all of them, you can run below command:  
+1. Disable the iGPU will get the best performance. Visit [Multi-GPUs usage](#multi-gpus-usage) for details.  
+2. Disable this check and use all of them, you can run below command:  
   `set SYCL_DEVICE_CHECK=0`(Windows user)   
   or  
   `set SYCL_DEVICE_CHECK=0`(Linux user)
@@ -315,8 +315,7 @@ To specify which Intel GPU you would like llama.cpp to use, you could set enviro
 ### Performance Environment
 #### SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS
 To enable SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS, you can run below command:
-`set SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS=1`(Windows user)   
-or  
-`export SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS=1`(Linux user)
+- `set SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS=1`(Windows user)   
+- `export SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS=1`(Linux user)
 > [!NOTE]
 > The environment variable SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS determines the usage of immediate command lists for task submission to the GPU. While this mode typically enhances performance, exceptions may occur. Please consider experimenting with and without this environment variable for best performance. For more details, you can refer to [this article](https://www.intel.com/content/www/us/en/developer/articles/guide/level-zero-immediate-command-lists.html).  
