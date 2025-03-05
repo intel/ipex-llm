@@ -44,7 +44,7 @@ pip install tiktoken blobfile
 
 ## 1. Download & Convert Model
 
-To run the Moonlight model with IPEX-LLM optimizations, we need to download and convert first it to make sure it could be successfully loaded by `transformers`.
+To run the Moonlight model with IPEX-LLM optimizations, we need to download and convert it first to make sure it could be successfully loaded by `transformers`.
 
 ### 1.1 Download Model
 
