@@ -26,7 +26,7 @@ To map the `XPU` into the container, you need to specify `--device=/dev/dri` whe
 
 ```bash
 #/bin/bash
-export DOCKER_IMAGE=intelanalytics/ipex-llm-xpu:2.2.0-SNAPSHOT
+export DOCKER_IMAGE=intelanalytics/ipex-llm-serving-xpu:2.2.0-SNAPSHOT
 
 sudo docker run -itd \
         --net=host \
@@ -34,6 +34,7 @@ sudo docker run -itd \
         --memory="32G" \
         --name=CONTAINER_NAME \
         --shm-size="16g" \
+        --entrypoint /bin/bash \
         $DOCKER_IMAGE
 ```
 
@@ -71,7 +72,7 @@ By default, the container is configured to automatically start the service when 
 
 ```bash
 #/bin/bash
-export DOCKER_IMAGE=intelanalytics/ipex-llm-xpu:2.2.0-SNAPSHOT
+export DOCKER_IMAGE=intelanalytics/ipex-llm-serving-xpu:2.2.0-SNAPSHOT
 
 sudo docker run -itd \
         --net=host \
@@ -110,7 +111,7 @@ If you prefer to manually start the service or need to troubleshoot, you can ove
 
 ```bash
 #/bin/bash
-export DOCKER_IMAGE=intelanalytics/ipex-llm-xpu:2.2.0-SNAPSHOT
+export DOCKER_IMAGE=intelanalytics/ipex-llm-serving-xpu:2.2.0-SNAPSHOT
 
 sudo docker run -itd \
         --net=host \

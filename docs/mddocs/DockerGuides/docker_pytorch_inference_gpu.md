@@ -32,6 +32,7 @@ Start ipex-llm-xpu Docker Container. Choose one of the following commands to sta
              --name=$CONTAINER_NAME \
              --shm-size="16g" \
              -v $MODEL_PATH:/llm/models \
+             --entrypoint /bin/bash \
              $DOCKER_IMAGE
   ```
 
@@ -52,6 +53,7 @@ Start ipex-llm-xpu Docker Container. Choose one of the following commands to sta
                   --shm-size="16g" \
                   -v $MODEL_PATH:/llm/llm-models \
                   -v /usr/lib/wsl:/usr/lib/wsl \ 
+                  --entrypoint /bin/bash \
                   $DOCKER_IMAGE
   ```
 

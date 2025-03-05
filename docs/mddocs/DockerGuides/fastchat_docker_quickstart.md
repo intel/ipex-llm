@@ -29,6 +29,7 @@ sudo docker run -itd \
         --memory="32G" \
         --name=$CONTAINER_NAME \
         --shm-size="16g" \
+        --entrypoint /bin/bash \
         $DOCKER_IMAGE
 ```
 

@@ -64,6 +64,7 @@ python eval.py \
          -e http_proxy=$HTTP_PROXY \
          -e https_proxy=$HTTPS_PROXY \
          --shm-size="16g" \
+         --entrypoint /bin/bash \
          $DOCKER_IMAGE
    ```
 
