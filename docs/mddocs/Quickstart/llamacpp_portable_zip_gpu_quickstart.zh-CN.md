@@ -28,6 +28,7 @@
   - [错误：检测到不同的 sycl 设备](#错误检测到不同的-sycl-设备)
   - [多 GPU 配置](#多-gpu-配置)
   - [性能环境](#性能环境)
+- [更多详情](llama_cpp_quickstart.md)
 
 ## Windows 用户指南
 
