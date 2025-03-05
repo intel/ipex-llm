@@ -54,9 +54,9 @@
 
 ### Use
 - [Ollama Portable Zip](Quickstart/ollama_portable_zip_quickstart.md): running **Ollama** on Intel GPU ***without the need of manual installations***
+- [llama.cpp](Quickstart/llamacpp_portable_zip_gpu_quickstart.md): running **llama.cpp** on Intel GPU ***without the need of manual installations***
 - [Arc B580](Quickstart/bmg_quickstart.md): running `ipex-llm` on Intel Arc **B580** GPU for Ollama, llama.cpp, PyTorch, HuggingFace, etc.
 - [NPU](Quickstart/npu_quickstart.md): running `ipex-llm` on Intel **NPU** in both Python and C++
-- [llama.cpp](Quickstart/llama_cpp_quickstart.md): running **llama.cpp** (*using C++ interface of `ipex-llm`*) on Intel GPU
 - [Ollama](Quickstart/ollama_quickstart.md): running **ollama** (*using C++ interface of `ipex-llm`*) on Intel GPU
 - [PyTorch/HuggingFace](Quickstart/install_windows_gpu.md): running **PyTorch**, **HuggingFace**, **LangChain**, **LlamaIndex**, etc. (*using Python interface of `ipex-llm`*) on Intel GPU for [Windows](Quickstart/install_windows_gpu.md) and [Linux](Quickstart/install_linux_gpu.md)
 - [vLLM](Quickstart/vLLM_quickstart.md): running `ipex-llm` in **vLLM** on both Intel [GPU](DockerGuides/vllm_docker_quickstart.md) and [CPU](DockerGuides/vllm_cpu_docker_quickstart.md)
