@@ -57,7 +57,7 @@ Then, extract the zip file to a folder.
 Here we provide a simple example to show how to run a community GGUF model with IPEX-LLM.  
 
 #### Model Download
-Before running, you should download or copy community GGUF model to your current directory. For instance,  `DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf` of [bartowski/DeepSeek-R1-Distill-Qwen-7B-GGUF](https://huggingface.co/bartowski/DeepSeek-R1-Distill-Qwen-7B-GGUF/blob/main/DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf).
+Before running, you should download or copy community GGUF model to your local directory. For instance,  `DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf` of [bartowski/DeepSeek-R1-Distill-Qwen-7B-GGUF](https://huggingface.co/bartowski/DeepSeek-R1-Distill-Qwen-7B-GGUF/blob/main/DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf).
 
 #### Run GGUF model
 Please change `path\to\DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf` to your model path before your run below command.
@@ -136,7 +136,7 @@ Then, extract the tgz file to a folder.
 Here we provide a simple example to show how to run a community GGUF model with IPEX-LLM.  
 
 #### Model Download
-Before running, you should download or copy community GGUF model to your current directory. For instance,  `DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf` of [bartowski/DeepSeek-R1-Distill-Qwen-7B-GGUF](https://huggingface.co/bartowski/DeepSeek-R1-Distill-Qwen-7B-GGUF/blob/main/DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf).
+Before running, you should download or copy community GGUF model to your local directory. For instance,  `DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf` of [bartowski/DeepSeek-R1-Distill-Qwen-7B-GGUF](https://huggingface.co/bartowski/DeepSeek-R1-Distill-Qwen-7B-GGUF/blob/main/DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf).
 
 #### Run GGUF model
 Please change `/path/to/DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf` to your model path before your run below command.  
