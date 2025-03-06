@@ -26,7 +26,7 @@ This guide demonstrates how to use [llama.cpp portable zip](https://github.com/i
   - [Step 1: Download and Extract](#step-1-download-and-extract)
   - [Step 2: Runtime Configuration](#step-2-runtime-configuration-1)
   - [Step 3: Run GGUF models](#step-3-run-gguf-models-1)
-  - [(New) FlashMoE for MoE Models (e.g., DeepSeek V3/R1) using llama.cpp](#flashmoe-for-deepseek-v3r1)
+  - [(New) FlashMoE for DeepSeek V3/R1 using llama.cpp](#flashmoe-for-deepseek-v3r1)
 - [Tips & Troubleshooting](#tips--troubleshooting)
   - [Error: Detected different sycl devices](#error-detected-different-sycl-devices)
   - [Multi-GPUs usage](#multi-gpus-usage)
