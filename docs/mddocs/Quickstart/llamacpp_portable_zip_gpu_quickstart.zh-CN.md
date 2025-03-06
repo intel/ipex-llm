@@ -26,7 +26,7 @@
   - [步骤 1：下载与解压](#步骤-1下载与解压-1)
   - [步骤 2：运行时配置](#步骤-2运行时配置-1)
   - [步骤 3：运行 GGUF 模型](#步骤-3运行-gguf-模型-1)
-  - [(新功能) FlashMoE 运行 DeepSeek V3/R1](#flashmoe-运行-deepseek-v3r1)
+  - [(新功能) FlashMoE 运行 DeepSeek V3/R1 671B](#flashmoe-运行-deepseek-v3r1)
 - [提示与故障排除](#提示与故障排除)
   - [错误：检测到不同的 sycl 设备](#错误检测到不同的-sycl-设备)
   - [多 GPU 配置](#多-gpu-配置)
