@@ -6,7 +6,7 @@
 本指南演示如何使用 [llama.cpp portable zip](https://github.com/intel/ipex-llm/releases/tag/v2.2.0-nightly) 通过 `ipex-llm` 在 Intel GPU 上直接免安装运行。
 
 > [!Important]
-> 使用最新 [llama.cpp Portable Zip](#flashmoe-运行-deepseek-v3r1), 可以在 Xeon 上通过1到2张 Arc A770 GPU 运行 **DeepSeek-R1-671B-Q4_K_M**
+> 使用最新版 [llama.cpp Portable Zip](#flashmoe-运行-deepseek-v3r1), 可以在 Xeon 上通过1到2张 Arc A770 GPU 运行 **DeepSeek-R1-671B-Q4_K_M**
 
 > [!NOTE]
 > llama.cpp portable zip 在如下设备上进行了验证：
