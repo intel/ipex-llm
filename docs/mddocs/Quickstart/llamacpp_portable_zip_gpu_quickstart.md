@@ -4,7 +4,7 @@
 </p>
 
 >[!Important]
-> You can now run **DeepSeek-R1-671B-Q4_K_M** with 1 or 2 Arc A770 on Xeon using the latest [llama.cpp Portable Zip](#flashmoe-for-deepseek-v3r1).
+> You can now run **DeepSeek-R1-671B-Q4_K_M** with 1 or 2 Arc A770 on Xeon using the latest *llama.cpp Portable Zip*; see [below](#flashmoe-for-deepseek-v3r1) for details.
 
 This guide demonstrates how to use [llama.cpp portable zip](https://github.com/intel/ipex-llm/releases/tag/v2.2.0-nightly) to directly run llama.cpp on Intel GPU with `ipex-llm` (without the need of manual installations).
 
