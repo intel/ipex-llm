@@ -21,6 +21,26 @@ Currently, IPEX-LLM integrated vLLM only supports the following models:
 
 ## Quick Start
 
+> [!TIP]  
+> Before running benchmarks, it's recommended to lock CPU and GPU frequencies to ensure more stable, reliable, and better performance data.
+>  
+> **Lock CPU Frequency:**  
+> Use the following command to set the minimum CPU frequency (adjust based on your CPU model):  
+>  
+> ```bash  
+> sudo cpupower frequency-set -d 3.8GHz  
+> ```  
+>  
+> **Lock GPU Frequencies:**  
+> Use these commands to lock GPU frequencies to 2400MHz:  
+>  
+> ```bash  
+> sudo xpu-smi config -d 0 -t 0 --frequencyrange 2400,2400  
+> sudo xpu-smi config -d 1 -t 0 --frequencyrange 2400,2400  
+> sudo xpu-smi config -d 2 -t 0 --frequencyrange 2400,2400  
+> sudo xpu-smi config -d 3 -t 0 --frequencyrange 2400,2400  
+> ```  
+
 This quickstart guide walks you through installing and running `vLLM` with `ipex-llm`.
 
 ### 1. Install IPEX-LLM for vLLM
