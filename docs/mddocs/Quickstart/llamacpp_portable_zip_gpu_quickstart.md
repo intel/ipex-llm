@@ -190,7 +190,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 ### FlashMoE for DeepSeek V3/R1
 
-FlashMoE is a command-line tool built on llama.cpp, optimized for mixture-of-experts (MoE) models such as DeepSeek V3/R1. Now, it's available for Linux platforms.
+FlashMoE is a command-line tool built on top of `llama.cpp`, optimized for mixture-of-experts (MoE) models such as DeepSeek V3/R1. It is currently available for Linux platforms.
 
 Tested MoE GGUF Models (other MoE GGUF models are also supported):
 - [DeepSeek-V3-Q4_K_M](https://huggingface.co/unsloth/DeepSeek-V3-GGUF/tree/main/DeepSeek-V3-Q4_K_M)
