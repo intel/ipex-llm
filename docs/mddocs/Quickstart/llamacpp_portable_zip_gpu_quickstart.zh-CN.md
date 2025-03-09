@@ -77,10 +77,8 @@ llama-cli.exe -m PATH\TO\DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf -p "A conversat
 
 ```
 Found 1 SYCL devices:
-|  |                   |                                       |       |Max    |        |Max  |Global |
-    |
-|  |                   |                                       |       |compute|Max work|sub  |mem    |
-    |
+|  |                   |                                       |       |Max    |        |Max  |Global |                     |
+|  |                   |                                       |       |compute|Max work|sub  |mem    |                     |
 |ID|        Device Type|                                   Name|Version|units  |group   |group|size   |       Driver version|
 |--|-------------------|---------------------------------------|-------|-------|--------|-----|-------|---------------------|
 | 0| [level_zero:gpu:0]|                     Intel Arc Graphics|  12.71|    128|    1024|   32| 13578M|            1.3.27504|
@@ -160,10 +158,8 @@ llama_perf_context_print:       total time =   xxxxx.xx ms /  1385 tokens
 
 ```bash
 Found 1 SYCL devices:
-|  |                   |                                       |       |Max    |        |Max  |Global |
-    |
-|  |                   |                                       |       |compute|Max work|sub  |mem    |
-    |
+|  |                   |                                       |       |Max    |        |Max  |Global |                     |
+|  |                   |                                       |       |compute|Max work|sub  |mem    |                     |
 |ID|        Device Type|                                   Name|Version|units  |group   |group|size   |       Driver version|
 |--|-------------------|---------------------------------------|-------|-------|--------|-----|-------|---------------------|
 | 0| [level_zero:gpu:0]|                     Intel Arc Graphics|  12.71|    128|    1024|   32| 13578M|            1.3.27504|
@@ -198,7 +194,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 ### FlashMoE 运行 DeepSeek V3/R1
 
-FlashMoE 是一款基于 llama.cpp 构建的命令行工具，针对 DeepSeek V3/R1 等混合专家模型（MoE）模型进行了优化。现在，它可用于 Linux 平台。
+FlashMoE 是一款基于 `llama.cpp` 构建的命令行工具，针对 DeepSeek V3/R1 等混合专家模型（MoE）模型进行了优化。它现可用于 Linux 平台。
 
 经过测试的 MoE GGUF 模型（也支持其他 MoE GGUF 模型）：
 - [DeepSeek-V3-Q4_K_M](https://huggingface.co/unsloth/DeepSeek-V3-GGUF/tree/main/DeepSeek-V3-Q4_K_M)
