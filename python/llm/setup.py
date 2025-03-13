@@ -312,7 +312,6 @@ def setup_package():
                          "onednn-devel==2024.1.1;platform_system=='Windows'",
                          "onednn==2024.1.1;platform_system=='Windows'"]
     
-    # Add for testing purposes for now
     xpu_26_requires = copy.deepcopy(all_requires)
     for exclude_require in cpu_torch_version:
         xpu_26_requires.remove(exclude_require)
@@ -323,6 +322,22 @@ def setup_package():
                         "onednn-devel==2025.0.1",
                         "onednn==2025.0.1",
                         "dpcpp-cpp-rt==2025.0.2"]
+    
+    # Add for testing purposes for now, for Arrow Lake-H with AOT on Windows
+    # Linux keeps the same as xpu_2.6
+    xpu_26_arl_requires = copy.deepcopy(all_requires)
+    for exclude_require in cpu_torch_version:
+        xpu_26_arl_requires.remove(exclude_require)
+    xpu_26_arl_requires += ["torch==2.6.0.post0+xpu;platform_system=='Windows'",
+                            "torchvision==0.21.0.post0+xpu;platform_system=='Windows'",
+                            "torchaudio==2.6.0.post0+xpu;platform_system=='Windows'",
+                            "torch==2.6.0+xpu;platform_system=='Linux'",
+                            "torchvision==0.21.0+xpu;platform_system=='Linux'",
+                            "torchaudio==2.6.0+xpu;platform_system=='Linux'",
+                            "bigdl-core-xe-all==" + CORE_XE_VERSION,
+                            "onednn-devel==2025.0.1",
+                            "onednn==2025.0.1",
+                            "dpcpp-cpp-rt==2025.0.2"]
 
     cpp_requires = ["bigdl-core-cpp==" + CORE_XE_VERSION,
                     "onednn-devel==2025.0.1;platform_system=='Windows'",
@@ -370,6 +385,7 @@ def setup_package():
                         "xpu-arl": xpu_lnl_requires,
                         "xpu-arc": xpu_lnl_requires,
                         "xpu-2-6": xpu_26_requires,
+                        "xpu-2-6-arl": xpu_26_arl_requires,
                         "serving": serving_requires,
                         "cpp": cpp_requires,
                         "llama-index": llama_index_requires}, # for internal usage when upstreaming for llama-index
