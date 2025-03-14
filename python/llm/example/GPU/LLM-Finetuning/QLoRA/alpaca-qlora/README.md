@@ -10,6 +10,8 @@ To run this example with IPEX-LLM on Intel GPUs, we have some recommended requir
 
 ### 1. Install
 
+For Gemma-2B, directly start from [here](README.md#show-gemma-2b-example).
+
 ```bash
 conda create -n llm python=3.11
 conda activate llm
@@ -167,6 +169,30 @@ pip install transformers==4.37.0
 
 ```bash
 bash qlora_finetune_qwen15_7b_arc_1_card.sh
+```
+
+</details>
+
+<details>
+  <summary> Show Gemma-2B example </summary>
+
+1. Install
+
+```bash
+conda create -n llm python=3.11
+conda activate llm
+# below command will install intel_extension_for_pytorch==2.1.10+xpu as default
+pip install --pre --upgrade ipex-llm[xpu] --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/xpu/us/
+pip install datasets
+pip install transformers==4.38.1
+pip install accelerate==0.27.2
+pip install bitsandbytes==0.45.3
+```
+
+2. Run on A770
+
+```bash
+qlora_finetune_gemma_2b_arc_1_card.sh
 ```
 
 </details>
