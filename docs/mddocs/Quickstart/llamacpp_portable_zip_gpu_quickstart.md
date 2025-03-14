@@ -208,6 +208,7 @@ Requirements:
 Note: 
 - Larger models and other precisions may require more resources.
 - For 1 ARC A770 platform, please reduce context length (e.g., 1024) to avoid OOM. Add this option `-c 1024` at the end of below command.
+- For dual-sockets platform, please enable `SNC (Sub-NUMA Clustering)` in BIOS and add `numactl --interleave=all` before launch command to gain *better decoding performance*.
 
 Before running, you should download or copy community GGUF model to your local directory. For instance,  `DeepSeek-R1-Q4_K_M.gguf` of [DeepSeek-R1-Q4_K_M.gguf](https://huggingface.co/unsloth/DeepSeek-R1-GGUF/tree/main/DeepSeek-R1-Q4_K_M).
 
