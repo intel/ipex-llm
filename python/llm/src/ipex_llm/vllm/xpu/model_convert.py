@@ -109,7 +109,7 @@ def get_load_function(low_bit):
                     modules = None
                 not_convert_o_proj = os.getenv("IPEX_LLM_NOT_CONVERT_O_PROJ", None)
                 if not_convert_o_proj is not None:
-                    # only use to avoid nan value in o_proj forward running DeepSeek-R1-Distill-Qwen-14B
+                    # only use to avoid nan value in o_proj running DeepSeek-R1-Distill-Qwen-14B
                     modules = ["o_proj"]
                 else:
                     modules = None
