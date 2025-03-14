@@ -197,7 +197,7 @@ source /opt/intel/oneapi/setvars.sh
 ##### 3. Run on A770
 
 ```bash
-qlora_finetune_gemma_2b_arc_1_card.sh
+bash qlora_finetune_gemma_2b_arc_1_card.sh
 ```
 
 </details>
