@@ -10,7 +10,7 @@ To run this example with IPEX-LLM on Intel GPUs, we have some recommended requir
 
 ### 1. Install
 
-For Gemma-2B, directly start from [here](README.md#show-gemma-2b-example).
+For Gemma-2B, directly start from [here](README.md#3-qlora-finetune).
 
 ```bash
 conda create -n llm python=3.11
@@ -176,7 +176,7 @@ bash qlora_finetune_qwen15_7b_arc_1_card.sh
 <details>
   <summary> Show Gemma-2B example </summary>
 
-1. Install
+##### 1. Install
 
 ```bash
 conda create -n llm python=3.11
@@ -188,8 +188,13 @@ pip install transformers==4.38.1
 pip install accelerate==0.27.2
 pip install bitsandbytes==0.45.3
 ```
+##### 2. Configures OneAPI environment variables
 
-2. Run on A770
+```bash
+source /opt/intel/oneapi/setvars.sh
+```
+
+##### 3. Run on A770
 
 ```bash
 qlora_finetune_gemma_2b_arc_1_card.sh
