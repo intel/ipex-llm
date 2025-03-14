@@ -37,11 +37,7 @@
 
 ### 系统环境安装
 
-检查你的 GPU 驱动程序版本，并根据需要进行更新：
-
-- 对于 Intel Core Ultra processors (Series 2) 或 Intel Arc B-Series GPU，我们推荐将你的 GPU 驱动版本升级到[最新版本](https://www.intel.com/content/www/us/en/download/785597/intel-arc-iris-xe-graphics-windows.html)
-
-- 对于其他 Intel 核显和独显，我们推荐使用 GPU 驱动版本[32.0.101.6078](https://www.intel.com/content/www/us/en/download/785597/834050/intel-arc-iris-xe-graphics-windows.html)
+我们推荐将你的 GPU 驱动版本升级到[最新版本](https://www.intel.com/content/www/us/en/download/785597/intel-arc-iris-xe-graphics-windows.html)。
 
 ### 步骤 1：下载与解压
 
