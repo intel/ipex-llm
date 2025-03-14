@@ -107,6 +107,12 @@ def get_load_function(low_bit):
                     modules = ["35.mlp", "36.mlp", "37.mlp", "38.mlp", "39.mlp"]
                 else:
                     modules = None
+                not_convert_o_proj = os.getenv("IPEX_LLM_NOT_CONVERT_O_PROJ", None)
+                if not_convert_o_proj is not None:
+                    # only use to avoid nan value in o_proj forward running DeepSeek-R1-Distill-Qwen-14B
+                    modules = ["o_proj"]
+                else:
+                    modules = None
                 if "minicpm" in self.vllm_config.model_config.model.lower():
                     modules = ["vpm", "resampler"]
                 if "internvl2" in self.vllm_config.model_config.model.lower():
