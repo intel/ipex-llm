@@ -210,7 +210,7 @@ FlashMoE 是一款基于 `llama.cpp` 构建的命令行工具，针对 DeepSeek 
 提示： 
 - 更大的模型和其他精度可能需要更多的资源。
 - 对于 1 块 ARC A770 的平台，请减少上下文长度（例如 1024），以避免 OOM（内存溢出）。请在以下命令的末尾添加选项 `-c 1024`。
-- 对于拥有 2 块 CPU 的平台，请在 BIOS 上开启`子NUMA 集群`, 并在启动命令前增加 `numactl --interleave=all`, 以获得更高的性能。
+- 对于拥有 2 块 CPU 的平台，请在 BIOS 上开启`子NUMA 集群`, 并在启动命令前增加 `numactl --interleave=all`, 以获得*更高的性能*。
 
 运行之前，你需要下载或复制社区的 GGUF 模型到你的当前目录。例如，[DeepSeek-R1-Q4_K_M.gguf](https://huggingface.co/unsloth/DeepSeek-R1-GGUF/tree/main/DeepSeek-R1-Q4_K_M) 的 `DeepSeek-R1-Q4_K_M.gguf`。
 
