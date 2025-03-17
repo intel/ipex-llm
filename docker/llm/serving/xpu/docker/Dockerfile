@@ -52,7 +52,7 @@ RUN set -eux && \
     dpkg -i *.deb && \
     #
     # Install Intel PyTorch extension for LLM inference
-    pip install --pre --upgrade ipex-llm[xpu_2.6] --extra-index-url https://download.pytorch.org/whl/test/xpu && \
+    pip install --pre --upgrade ipex-llm[xpu_2.6] --extra-index-url https://download.pytorch.org/whl/xpu && \
     #
     # Build torch-ccl
     mkdir /build && \
