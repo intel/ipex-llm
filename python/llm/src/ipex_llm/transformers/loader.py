@@ -90,7 +90,6 @@ def load_model(
         model = model.eval()
 
     if device == "xpu":
-        import intel_extension_for_pytorch as ipex
         print("Convert model to half precision...")
         model = model.half()
         model = model.to('xpu')
