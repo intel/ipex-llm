@@ -24,6 +24,28 @@ terms are listed below.
 
    Intel® oneAPI Math Kernel Library(oneMKL)
 
+			OpenVINO toolkit
+
+			cluster-agent
+
+			hd-agent
+
+			platform-telemetry-agent
+
+			platform-update-agent
+
+			arrow-go
+
+			cobra
+
+			console
+
+			flatbuffers-go
+
+			grpc-go
+
+			pdevine-tensor
+
 
 
                                  Apache License
@@ -518,9 +540,185 @@ SOFTWARE.
 
 
 -------------------------------------------------------------
-3. gperftools
+3. jemalloc
+    Copyright (C) 2002-present Jason Evans <jasone@canonware.com>.
+    All rights reserved.
+    Copyright (C) 2007-2012 Mozilla Foundation.  All rights reserved.
+    Copyright (C) 2009-present Facebook, Inc.  All rights reserved.
+
+   errors
+    Copyright (c) 2015, Dave Cheney <dave@cheney.net>
+    All rights reserved.
+
+   gods
+    Copyright (c) 2015, Emir Pasic
+    All rights reserved.
+
+   math32
+    Copyright (c) 2021, Xuanyi Chew and the Go Authors
+    All rights reserved.
+
+   nlpodyssey-gopickle
+    Copyright (c) 2020, NLP Odyssey Authors
+    All rights reserved.
+
+   xtgo-set
+    Copyright (c) 2015 Kevin Gillette. All rights reserved.
+
+
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+1. Redistributions of source code must retain the above copyright notice(s),
+   this list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice(s),
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER(S) ``AS IS'' AND ANY EXPRESS
+OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+EVENT SHALL THE COPYRIGHT HOLDER(S) BE LIABLE FOR ANY DIRECT, INDIRECT,
+INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+
+-------------------------------------------------------------
+4. gperftools
     Copyright (c) 2005, Google Inc.
     All rights reserved.
+
+   gogo-protobuf
+    Copyright (c) 2013, The GoGo Authors. All rights reserved.
+    Copyright 2010 The Go Authors.  All rights reserved.
+
+   golang-runtime
+    Copyright 2009 The Go Authors.
+
+   gonum-blas
+    Copyright 2009 The Go Authors.
+
+   gonum-lapack
+    Copyright ©2013 The gonum Authors. All rights reserved.
+
+   gonum-matrix
+    Copyright ©2013 The Gonum Authors. All rights reserved.
+
+   hwloc
+    Copyright (c) 2004-2012 The Trustees of Indiana University and Indiana
+                            University Research and Technology
+                            Corporation.  All rights reserved.
+    Copyright (c) 2004-2021 The University of Tennessee and The University
+                            of Tennessee Research Foundation.  All rights
+                            reserved.
+    Copyright (c) 2004-2018 High Performance Computing Center Stuttgart,
+                            University of Stuttgart.  All rights reserved.
+    Copyright (c) 2004-2008 The Regents of the University of California.
+                            All rights reserved.
+    Copyright (c) 2006-2018 Los Alamos National Security, LLC.  All rights
+                            reserved.
+    Copyright (c) 2006-2021 Cisco Systems, Inc.  All rights reserved.
+    Copyright (c) 2006-2010 Voltaire, Inc. All rights reserved.
+    Copyright (c) 2006-2021 Sandia National Laboratories. All rights reserved.
+    Copyright (c) 2006-2010 Sun Microsystems, Inc.  All rights reserved.
+                            Use is subject to license terms.
+    Copyright (c) 2006-2021 The University of Houston. All rights reserved.
+    Copyright (c) 2006-2009 Myricom, Inc.  All rights reserved.
+    Copyright (c) 2007-2017 UT-Battelle, LLC. All rights reserved.
+    Copyright (c) 2007-2021 IBM Corporation.  All rights reserved.
+    Copyright (c) 1998-2005 Forschungszentrum Juelich, Juelich Supercomputing
+                            Centre, Federal Republic of Germany
+    Copyright (c) 2005-2008 ZIH, TU Dresden, Federal Republic of Germany
+    Copyright (c) 2007      Evergrid, Inc. All rights reserved.
+    Copyright (c) 2008-2016 Chelsio, Inc.  All rights reserved.
+    Copyright (c) 2008-2009 Institut National de Recherche en
+                            Informatique.  All rights reserved.
+    Copyright (c) 2007      Lawrence Livermore National Security, LLC.
+                            All rights reserved.
+    Copyright (c) 2007-2019 Mellanox Technologies.  All rights reserved.
+    Copyright (c) 2006-2010 QLogic Corporation.  All rights reserved.
+    Copyright (c) 2008-2017 Oak Ridge National Labs.  All rights reserved.
+    Copyright (c) 2006-2012 Oracle and/or its affiliates.  All rights reserved.
+    Copyright (c) 2009-2015 Bull SAS.  All rights reserved.
+    Copyright (c) 2010      ARM ltd.  All rights reserved.
+    Copyright (c) 2016      ARM, Inc.  All rights reserved.
+    Copyright (c) 2010-2011 Alex Brick .  All rights reserved.
+    Copyright (c) 2012      The University of Wisconsin-La Crosse. All rights reserved.
+    Copyright (c) 2013-2020 Intel, Inc. All rights reserved.
+    Copyright (c) 2011-2021 NVIDIA Corporation.  All rights reserved.
+    Copyright (c) 2016-2018 Broadcom Limited.  All rights reserved.
+    Copyright (c) 2011-2021 Fujitsu Limited.  All rights reserved.
+    Copyright (c) 2014-2015 Hewlett-Packard Development Company, LP.  All
+                            rights reserved.
+    Copyright (c) 2013-2021 Research Organization for Information Science (RIST).
+                            All rights reserved.
+    Copyright (c) 2017-2021 Amazon.com, Inc. or its affiliates.  All Rights
+                            reserved.
+    Copyright (c) 2018      DataDirect Networks. All rights reserved.
+    Copyright (c) 2018-2021 Triad National Security, LLC. All rights reserved.
+    Copyright (c) 2019-2021 Hewlett Packard Enterprise Development, LP.
+    Copyright (c) 2020-2021 Google, LLC. All rights reserved.
+    Copyright (c) 2002      University of Chicago
+    Copyright (c) 2001      Argonne National Laboratory
+    Copyright (c) 2020-2021 Cornelis Networks, Inc. All rights reserved.
+    Copyright (c) 2021      Nanook Consulting
+    Copyright (c) 2017-2019 Iowa State University Research Foundation, Inc.
+                            All rights reserved.
+    Copyright (c) 2024      Advanced Micro Devices, Inc. All rights reserved.
+
+   pflag
+    Copyright (c) 2012 Alex Ogier. All rights reserved.
+    Copyright (c) 2012 The Go Authors. All rights reserved.
+
+   protobuf
+    Copyright 2010 The Go Authors.  All rights reserved.
+
+   protobuf-go
+    Copyright (c) 2018 The Go Authors. All rights reserved.
+
+   spf13-pflag
+    Copyright (c) 2012 Alex Ogier. All rights reserved.
+    Copyright (c) 2012 The Go Authors. All rights reserved.
+
+   unsafe-assume-no-moving-gc
+    Copyright (c) 2020, Brad Fitzpatrick
+    All rights reserved.
+
+   v1-gonum
+    Copyright ©2013 The Gonum Authors. All rights reserved.
+
+   x-crypto
+    Copyright 2009 The Go Authors.
+
+   x-exp
+    Copyright 2009 The Go Authors.
+
+   x-image
+    Copyright 2009 The Go Authors.
+
+   x-net
+    Copyright 2009 The Go Authors.
+
+   x-sync
+    Copyright 2009 The Go Authors.
+
+   x-sys
+    Copyright 2009 The Go Authors.
+
+   x-term
+    Copyright 2009 The Go Authors.
+
+   x-text
+    Copyright 2009 The Go Authors.
+
+   x-xerrors
+    Copyright 2019 The Go Authors.
+
 
 
 Redistribution and use in source and binary forms, with or without
@@ -549,32 +747,6 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
--------------------------------------------------------------
-4. jemalloc
-    Copyright (C) 2002-present Jason Evans <jasone@canonware.com>.
-    All rights reserved.
-    Copyright (C) 2007-2012 Mozilla Foundation.  All rights reserved.
-    Copyright (C) 2009-present Facebook, Inc.  All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-1. Redistributions of source code must retain the above copyright notice(s),
-   this list of conditions and the following disclaimer.
-2. Redistributions in binary form must reproduce the above copyright notice(s),
-   this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER(S) ``AS IS'' AND ANY EXPRESS
-OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
-EVENT SHALL THE COPYRIGHT HOLDER(S) BE LIABLE FOR ANY DIRECT, INDIRECT,
-INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
-LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
-OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 
@@ -857,33 +1029,77 @@ D. GAI and AI Features in Third Party Software.  Some Third Party Software may h
 
 
 -------------------------------------------------------------
-7. cluster-agent
-   
-   hd-agent
-   
-   platform-telemetry-agent
-
-   platform-update-agent
-
-
-
-Copyright Intel Corporation
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-
-
-
--------------------------------------------------------------
-8. libcxx
+7. libcxx
     Copyright (c) 2009-2014 by the contributors listed in CREDITS.TXT
 
    libcxxabi
     Copyright (c) 2009-2014 by the contributors listed in CREDITS.TXT
+
+   llvm
+
+   agnivade-levenshtein
+    Copyright (c) 2015 Agniva De Sarker
+
+   d4l3k-go-bfloat16
+    Copyright (c) 2021 Tristan Rice
+
+   float16
+    Copyright (c) 2019-present Montgomery Edwards⁴⁴⁸ and Faye Amacker
+
+   gin
+    Copyright (c) 2014 Manuel Martínez-Almeida
+
+   gin-contrib-cors
+    Copyright (c) 2016 Gin-Gonic
+
+   gin-contrib-sse
+    Copyright (c) 2014 Manuel Martínez-Almeida
+
+   go-codec
+    Copyright (c) 2012-2020 Ugorji Nwoke.
+    All rights reserved.
+
+   go-isatty
+    Copyright (c) Yasuhiro MATSUMOTO <mattn.jp@gmail.com>
+
+   go-playground-locales
+    Copyright (c) 2016 Go Playground
+
+   go-playground-universal-translator
+    Copyright (c) 2016 Go Playground
+
+   go-runewidth
+    Copyright (c) 2016 Yasuhiro Matsumoto
+
+   go-toml
+    Copyright (c) 2021 - 2023 Thomas Pelletier
+
+   go-urn
+    Copyright (c) 2018 Leonardo Di Donato
+
+   gorgonia.org-vecf32
+    Copyright (c) 2017 Chewxy
+
+   gorgonia.org-vecf64
+    Copyright (c) 2017 Xuanyi Chew
+
+   hm
+    Copyright (c) 2016 Xuanyi Chew
+
+   mimetype
+    Copyright (c) 2018 Gabriel Vasile
+
+   sse
+    Copyright (c) 2014 Manuel Martínez-Almeida
+
+   tablewriter
+    Copyright (C) 2014 by Oleku Konko
+
+   validator
+    Copyright (c) 2015 Dean Karn
+
+   uniseg
+    Copyright (c) 2019 Oliver Kuederle
 
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -903,6 +1119,61 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+
+
+-------------------------------------------------------------
+8. gopkg.in-yaml
+
+
+This project is covered by two different licenses: MIT and Apache.
+
+#### MIT License ####
+
+The following files were ported to Go from C files of libyaml, and thus
+are still covered by their original MIT license, with the additional
+copyright staring in 2011 when the project was ported over:
+
+    apic.go emitterc.go parserc.go readerc.go scannerc.go
+    writerc.go yamlh.go yamlprivateh.go
+
+Copyright (c) 2006-2010 Kirill Simonov
+Copyright (c) 2006-2011 Kirill Simonov
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+### Apache License ###
+
+All the remaining project files are covered by the Apache license:
+
+Copyright (c) 2011-2019 Canonical Ltd
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 
 
 -------------------------------------------------------------
@@ -959,8 +1230,46 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 
 -------------------------------------------------------------
-10. stb-image
+10. zlib
 
+/* zlib.h -- interface of the 'zlib' general purpose compression library
+  version 1.3.1, January 22nd, 2024
+
+  Copyright (C) 1995-2024 Jean-loup Gailly and Mark Adler
+
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
+
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
+
+  Jean-loup Gailly        Mark Adler
+  jloup@gzip.org          madler@alumni.caltech.edu
+
+*/
+
+
+-------------------------------------------------------------
+11. stb-image
+
+    blas
+        Copyright (c) 1992-2013 The University of Tennessee and The University
+                                of Tennessee Research Foundation.  All rights
+                                reserved.
+        Copyright (c) 2000-2013 The University of California Berkeley. All
+                                rights reserved.
+        Copyright (c) 2006-2013 The University of Colorado Denver.  All rights
+                                reserved.
 
 This software is available under 2 licenses -- choose whichever you prefer.
 ------------------------------------------------------------------------------
