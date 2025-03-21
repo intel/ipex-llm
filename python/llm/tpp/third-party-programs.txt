@@ -1310,3 +1310,24 @@ ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
+
+
+
+-------------------------------------------------------------
+The following third party programs have their own third party programs. These additional third party program files are as follows:
+
+1. Intel® oneAPI Deep Neural Network Library (oneDNN): Third Party Programs File is available here https://github.com/intel/ipex-llm/tree/main/python/llm/tpp/onednn_third-party-programs.txt
+
+2. Intel® oneAPI Math Kernel Library (oneMKL): Third Party Programs File is available here https://github.com/intel/ipex-llm/tree/main/python/llm/tpp/tpponemkl_third-party-programs.txt
+
+3. Intel® Distribution of OpenVINO™ Toolkit (OpenVINO): Third Party Programs File is available here https://github.com/intel/ipex-llm/tree/main/python/llm/tpp/openvino_third-party-programs.txt
+
+4. Intel® oneAPI Threading Building Blocks (oneTBB): Third Party Programs File is available here https://github.com/intel/ipex-llm/tree/main/python/llm/tpp/onetbb_third-party-programs.txt
+
+5. Intel® oneAPI DPC++ Library (oneDPL): Third Party Programs File is available here https://github.com/intel/ipex-llm/tree/main/python/llm/tpp/onedpl_third-party-programs.txt
+
+-------------------------------------------------------------
+
+* Other names and brands may be claimed as the property of others. 
+
+-------------------------------------------------------------
