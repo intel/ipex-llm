@@ -12,9 +12,9 @@
 > 如果是在 Intel Arc B 系列 GPU 上安装(例，**B580**)，请参阅本[指南](./bmg_quickstart.md)。
 
 > [!NOTE]
-> `ipex-llm[cpp]` 的最新版本与官方 llama.cpp 的 [3f1ae2e](https://github.com/ggerganov/llama.cpp/commit/3f1ae2e32cde00c39b96be6d01c2997c29bae555) 版本保持一致。 
+> `ipex-llm[cpp]` 的最新版本与官方 llama.cpp 的 [d7cfe1f](https://github.com/ggml-org/llama.cpp/commit/d7cfe1ffe0f435d0048a6058d529daf76e072d9c) 版本保持一致。 
 >
-> `ipex-llm[cpp]==2.2.0b20241204` 与官方 llama.cpp 的 [a1631e5](https://github.com/ggerganov/llama.cpp/commit/a1631e53f6763e17da522ba219b030d8932900bd) 版本保持一致。
+> `ipex-llm[cpp]==2.2.0b20250320` 与官方 llama.cpp 的 [ba1cb19](https://github.com/ggml-org/llama.cpp/commit/ba1cb19cdd0d92e012e0f6e009e0620f854b6afd) 版本保持一致。
 
 以下是在 Intel Arc GPU 上运行 LLaMA2-7B 的 DEMO 演示。
 
@@ -159,7 +159,7 @@ cd llama-cpp
 - **Linux 用户**:
   
   ```bash
-  ./llama-cli -m mistral-7b-instruct-v0.1.Q4_K_M.gguf -n 32 --prompt "Once upon a time, there existed a little girl who liked to have adventures. She wanted to go to places and meet new people, and have fun" -c 1024 -t 8 -e -ngl 99 --color
+  ./llama-cli -m mistral-7b-instruct-v0.1.Q4_K_M.gguf -n 32 --prompt "Once upon a time, there existed a little girl who liked to have adventures. She wanted to go to places and meet new people, and have fun" -c 1024 -t 8 -e -ngl 99 --color -no-cnv
   ```
 
   > **Note**:
@@ -171,7 +171,7 @@ cd llama-cpp
   请在 Miniforge Prompt 中运行以下命令。
 
   ```cmd
-  llama-cli -m mistral-7b-instruct-v0.1.Q4_K_M.gguf -n 32 --prompt "Once upon a time, there existed a little girl who liked to have adventures. She wanted to go to places and meet new people, and have fun" -c 1024 -t 8 -e -ngl 99 --color
+  llama-cli -m mistral-7b-instruct-v0.1.Q4_K_M.gguf -n 32 --prompt "Once upon a time, there existed a little girl who liked to have adventures. She wanted to go to places and meet new people, and have fun" -c 1024 -t 8 -e -ngl 99 --color -no-cnv
   ```
 
   > **Note**:

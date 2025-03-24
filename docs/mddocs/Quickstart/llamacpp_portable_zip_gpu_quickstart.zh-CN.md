@@ -16,22 +16,28 @@
 > - Intel Arc B-Series GPU
 
 ## 目录
-- [Windows 用户指南](#windows-用户指南)
-  - [系统环境安装](#系统环境安装)
-  - [步骤 1：下载与解压](#步骤-1下载与解压)
-  - [步骤 2：运行时配置](#步骤-2运行时配置)
-  - [步骤 3：运行 GGUF 模型](#步骤-3运行-gguf-模型)
-- [Linux 用户指南](#linux-用户指南)
-  - [系统环境安装](#系统环境安装-1)
-  - [步骤 1：下载与解压](#步骤-1下载与解压-1)
-  - [步骤 2：运行时配置](#步骤-2运行时配置-1)
-  - [步骤 3：运行 GGUF 模型](#步骤-3运行-gguf-模型-1)
-  - [(新功能) FlashMoE 运行 DeepSeek V3/R1 671B](#flashmoe-运行-deepseek-v3r1)
-- [提示与故障排除](#提示与故障排除)
-  - [错误：检测到不同的 sycl 设备](#错误检测到不同的-sycl-设备)
-  - [多 GPU 配置](#多-gpu-配置)
-  - [性能环境](#性能环境)
-- [更多详情](llama_cpp_quickstart.md)
+- [使用 IPEX-LLM 在 Intel GPU 运行 llama.cpp Portable Zip](#使用-ipex-llm-在-intel-gpu-运行-llamacpp-portable-zip)
+  - [目录](#目录)
+  - [Windows 用户指南](#windows-用户指南)
+    - [系统环境安装](#系统环境安装)
+    - [步骤 1：下载与解压](#步骤-1下载与解压)
+    - [步骤 2：运行时配置](#步骤-2运行时配置)
+    - [步骤 3：运行 GGUF 模型](#步骤-3运行-gguf-模型)
+      - [模型下载](#模型下载)
+      - [运行 GGUF 模型](#运行-gguf-模型)
+  - [Linux 用户指南](#linux-用户指南)
+    - [系统环境安装](#系统环境安装-1)
+    - [步骤 1：下载与解压](#步骤-1下载与解压-1)
+    - [步骤 2：运行时配置](#步骤-2运行时配置-1)
+    - [步骤 3：运行 GGUF 模型](#步骤-3运行-gguf-模型-1)
+      - [模型下载](#模型下载-1)
+      - [运行 GGUF 模型](#运行-gguf-模型-1)
+    - [FlashMoE 运行 DeepSeek V3/R1](#flashmoe-运行-deepseek-v3r1)
+  - [提示与故障排除](#提示与故障排除)
+    - [错误：检测到不同的 sycl 设备](#错误检测到不同的-sycl-设备)
+    - [多 GPU 配置](#多-gpu-配置)
+    - [性能环境](#性能环境)
+      - [SYCL\_PI\_LEVEL\_ZERO\_USE\_IMMEDIATE\_COMMANDLISTS](#sycl_pi_level_zero_use_immediate_commandlists)
 
 ## Windows 用户指南
 
@@ -66,7 +72,7 @@
 在运行以下命令之前，请将 `PATH\TO\DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf` 更改为你的模型路径。
 
 ```cmd
-llama-cli.exe -m PATH\TO\DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf -p "A conversation between User and Assistant. The user asks a question, and the Assistant solves it. The assistant first thinks about the reasoning process in the mind and then provides the user with the answer. The reasoning process and answer are enclosed within <think> </think> and <answer> </answer> tags, respectively, i.e., <think> reasoning process here </think> <answer> answer here </answer>. User: Question:The product of the ages of three teenagers is 4590. How old is the oldest? a. 18 b. 19 c. 15 d. 17 Assistant: <think>" -n 2048  -t 8 -e -ngl 99 --color -c 2500 --temp 0
+llama-cli.exe -m PATH\TO\DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf -p "A conversation between User and Assistant. The user asks a question, and the Assistant solves it. The assistant first thinks about the reasoning process in the mind and then provides the user with the answer. The reasoning process and answer are enclosed within <think> </think> and <answer> </answer> tags, respectively, i.e., <think> reasoning process here </think> <answer> answer here </answer>. User: Question:The product of the ages of three teenagers is 4590. How old is the oldest? a. 18 b. 19 c. 15 d. 17 Assistant: <think>" -n 2048  -t 8 -e -ngl 99 --color -c 2500 --temp 0 -no-cnv
 ```
 
 部分输出：
@@ -147,7 +153,7 @@ llama_perf_context_print:       total time =   xxxxx.xx ms /  1385 tokens
 在运行以下命令之前，请将 `PATH\TO\DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf` 更改为你的模型路径。
 
 ```bash
-./llama-cli -m /PATH/TO/DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf -p "A conversation between User and Assistant. The user asks a question, and the Assistant solves it. The assistant first thinks about the reasoning process in the mind and then provides the user with the answer. The reasoning process and answer are enclosed within <think> </think> and <answer> </answer> tags, respectively, i.e., <think> reasoning process here </think> <answer> answer here </answer>. User: Question:The product of the ages of three teenagers is 4590. How old is the oldest? a. 18 b. 19 c. 15 d. 17 Assistant: <think>" -n 2048  -t 8 -e -ngl 99 --color -c 2500 --temp 0
+./llama-cli -m /PATH/TO/DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf -p "A conversation between User and Assistant. The user asks a question, and the Assistant solves it. The assistant first thinks about the reasoning process in the mind and then provides the user with the answer. The reasoning process and answer are enclosed within <think> </think> and <answer> </answer> tags, respectively, i.e., <think> reasoning process here </think> <answer> answer here </answer>. User: Question:The product of the ages of three teenagers is 4590. How old is the oldest? a. 18 b. 19 c. 15 d. 17 Assistant: <think>" -n 2048  -t 8 -e -ngl 99 --color -c 2500 --temp 0 -no-cnv
 ```
 
 部分输出：
@@ -213,7 +219,7 @@ FlashMoE 是一款基于 `llama.cpp` 构建的命令行工具，针对 DeepSeek 
 请将 `/PATH/TO/DeepSeek-R1-Q4_K_M-00001-of-00009.gguf` 更改为您的模型路径，然后运行 `DeepSeek-R1-Q4_K_M.gguf`
 
 ```bash
-./flash-moe -m /PATH/TO/DeepSeek-R1-Q4_K_M-00001-of-00009.gguf --prompt "What's AI?"
+./flash-moe -m /PATH/TO/DeepSeek-R1-Q4_K_M-00001-of-00009.gguf --prompt "What's AI?" -no-cnv
 ```
 
 部分输出：

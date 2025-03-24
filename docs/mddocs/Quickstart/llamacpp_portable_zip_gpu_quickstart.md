@@ -16,22 +16,29 @@ This guide demonstrates how to use [llama.cpp portable zip](https://github.com/i
 > - Intel Arc B-Series GPU
 
 ## Table of Contents
-- [Windows Quickstart](#windows-quickstart)
-  - [Prerequisites](#prerequisites)
-  - [Step 1: Download and Unzip](#step-1-download-and-unzip)
-  - [Step 2: Runtime Configuration](#step-2-runtime-configuration)
-  - [Step 3: Run GGUF models](#step-3-run-gguf-models)
-- [Linux Quickstart](#linux-quickstart)
-  - [Prerequisites](#prerequisites-1)
-  - [Step 1: Download and Extract](#step-1-download-and-extract)
-  - [Step 2: Runtime Configuration](#step-2-runtime-configuration-1)
-  - [Step 3: Run GGUF models](#step-3-run-gguf-models-1)
-  - [(New) FlashMoE for DeepSeek V3/R1 671B using llama.cpp](#flashmoe-for-deepseek-v3r1)
-- [Tips & Troubleshooting](#tips--troubleshooting)
-  - [Error: Detected different sycl devices](#error-detected-different-sycl-devices)
-  - [Multi-GPUs usage](#multi-gpus-usage)
-  - [Performance Environment](#performance-environment)
-- [More Details](llama_cpp_quickstart.md)
+- [Run llama.cpp Portable Zip on Intel GPU with IPEX-LLM](#run-llamacpp-portable-zip-on-intel-gpu-with-ipex-llm)
+  - [Table of Contents](#table-of-contents)
+  - [Windows Quickstart](#windows-quickstart)
+    - [Prerequisites](#prerequisites)
+    - [Step 1: Download and Unzip](#step-1-download-and-unzip)
+    - [Step 2: Runtime Configuration](#step-2-runtime-configuration)
+    - [Step 3: Run GGUF models](#step-3-run-gguf-models)
+      - [Model Download](#model-download)
+      - [Run GGUF model](#run-gguf-model)
+  - [Linux Quickstart](#linux-quickstart)
+    - [Prerequisites](#prerequisites-1)
+    - [Step 1: Download and Extract](#step-1-download-and-extract)
+    - [Step 2: Runtime Configuration](#step-2-runtime-configuration-1)
+    - [Step 3: Run GGUF models](#step-3-run-gguf-models-1)
+      - [Model Download](#model-download-1)
+      - [Run GGUF model](#run-gguf-model-1)
+    - [FlashMoE for DeepSeek V3/R1](#flashmoe-for-deepseek-v3r1)
+      - [Run DeepSeek V3/R1 with FlashMoE](#run-deepseek-v3r1-with-flashmoe)
+  - [Tips \& Troubleshooting](#tips--troubleshooting)
+    - [Error: Detected different sycl devices](#error-detected-different-sycl-devices)
+    - [Multi-GPUs usage](#multi-gpus-usage)
+    - [Performance Environment](#performance-environment)
+      - [SYCL\_PI\_LEVEL\_ZERO\_USE\_IMMEDIATE\_COMMANDLISTS](#sycl_pi_level_zero_use_immediate_commandlists)
 
 ## Windows Quickstart
 
@@ -64,7 +71,7 @@ Before running, you should download or copy community GGUF model to your local d
 #### Run GGUF model
 Please change `PATH\TO\DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf` to your model path before your run below command.
 ```cmd
-llama-cli.exe -m PATH\TO\DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf -p "A conversation between User and Assistant. The user asks a question, and the Assistant solves it. The assistant first thinks about the reasoning process in the mind and then provides the user with the answer. The reasoning process and answer are enclosed within <think> </think> and <answer> </answer> tags, respectively, i.e., <think> reasoning process here </think> <answer> answer here </answer>. User: Question:The product of the ages of three teenagers is 4590. How old is the oldest? a. 18 b. 19 c. 15 d. 17 Assistant: <think>" -n 2048  -t 8 -e -ngl 99 --color -c 2500 --temp 0
+llama-cli.exe -m PATH\TO\DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf -p "A conversation between User and Assistant. The user asks a question, and the Assistant solves it. The assistant first thinks about the reasoning process in the mind and then provides the user with the answer. The reasoning process and answer are enclosed within <think> </think> and <answer> </answer> tags, respectively, i.e., <think> reasoning process here </think> <answer> answer here </answer>. User: Question:The product of the ages of three teenagers is 4590. How old is the oldest? a. 18 b. 19 c. 15 d. 17 Assistant: <think>" -n 2048  -t 8 -e -ngl 99 --color -c 2500 --temp 0 -no-cnv
 ```
 
 Part of outputs:
@@ -143,7 +150,7 @@ Before running, you should download or copy community GGUF model to your local d
 #### Run GGUF model
 Please change `/PATH/TO/DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf` to your model path before your run below command.  
 ```bash
-./llama-cli -m /PATH/TO/DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf -p "A conversation between User and Assistant. The user asks a question, and the Assistant solves it. The assistant first thinks about the reasoning process in the mind and then provides the user with the answer. The reasoning process and answer are enclosed within <think> </think> and <answer> </answer> tags, respectively, i.e., <think> reasoning process here </think> <answer> answer here </answer>. User: Question:The product of the ages of three teenagers is 4590. How old is the oldest? a. 18 b. 19 c. 15 d. 17 Assistant: <think>" -n 2048  -t 8 -e -ngl 99 --color -c 2500 --temp 0
+./llama-cli -m /PATH/TO/DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf -p "A conversation between User and Assistant. The user asks a question, and the Assistant solves it. The assistant first thinks about the reasoning process in the mind and then provides the user with the answer. The reasoning process and answer are enclosed within <think> </think> and <answer> </answer> tags, respectively, i.e., <think> reasoning process here </think> <answer> answer here </answer>. User: Question:The product of the ages of three teenagers is 4590. How old is the oldest? a. 18 b. 19 c. 15 d. 17 Assistant: <think>" -n 2048  -t 8 -e -ngl 99 --color -c 2500 --temp 0 -no-cnv
 ```
 
 Part of outputs:
@@ -211,7 +218,7 @@ Before running, you should download or copy community GGUF model to your local d
 Change `/PATH/TO/DeepSeek-R1-Q4_K_M-00001-of-00009.gguf` to your model path, then run `DeepSeek-R1-Q4_K_M.gguf`
 
 ```bash
-./flash-moe -m /PATH/TO/DeepSeek-R1-Q4_K_M-00001-of-00009.gguf --prompt "What's AI?"
+./flash-moe -m /PATH/TO/DeepSeek-R1-Q4_K_M-00001-of-00009.gguf --prompt "What's AI?" -no-cnv
 ```
 
 Part of outputs
