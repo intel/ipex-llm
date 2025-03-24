@@ -75,27 +75,32 @@ Found 1 SYCL devices:
 |  |                   |                                       |       |compute|Max work|sub  |mem    |                     |
 |ID|        Device Type|                                   Name|Version|units  |group   |group|size   |       Driver version|
 |--|-------------------|---------------------------------------|-------|-------|--------|-----|-------|---------------------|
-| 0| [level_zero:gpu:0]|                     Intel Arc Graphics|  12.71|    128|    1024|   32| 13578M|            1.3.27504|
+| 0| [level_zero:gpu:0]|                Intel Arc A770 Graphics|  12.55|    512|    1024|   32| 16225M|     1.6.31294.120000|
+SYCL Optimization Feature:
+|ID|        Device Type|Reorder|
+|--|-------------------|-------|
+| 0| [level_zero:gpu:0]|      Y|
+llama_kv_cache_init: kv_size = 2528, offload = 1, type_k = 'f16', type_v = 'f16', n_layer = 28, can_shift = 1
 llama_kv_cache_init:      SYCL0 KV buffer size =   138.25 MiB
-llama_new_context_with_model: KV self size  =  138.25 MiB, K (f16):   69.12 MiB, V (f16):   69.12 MiB
-llama_new_context_with_model:  SYCL_Host  output buffer size =     0.58 MiB
-llama_new_context_with_model:      SYCL0 compute buffer size =  1501.00 MiB
-llama_new_context_with_model:  SYCL_Host compute buffer size =    58.97 MiB
-llama_new_context_with_model: graph nodes  = 874
-llama_new_context_with_model: graph splits = 2
+llama_init_from_model: KV self size  =  138.25 MiB, K (f16):   69.12 MiB, V (f16):   69.12 MiB
+llama_init_from_model:  SYCL_Host  output buffer size =     0.58 MiB
+llama_init_from_model:      SYCL0 compute buffer size =  1501.00 MiB
+llama_init_from_model:  SYCL_Host compute buffer size =    59.28 MiB
+llama_init_from_model: graph nodes  = 874
+llama_init_from_model: graph splits = 2
+common_init_from_params: setting dry_penalty_last_n to ctx_size = 2528
 common_init_from_params: warming up the model with an empty run - please wait ... (--no-warmup to disable)
 main: llama threadpool init, n_threads = 8
 
-system_info: n_threads = 8 (n_threads_batch = 8) / 22 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | LLAMAFILE = 1 | OPENMP = 1 | AARCH64_REPACK = 1 |
+system_info: n_threads = 8 (n_threads_batch = 8) / 32 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | LLAMAFILE = 1 | OPENMP = 1 | AARCH64_REPACK = 1 | 
 
-sampler seed: 341519086
-sampler params:
+sampler seed: 1856767110
+sampler params: 
         repeat_last_n = 64, repeat_penalty = 1.000, frequency_penalty = 0.000, presence_penalty = 0.000
-        dry_multiplier = 0.000, dry_base = 1.750, dry_allowed_length = 2, dry_penalty_last_n = -1
-        top_k = 40, top_p = 0.950, min_p = 0.050, xtc_probability = 0.000, xtc_threshold = 0.100, typical_p = 1.000, temp = 0.000
+        dry_multiplier = 0.000, dry_base = 1.750, dry_allowed_length = 2, dry_penalty_last_n = 2528
+        top_k = 40, top_p = 0.950, min_p = 0.050, xtc_probability = 0.000, xtc_threshold = 0.100, typical_p = 1.000, top_n_sigma = -1.000, temp = 0.000
         mirostat = 0, mirostat_lr = 0.100, mirostat_ent = 5.000
-sampler chain: logits -> logit-bias -> penalties -> dry -> top-k -> typical -> top-p -> min-p -> xtc -> temp-ext -> dist
-
+sampler chain: logits -> logit-bias -> penalties -> dry -> top-k -> typical -> top-p -> min-p -> xtc -> temp-ext -> dist 
 generate: n_ctx = 2528, n_batch = 4096, n_predict = 2048, n_keep = 1
 
 <think>
@@ -154,27 +159,32 @@ Found 1 SYCL devices:
 |  |                   |                                       |       |compute|Max work|sub  |mem    |                     |
 |ID|        Device Type|                                   Name|Version|units  |group   |group|size   |       Driver version|
 |--|-------------------|---------------------------------------|-------|-------|--------|-----|-------|---------------------|
-| 0| [level_zero:gpu:0]|                     Intel Arc Graphics|  12.71|    128|    1024|   32| 13578M|            1.3.27504|
+| 0| [level_zero:gpu:0]|                Intel Arc A770 Graphics|  12.55|    512|    1024|   32| 16225M|     1.6.31294.120000|
+SYCL Optimization Feature:
+|ID|        Device Type|Reorder|
+|--|-------------------|-------|
+| 0| [level_zero:gpu:0]|      Y|
+llama_kv_cache_init: kv_size = 2528, offload = 1, type_k = 'f16', type_v = 'f16', n_layer = 28, can_shift = 1
 llama_kv_cache_init:      SYCL0 KV buffer size =   138.25 MiB
-llama_new_context_with_model: KV self size  =  138.25 MiB, K (f16):   69.12 MiB, V (f16):   69.12 MiB
-llama_new_context_with_model:  SYCL_Host  output buffer size =     0.58 MiB
-llama_new_context_with_model:      SYCL0 compute buffer size =  1501.00 MiB
-llama_new_context_with_model:  SYCL_Host compute buffer size =    58.97 MiB
-llama_new_context_with_model: graph nodes  = 874
-llama_new_context_with_model: graph splits = 2
+llama_init_from_model: KV self size  =  138.25 MiB, K (f16):   69.12 MiB, V (f16):   69.12 MiB
+llama_init_from_model:  SYCL_Host  output buffer size =     0.58 MiB
+llama_init_from_model:      SYCL0 compute buffer size =  1501.00 MiB
+llama_init_from_model:  SYCL_Host compute buffer size =    59.28 MiB
+llama_init_from_model: graph nodes  = 874
+llama_init_from_model: graph splits = 2
+common_init_from_params: setting dry_penalty_last_n to ctx_size = 2528
 common_init_from_params: warming up the model with an empty run - please wait ... (--no-warmup to disable)
 main: llama threadpool init, n_threads = 8
 
-system_info: n_threads = 8 (n_threads_batch = 8) / 22 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | LLAMAFILE = 1 | OPENMP = 1 | AARCH64_REPACK = 1 |
+system_info: n_threads = 8 (n_threads_batch = 8) / 32 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | LLAMAFILE = 1 | OPENMP = 1 | AARCH64_REPACK = 1 | 
 
-sampler seed: 341519086
-sampler params:
+sampler seed: 1856767110
+sampler params: 
         repeat_last_n = 64, repeat_penalty = 1.000, frequency_penalty = 0.000, presence_penalty = 0.000
-        dry_multiplier = 0.000, dry_base = 1.750, dry_allowed_length = 2, dry_penalty_last_n = -1
-        top_k = 40, top_p = 0.950, min_p = 0.050, xtc_probability = 0.000, xtc_threshold = 0.100, typical_p = 1.000, temp = 0.000
+        dry_multiplier = 0.000, dry_base = 1.750, dry_allowed_length = 2, dry_penalty_last_n = 2528
+        top_k = 40, top_p = 0.950, min_p = 0.050, xtc_probability = 0.000, xtc_threshold = 0.100, typical_p = 1.000, top_n_sigma = -1.000, temp = 0.000
         mirostat = 0, mirostat_lr = 0.100, mirostat_ent = 5.000
-sampler chain: logits -> logit-bias -> penalties -> dry -> top-k -> typical -> top-p -> min-p -> xtc -> temp-ext -> dist
-
+sampler chain: logits -> logit-bias -> penalties -> dry -> top-k -> typical -> top-p -> min-p -> xtc -> temp-ext -> dist 
 generate: n_ctx = 2528, n_batch = 4096, n_predict = 2048, n_keep = 1
 
 <think>

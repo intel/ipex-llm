@@ -180,11 +180,10 @@ cd llama-cpp
 
 #### 示例输出
 ```
-Log start
-main: build = 1 (6f4ec98)
-main: built with MSVC 19.39.33519.0 for
-main: seed  = 1724921424
-llama_model_loader: loaded meta data with 20 key-value pairs and 291 tensors from D:\gguf-models\mistral-7b-instruct-v0.1.Q4_K_M.gguf (version GGUF V2)
+main: llama backend init
+main: load the model and apply lora adapter, if any
+llama_model_load_from_file_impl: using device SYCL0 (Intel(R) Arc(TM) A770 Graphics) - 15473 MiB free
+llama_model_loader: loaded meta data with 20 key-value pairs and 291 tensors from /home/arda/ruonan/mistral-7b-instruct-v0.1.Q4_K_M.gguf (version GGUF V2)
 llama_model_loader: Dumping metadata keys/values. Note: KV overrides do not apply in this output.
 llama_model_loader: - kv   0:                       general.architecture str              = llama
 llama_model_loader: - kv   1:                               general.name str              = mistralai_mistral-7b-instruct-v0.1
@@ -209,108 +208,123 @@ llama_model_loader: - kv  19:               general.quantization_version u32    
 llama_model_loader: - type  f32:   65 tensors
 llama_model_loader: - type q4_K:  193 tensors
 llama_model_loader: - type q6_K:   33 tensors
-llm_load_vocab: special tokens cache size = 3
-llm_load_vocab: token to piece cache size = 0.1637 MB
-llm_load_print_meta: format           = GGUF V2
-llm_load_print_meta: arch             = llama
-llm_load_print_meta: vocab type       = SPM
-llm_load_print_meta: n_vocab          = 32000
-llm_load_print_meta: n_merges         = 0
-llm_load_print_meta: vocab_only       = 0
-llm_load_print_meta: n_ctx_train      = 32768
-llm_load_print_meta: n_embd           = 4096
-llm_load_print_meta: n_layer          = 32
-llm_load_print_meta: n_head           = 32
-llm_load_print_meta: n_head_kv        = 8
-llm_load_print_meta: n_rot            = 128
-llm_load_print_meta: n_swa            = 0
-llm_load_print_meta: n_embd_head_k    = 128
-llm_load_print_meta: n_embd_head_v    = 128
-llm_load_print_meta: n_gqa            = 4
-llm_load_print_meta: n_embd_k_gqa     = 1024
-llm_load_print_meta: n_embd_v_gqa     = 1024
-llm_load_print_meta: f_norm_eps       = 0.0e+00
-llm_load_print_meta: f_norm_rms_eps   = 1.0e-05
-llm_load_print_meta: f_clamp_kqv      = 0.0e+00
-llm_load_print_meta: f_max_alibi_bias = 0.0e+00
-llm_load_print_meta: f_logit_scale    = 0.0e+00
-llm_load_print_meta: n_ff             = 14336
-llm_load_print_meta: n_expert         = 0
-llm_load_print_meta: n_expert_used    = 0
-llm_load_print_meta: causal attn      = 1
-llm_load_print_meta: pooling type     = 0
-llm_load_print_meta: rope type        = 0
-llm_load_print_meta: rope scaling     = linear
-llm_load_print_meta: freq_base_train  = 10000.0
-llm_load_print_meta: freq_scale_train = 1
-llm_load_print_meta: n_ctx_orig_yarn  = 32768
-llm_load_print_meta: rope_finetuned   = unknown
-llm_load_print_meta: ssm_d_conv       = 0
-llm_load_print_meta: ssm_d_inner      = 0
-llm_load_print_meta: ssm_d_state      = 0
-llm_load_print_meta: ssm_dt_rank      = 0
-llm_load_print_meta: ssm_dt_b_c_rms   = 0
-llm_load_print_meta: model type       = 7B
-llm_load_print_meta: model ftype      = Q4_K - Medium
-llm_load_print_meta: model params     = 7.24 B
-llm_load_print_meta: model size       = 4.07 GiB (4.83 BPW)
-llm_load_print_meta: general.name     = mistralai_mistral-7b-instruct-v0.1
-llm_load_print_meta: BOS token        = 1 '<s>'
-llm_load_print_meta: EOS token        = 2 '</s>'
-llm_load_print_meta: UNK token        = 0 '<unk>'
-llm_load_print_meta: LF token         = 13 '<0x0A>'
-llm_load_print_meta: max token length = 48
-ggml_sycl_init: GGML_SYCL_FORCE_MMQ:   no
-ggml_sycl_init: SYCL_USE_XMX: yes
-ggml_sycl_init: found 1 SYCL devices:
-llm_load_tensors: ggml ctx size =    0.27 MiB
-llm_load_tensors: offloading 32 repeating layers to GPU
-llm_load_tensors: offloading non-repeating layers to GPU
-llm_load_tensors: offloaded 33/33 layers to GPU
-llm_load_tensors:      SYCL0 buffer size =  4095.05 MiB
-llm_load_tensors:        CPU buffer size =    70.31 MiB
-..............................................................................................
-llama_new_context_with_model: n_ctx      = 512
-llama_new_context_with_model: n_batch    = 512
-llama_new_context_with_model: n_ubatch   = 512
-llama_new_context_with_model: flash_attn = 0
-llama_new_context_with_model: freq_base  = 10000.0
-llama_new_context_with_model: freq_scale = 1
-[SYCL] call ggml_check_sycl
-ggml_check_sycl: GGML_SYCL_DEBUG: 0
-ggml_check_sycl: GGML_SYCL_F16: no
-found 1 SYCL devices:
+print_info: file format = GGUF V2
+print_info: file type   = Q4_K - Medium
+print_info: file size   = 4.07 GiB (4.83 BPW) 
+load: special_eos_id is not in special_eog_ids - the tokenizer config may be incorrect
+load: special tokens cache size = 3
+load: token to piece cache size = 0.1637 MB
+print_info: arch             = llama
+print_info: vocab_only       = 0
+print_info: n_ctx_train      = 32768
+print_info: n_embd           = 4096
+print_info: n_layer          = 32
+print_info: n_head           = 32
+print_info: n_head_kv        = 8
+print_info: n_rot            = 128
+print_info: n_swa            = 0
+print_info: n_embd_head_k    = 128
+print_info: n_embd_head_v    = 128
+print_info: n_gqa            = 4
+print_info: n_embd_k_gqa     = 1024
+print_info: n_embd_v_gqa     = 1024
+print_info: f_norm_eps       = 0.0e+00
+print_info: f_norm_rms_eps   = 1.0e-05
+print_info: f_clamp_kqv      = 0.0e+00
+print_info: f_max_alibi_bias = 0.0e+00
+print_info: f_logit_scale    = 0.0e+00
+print_info: n_ff             = 14336
+print_info: n_expert         = 0
+print_info: n_expert_used    = 0
+print_info: causal attn      = 1
+print_info: pooling type     = 0
+print_info: rope type        = 0
+print_info: rope scaling     = linear
+print_info: freq_base_train  = 10000.0
+print_info: freq_scale_train = 1
+print_info: n_ctx_orig_yarn  = 32768
+print_info: rope_finetuned   = unknown
+print_info: ssm_d_conv       = 0
+print_info: ssm_d_inner      = 0
+print_info: ssm_d_state      = 0
+print_info: ssm_dt_rank      = 0
+print_info: ssm_dt_b_c_rms   = 0
+print_info: model type       = 7B
+print_info: model params     = 7.24 B
+print_info: general.name     = mistralai_mistral-7b-instruct-v0.1
+print_info: vocab type       = SPM
+print_info: n_vocab          = 32000
+print_info: n_merges         = 0
+print_info: BOS token        = 1 '<s>'
+print_info: EOS token        = 2 '</s>'
+print_info: UNK token        = 0 '<unk>'
+print_info: LF token         = 13 '<0x0A>'
+print_info: EOG token        = 2 '</s>'
+print_info: max token length = 48
+load_tensors: loading model tensors, this can take a while... (mmap = true)
+load_tensors: offloading 32 repeating layers to GPU
+load_tensors: offloading output layer to GPU
+load_tensors: offloaded 33/33 layers to GPU
+load_tensors:   CPU_Mapped model buffer size =    70.31 MiB
+load_tensors:        SYCL0 model buffer size =  4095.05 MiB
+.................................................................................................
+llama_init_from_model: n_seq_max     = 1
+llama_init_from_model: n_ctx         = 1024
+llama_init_from_model: n_ctx_per_seq = 1024
+llama_init_from_model: n_batch       = 1024
+llama_init_from_model: n_ubatch      = 1024
+llama_init_from_model: flash_attn    = 0
+llama_init_from_model: freq_base     = 10000.0
+llama_init_from_model: freq_scale    = 1
+llama_init_from_model: n_ctx_per_seq (1024) < n_ctx_train (32768) -- the full capacity of the model will not be utilized
+Running with Environment Variables:
+  GGML_SYCL_DEBUG: 0
+  GGML_SYCL_DISABLE_OPT: 1
+Build with Macros:
+  GGML_SYCL_FORCE_MMQ: no
+  GGML_SYCL_F16: no
+Found 1 SYCL devices:
 |  |                   |                                       |       |Max    |        |Max  |Global |                     |
 |  |                   |                                       |       |compute|Max work|sub  |mem    |                     |
 |ID|        Device Type|                                   Name|Version|units  |group   |group|size   |       Driver version|
 |--|-------------------|---------------------------------------|-------|-------|--------|-----|-------|---------------------|
-| 0| [level_zero:gpu:0]|                     Intel Arc Graphics|    1.3|    112|    1024|   32| 13578M|            1.3.27504|
-llama_kv_cache_init:      SYCL0 KV buffer size =    64.00 MiB
-llama_new_context_with_model: KV self size  =   64.00 MiB, K (f16):   32.00 MiB, V (f16):   32.00 MiB
-llama_new_context_with_model:  SYCL_Host  output buffer size =     0.12 MiB
-llama_new_context_with_model:      SYCL0 compute buffer size =    81.00 MiB
-llama_new_context_with_model:  SYCL_Host compute buffer size =     9.01 MiB
-llama_new_context_with_model: graph nodes  = 902
-llama_new_context_with_model: graph splits = 2
+| 0| [level_zero:gpu:0]|                Intel Arc A770 Graphics|  12.55|    512|    1024|   32| 16225M|     1.6.31294.120000|
+SYCL Optimization Feature:
+|ID|        Device Type|Reorder|
+|--|-------------------|-------|
+| 0| [level_zero:gpu:0]|      Y|
+llama_kv_cache_init: kv_size = 1024, offload = 1, type_k = 'f16', type_v = 'f16', n_layer = 32, can_shift = 1
+llama_kv_cache_init:      SYCL0 KV buffer size =   128.00 MiB
+llama_init_from_model: KV self size  =  128.00 MiB, K (f16):   64.00 MiB, V (f16):   64.00 MiB
+llama_init_from_model:  SYCL_Host  output buffer size =     0.12 MiB
+llama_init_from_model:      SYCL0 compute buffer size =   164.01 MiB
+llama_init_from_model:  SYCL_Host compute buffer size =    20.01 MiB
+llama_init_from_model: graph nodes  = 902
+llama_init_from_model: graph splits = 2
+common_init_from_params: setting dry_penalty_last_n to ctx_size = 1024
+common_init_from_params: warming up the model with an empty run - please wait ... (--no-warmup to disable)
+main: llama threadpool init, n_threads = 8
 
-system_info: n_threads = 8 / 18 | AVX = 1 | AVX_VNNI = 0 | AVX2 = 1 | AVX512 = 0 | AVX512_VBMI = 0 | AVX512_VNNI = 0 | AVX512_BF16 = 0 | FMA = 1 | NEON = 0 | SVE = 0 | ARM_FMA = 0 | F16C = 1 | FP16_VA = 0 | WASM_SIMD = 0 | BLAS = 1 | SSE3 = 1 | SSSE3 = 1 | VSX = 0 | MATMUL_INT8 = 0 | LLAMAFILE = 1 |
-sampling:
+system_info: n_threads = 8 (n_threads_batch = 8) / 32 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | LLAMAFILE = 1 | OPENMP = 1 | AARCH64_REPACK = 1 | 
+
+sampler seed: 403565315
+sampler params: 
         repeat_last_n = 64, repeat_penalty = 1.000, frequency_penalty = 0.000, presence_penalty = 0.000
-        top_k = 40, tfs_z = 1.000, top_p = 0.950, min_p = 0.050, typical_p = 1.000, temp = 0.800
+        dry_multiplier = 0.000, dry_base = 1.750, dry_allowed_length = 2, dry_penalty_last_n = 1024
+        top_k = 40, top_p = 0.950, min_p = 0.050, xtc_probability = 0.000, xtc_threshold = 0.100, typical_p = 1.000, top_n_sigma = -1.000, temp = 0.800
         mirostat = 0, mirostat_lr = 0.100, mirostat_ent = 5.000
-sampling order:
-CFG -> Penalties -> top_k -> tfs_z -> typical_p -> top_p -> min_p -> temperature
-generate: n_ctx = 512, n_batch = 2048, n_predict = 32, n_keep = 1
+sampler chain: logits -> logit-bias -> penalties -> dry -> top-k -> typical -> top-p -> min-p -> xtc -> temp-ext -> dist 
+generate: n_ctx = 1024, n_batch = 4096, n_predict = 32, n_keep = 1
 
+ Once upon a time, there existed a little girl who liked to have adventures. She wanted to go to places and meet new people, and have fun exploring the world. But sometimes, she found it hard to find friends who shared her interests.
 
- Once upon a time, there existed a little girl who liked to have adventures. She wanted to go to places and meet new people, and have fun exploring the world. She lived in a small village where there weren't many opportunities for adventures, but that didn't stop her. She would often read
-llama_print_timings:        load time =    xxxx ms
-llama_print_timings:      sample time =     x.xx ms /    32 runs   (   xx.xx ms per token,  xx.xx tokens per second)
-llama_print_timings: prompt eval time =    xx.xx ms /    31 tokens (   xx.xx ms per token,  xx.xx tokens per second)
-llama_print_timings:        eval time =    xx.xx ms /    31 runs   (   xx.xx ms per token,  xx.xx tokens per second)
-llama_print_timings:       total time =    xx.xx ms /    62 tokens
-Log end
+One day, she decided to take matters into her own
 
+llama_perf_sampler_print:    sampling time =       x.xx ms /    63 runs   (    x.xx ms per token, xx.xx tokens per second)
+llama_perf_context_print:        load time =      xx.xx ms
+llama_perf_context_print: prompt eval time =      xx.xx ms /    31 tokens (   xx.xx ms per token,    xx.xx tokens per second)
+llama_perf_context_print:        eval time =      xx.xx ms /    31 runs   (   xx.xx ms per token,    xx.xx tokens per second)
+llama_perf_context_print:       total time =      xx.xx ms /    62 tokens
 ```
 
 ### 故障排除
