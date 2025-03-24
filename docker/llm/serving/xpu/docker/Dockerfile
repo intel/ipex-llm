@@ -160,7 +160,6 @@ RUN set -eux && \
     pip install --upgrade cmake && \
     VLLM_TARGET_DEVICE=xpu pip install --no-build-isolation -v /llm/vllm && \
     pip install mpi4py fastapi uvicorn openai && \
-    pip install gradio==4.43.0 && \
     pip install ray
 
 WORKDIR /llm/
