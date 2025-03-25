@@ -193,7 +193,7 @@ def is_linear_module(module):
                and module.quant_method.quant_config.get_name() == "gptq"):
                 _USE_VLLM_GPTQ = True
             invalidInputError(module.skip_bias_add is not True or module.bias is None,
-                               "Currently, ipex-vllm does not"
+                              "Currently, ipex-vllm does not"
                               " support linear layers with skip_bias_add argument")
             if isinstance(module, RowParallelLinear) and tp_size >= 2:
                 mp_group = get_tensor_model_parallel_group()
