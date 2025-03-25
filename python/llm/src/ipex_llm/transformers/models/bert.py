@@ -119,7 +119,7 @@ def encoder_forward(
     output_hidden_states: Optional[bool] = False,
     return_dict: Optional[bool] = True,
 ):
-    if not attention_mask.any():
+    if attention_mask and not attention_mask.any():
         attention_mask = None
     return BertEncoder.forward(
         self=self,

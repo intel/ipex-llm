@@ -1275,6 +1275,8 @@ def _optimize_post(model):
                 convert_forward(model,
                                 module.BertSelfAttention,
                                 self_attention_forward)
+                if hasattr(module, "BertSdpaSelfAttention"):
+                    convert_forward(model, module.BertSdpaSelfAttention, self_attention_forward)
                 convert_forward(model,
                                 module.BertEncoder,
                                 encoder_forward)
@@ -1863,6 +1865,8 @@ def _optimize_post(model):
         convert_forward(model,
                         module.BertSelfAttention,
                         self_attention_forward)
+        if hasattr(module, "BertSdpaSelfAttention"):
+            convert_forward(model, module.BertSdpaSelfAttention, self_attention_forward)
         convert_forward(model,
                         module.BertEncoder,
                         encoder_forward)
