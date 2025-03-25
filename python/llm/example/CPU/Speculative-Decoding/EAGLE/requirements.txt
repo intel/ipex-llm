@@ -1,4 +1,4 @@
-fschat==0.2.31 
+fschat==0.2.36
 openai==0.28.0 
 anthropic==0.5.0 
 wandb
