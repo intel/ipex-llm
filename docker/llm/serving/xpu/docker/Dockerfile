@@ -173,7 +173,7 @@ RUN set -eux && \
     rm -rf /tmp/neo && \
     #
     # Install vllm
-    git clone -b 0.6.6.post1 https://github.com/vllm-project/vllm /llm/vllm && \
+    git clone -b v0.6.6.post1 https://github.com/vllm-project/vllm /llm/vllm && \
     cd /llm/vllm && \
     git apply /llm/vllm_for_multi_arc.patch && \
     pip install setuptools-scm && \

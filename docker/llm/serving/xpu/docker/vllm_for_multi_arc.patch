@@ -17549,7 +17549,7 @@ index 9033644e3..a46c67ad7 100644
      @property
      def url(self) -> str:
 diff --git a/vllm/attention/backends/ipex_attn.py b/vllm/attention/backends/ipex_attn.py
-index 21949874b..2151614ac 100644
+index 21949874b..79ed61f35 100644
 --- a/vllm/attention/backends/ipex_attn.py
 +++ b/vllm/attention/backends/ipex_attn.py
 @@ -4,7 +4,7 @@ from dataclasses import dataclass
@@ -17789,7 +17789,7 @@ index 21949874b..2151614ac 100644
      def forward(
          self,
          query: torch.Tensor,
-@@ -200,75 +340,165 @@ class IpexAttnBackendImpl(AttentionImpl[IpexAttnMetadata]):
+@@ -200,75 +340,166 @@ class IpexAttnBackendImpl(AttentionImpl[IpexAttnMetadata]):
          key = key.view(-1, self.num_kv_heads, self.head_size)
          value = value.view(-1, self.num_kv_heads, self.head_size)
  
@@ -17989,7 +17989,8 @@ index 21949874b..2151614ac 100644
 +                    out = vllm._C.ops.context_attention_forward_v1(query, key_cache, value_cache, prefill_meta.block_tables, prefill_meta.query_start_loc, prefill_meta.seq_lens_tensor, prefill_meta.context_lens, prefill_meta.max_seqlen, torch.amax(prefill_meta.context_lens).item())
 +                elif value is None:
 +                    # Otherwise, by default use v2 attention forward kernel...
-+                    out = vllm._C.ops.context_attention_forward_v2(query, key_cache, value_cache, prefill_meta.block_tables, prefill_meta.query_start_loc, prefill_meta.seq_lens_tensor, prefill_meta.context_lens, prefill_meta.max_seqlen, torch.amax(prefill_meta.context_lens).item(), torch.amax(q_lens_tensor_xpu).item())
++                    query_len = prefill_meta.query_start_loc[1:] - prefill_meta.query_start_loc[:-1]
++                    out = vllm._C.ops.context_attention_forward_v2(query, key_cache, value_cache, prefill_meta.block_tables, prefill_meta.query_start_loc, prefill_meta.seq_lens_tensor, prefill_meta.context_lens, prefill_meta.max_seqlen, torch.amax(prefill_meta.context_lens).item(), torch.amax(query_len).item())
 +                else:
 +                    out = vllm._C.ops.context_attention_forward_v1(query, key_cache, value_cache, prefill_meta.block_tables, prefill_meta.query_start_loc, prefill_meta.seq_lens_tensor, prefill_meta.context_lens, prefill_meta.max_seqlen, torch.amax(prefill_meta.context_lens).item())
 +                assert output[:num_prefill_tokens].shape == out.shape
@@ -18007,7 +18008,7 @@ index 21949874b..2151614ac 100644
              max_num_partitions = ((max_seq_len + _PARTITION_SIZE - 1) //
                                    _PARTITION_SIZE)
              # NOTE(woosuk): We use a simple heuristic to decide whether to use
-@@ -279,59 +509,85 @@ class IpexAttnBackendImpl(AttentionImpl[IpexAttnMetadata]):
+@@ -279,59 +510,85 @@ class IpexAttnBackendImpl(AttentionImpl[IpexAttnMetadata]):
              # TODO(woosuk): Tune this heuristic.
              # For context len > 8192, use V2 kernel to avoid shared memory
              # shortage.
