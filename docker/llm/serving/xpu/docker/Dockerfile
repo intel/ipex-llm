@@ -86,6 +86,11 @@ FROM intel/oneapi-basekit:2025.0.1-0-devel-ubuntu22.04
 # Copy the built torch-ccl package from the build stage
 COPY --from=build /build/torch-ccl/dist/oneccl_bind_pt-2.5.0+xpu-cp311-cp311-linux_x86_64.whl /opt/
 COPY --from=build /llm/ /llm/
+COPY --from=build /build/oneCCL/build/src/libccl.so.1.0 /opt/intel/1ccl-wks/lib/
+COPY --from=build /build/oneCCL/build/src/libccl.so.1 /opt/intel/1ccl-wks/lib/
+COPY --from=build /build/oneCCL/build/src/libccl.so /opt/intel/1ccl-wks/lib/
+COPY ./vllm_for_multi_arc.patch /llm/
+COPY ./setvars.sh /opt/intel/1ccl-wks/
 
 ARG http_proxy
 ARG https_proxy
@@ -167,13 +172,16 @@ RUN set -eux && \
     rm -rf /tmp/neo && \
     #
     # Install vllm
-    git clone -b 0.6.6 https://github.com/analytics-zoo/vllm.git /llm/vllm && \
+    git clone -b 0.6.6.post1 https://github.com/vllm-project/vllm /llm/vllm && \
     cd /llm/vllm && \
+    git apply /llm/vllm_for_multi_arc.patch && \
     pip install setuptools-scm && \
     pip install --upgrade cmake && \
     VLLM_TARGET_DEVICE=xpu pip install --no-build-isolation -v /llm/vllm && \
+    rm -rf /llm/vllm_for_multi_arc.patch && \
     pip install mpi4py fastapi uvicorn openai && \
     pip install ray
+
 
 WORKDIR /llm/
 ENTRYPOINT ["bash", "/llm/start-vllm-service.sh"]
