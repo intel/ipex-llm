@@ -16,6 +16,7 @@ COPY ./ccl_torch.patch /tmp/
 COPY ./vllm_online_benchmark.py ./vllm_offline_inference.py ./vllm_offline_inference_vision_language.py \
      ./payload-1024.lua ./start-vllm-service.sh ./benchmark_vllm_throughput.py ./benchmark_vllm_latency.py \
      ./start-pp_serving-service.sh /llm/
+COPY ./1ccl_for_multi_arc.patch /build/
      
 RUN set -eux && \
     #
@@ -55,7 +56,7 @@ RUN set -eux && \
     pip install --pre --upgrade ipex-llm[xpu_2.6] --extra-index-url https://download.pytorch.org/whl/xpu && \
     #
     # Build torch-ccl
-    mkdir /build && \
+    mkdir -p /build && \
     cd /build && \
     git clone https://github.com/intel/torch-ccl.git && \
     cd torch-ccl && \
@@ -64,8 +65,20 @@ RUN set -eux && \
     git submodule update --init --recursive && \
     # This patch will enable build torch-ccl with pytorch 2.6 environment
     git apply /tmp/ccl_torch.patch && \
-    USE_SYSTEM_ONECCL=ON COMPUTE_BACKEND=dpcpp python setup.py bdist_wheel
+    USE_SYSTEM_ONECCL=ON COMPUTE_BACKEND=dpcpp python setup.py bdist_wheel && \
     # File path: /build/torch-ccl/dist/oneccl_bind_pt-2.5.0+xpu-cp311-cp311-linux_x86_64.whl
+    # Build oneCCL
+    cd /build/ && \
+    git clone https://github.com/analytics-zoo/oneCCL.git && \
+    cd oneCCL && \
+    git checkout 3afa1bb7936f57683a2503c34b29c0daca6a9ccb && \
+    git apply /build/1ccl_for_multi_arc.patch && \
+    mkdir build && \
+    cd build && \
+    cmake .. -GNinja -DCMAKE_C_COMPILER=icx -DCMAKE_CXX_COMPILER=icpx -DCMAKE_CXX_FLAGS="-fsycl" -DCOMPUTE_BACKEND=dpcpp  -DCMAKE_BUILD_TYPE=MinSizeRel && \
+    # File path: /build/oneCCL/build/src/libccl.so.1.0
+    ninja
+
 
 # Second stage: Final runtime image
 FROM intel/oneapi-basekit:2025.0.1-0-devel-ubuntu22.04
