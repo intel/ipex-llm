@@ -68,6 +68,7 @@ RUN set -eux && \
     USE_SYSTEM_ONECCL=ON COMPUTE_BACKEND=dpcpp python setup.py bdist_wheel && \
     # File path: /build/torch-ccl/dist/oneccl_bind_pt-2.5.0+xpu-cp311-cp311-linux_x86_64.whl
     # Build oneCCL
+    pip install ninja && \
     cd /build/ && \
     git clone https://github.com/analytics-zoo/oneCCL.git && \
     cd oneCCL && \
