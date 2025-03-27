@@ -56,7 +56,7 @@ python eval.py \
    ```bash
    docker run -td \
          --net=host \
-         --group-add video \
+         --privileged \
          --device=/dev/dri \
          --name=$CONTAINER_NAME \
          -v /home/intel/LLM:/llm/models/ \
