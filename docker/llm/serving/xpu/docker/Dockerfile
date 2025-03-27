@@ -147,10 +147,6 @@ RUN set -eux && \
     # Install torch-ccl
     pip install /opt/oneccl_bind_pt-2.5.0+xpu-cp311-cp311-linux_x86_64.whl && \
     #
-    # Install Internal oneccl
-    cd /opt && \
-    wget https://sourceforge.net/projects/oneccl-wks/files/2025.0.0.6.6-release/oneccl_wks_installer_2025.0.0.6.6.sh && \
-    bash oneccl_wks_installer_2025.0.0.6.6.sh && \
     apt-get update && \
     apt-get install -y --no-install-recommends libfabric-dev wrk libaio-dev numactl && \
     # 
