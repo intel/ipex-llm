@@ -6,6 +6,9 @@
 本指南将引导你如何在具有 Intel GPUs 的 Windows 系统上安装 IPEX-LLM。 
 
 > [!NOTE]
+> 如果需要安装 IPEX-LLM PyTorch 2.6 版本，请参阅本[指南](./install_pytorch26.md#windows-quickstart)获取详细信息。
+
+> [!NOTE]
 > 如果是在 Intel Arc B 系列 GPU 上安装(例，**B580**)，请参阅本[指南](./bmg_quickstart.md)。
 
 > [!NOTE]
