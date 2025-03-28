@@ -1074,6 +1074,9 @@ def _optimize_pre(model, qtype=None):
     elif model.config.model_type == "deepseek_v3" and model.config.hidden_size == 2048:
         from ipex_llm.transformers.models.deepseek import padding_mla_v_hd
         model.apply(padding_mla_v_hd)
+    elif model.config.model_type == "qwen2_5_omni":
+        from ipex_llm.transformers.models.qwen2_5_omni import merge_qkv
+        model.apply(merge_qkv)
     return model
 
 
@@ -2043,7 +2046,21 @@ def _optimize_post(model):
         convert_forward(model, module.DeepseekV3Model, deepseek_model_forward)
         convert_forward(model, module.DeepseekV3Attention, deepseek_attention_forward)
         convert_forward(model, module.DeepseekV3MoE, deepseek_moe_forward)
-
+    elif model.config.model_type == "qwen2_5_omni":
+        modeling_module_name = model.__class__.__module__
+        module = importlib.import_module(modeling_module_name)
+        from ipex_llm.transformers.models.qwen2_5_omni import qwen2_5_omni_attention_forward
+        from ipex_llm.transformers.models.qwen2_5_omni import qwen2_5_omni_thinker_model_forward
+        from ipex_llm.transformers.models.qwen2 import qwen2_mlp_forward
+        from ipex_llm.transformers.models.common import rms_norm_forward
+        convert_forward(model.thinker.model, module.Qwen2_5OmniAttention,
+                        qwen2_5_omni_attention_forward)
+        convert_forward(model.thinker.model, module.Qwen2_5OmniSdpaAttention,
+                        qwen2_5_omni_attention_forward)
+        convert_forward(model.thinker.model, module.Qwen2_5OmniThinkerModel,
+                        qwen2_5_omni_thinker_model_forward)
+        convert_forward(model.thinker.model, module.Qwen2MLP, qwen2_mlp_forward)
+        convert_forward(model, module.Qwen2RMSNorm, rms_norm_forward)
     return model
 
 
