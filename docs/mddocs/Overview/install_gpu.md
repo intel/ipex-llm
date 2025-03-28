@@ -3,7 +3,7 @@
 ## Windows
 
 > [!NOTE]
-> For installation with PyTorch 2.6, please refer to this [guide](../Quickstart/install_pytorch26.md#windows-quickstart) for more information.
+> For installation with PyTorch 2.6, please refer to this [guide](../Quickstart/install_pytorch26_gpu.md#windows-quickstart) for more information.
 
 ### Prerequisites
 
@@ -175,7 +175,7 @@ If you met error when importing `intel_extension_for_pytorch`, please ensure tha
 ## Linux
 
 > [!NOTE]
-> For installation with PyTorch 2.6, please refer to this [guide](../Quickstart/install_pytorch26.md#linux-quickstart) for more information.
+> For installation with PyTorch 2.6, please refer to this [guide](../Quickstart/install_pytorch26_gpu.md#linux-quickstart) for more information.
 
 ### Prerequisites
 
