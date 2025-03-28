@@ -83,8 +83,8 @@ With the `llm-pt26` environment active:
   set UR_L0_USE_IMMEDIATE_COMMANDLISTS=0
   ```
 
-  > [!TIP]
-  > It is recommanded to experiment with `UR_L0_USE_IMMEDIATE_COMMANDLISTS=0` or `1` for best performance on Intel Arc™ A-Series GPU.
+> [!TIP]
+> It is recommanded to experiment with `UR_L0_USE_IMMEDIATE_COMMANDLISTS=0` or `1` for best performance on Intel Arc™ A-Series GPU.
 
 - For **other Intel iGPU and dGPU**:
 
@@ -94,10 +94,10 @@ With the `llm-pt26` environment active:
   set SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS=1
   ```
 
-  > [!NOTE]
-  > The environment variable `SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS` determines the usage of immediate command lists for task submission to the GPU. It is highly recommanded to experiment with `SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS=1` or `0` on your device for best performance.
-  >
-  > You could refer to [here](https://www.intel.com/content/www/us/en/developer/articles/guide/level-zero-immediate-command-lists.html) regarding more information about Level Zero Immediate Command Lists.
+> [!NOTE]
+> The environment variable `SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS` determines the usage of immediate command lists for task submission to the GPU. It is highly recommanded to experiment with `SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS=1` or `0` on your device for best performance.
+>
+> You could refer to [here](https://www.intel.com/content/www/us/en/developer/articles/guide/level-zero-immediate-command-lists.html) regarding more information about Level Zero Immediate Command Lists.
 
 ### Verify Installation
 
