@@ -12,12 +12,12 @@ IPEX-LLM with PyTorch 2.6 provides a simpler prerequisites setup process, withou
   - [Install Prerequisites](#install-prerequisites)
   - [Install `ipex-llm`](#install-ipex-llm)
   - [Runtime Configurations](#runtime-configurations)
+  - [Verify Installation](#verify-installation)
 - [Linux Quickstart](#linux-quickstart)
   - [Install Prerequisites](#install-prerequisites-1)
   - [Install `ipex-llm`](#install-ipex-llm-1)
   - [Runtime Configurations](#runtime-configurations-1)
-- [Verify Installation](#verify-installation)
-- [A Quick Example](#a-quick-example)
+  - [Verify Installation](#verify-installation-1)
 
 ## Windows Quickstart
 
