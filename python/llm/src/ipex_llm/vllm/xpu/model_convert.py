@@ -48,7 +48,7 @@ def _sample_get_logits(
         logits = lm_head(hidden_states)
         if embedding_bias is not None:
             logits += embedding_bias
-    if self.use_gather:
+    if self.use_all_gather:
         logits = tensor_model_parallel_gather(logits)
     else:
         logits = tensor_model_parallel_all_gather(logits)
@@ -63,6 +63,8 @@ def _model_sample_convert():
 
 
 def _ipex_llm_convert(load_in_low_bit):
+    # import pdb
+    # pdb.set_trace()
     from vllm.worker.xpu_model_runner import XPUModelRunner
     from ipex_llm.vllm.xpu.ipex_llm_wrapper import get_ipex_llm_wrapper
     from ipex_llm.vllm.xpu.ipex_llm_v1_wrapper import get_ipex_llm_v1_wrapper
