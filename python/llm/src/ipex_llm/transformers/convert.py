@@ -2067,7 +2067,6 @@ def _optimize_post(model):
         # vision opt
         from ipex_llm.transformers.models.qwen2_vl import qwen2_vision_get_dtype
         from ipex_llm.transformers.models.qwen2_5_omni import qwen2_5_omni_vision_attention_forward
-        model.thinker.visual.get_dtype = MethodType(qwen2_vision_get_dtype, model.thinker.visual)
         convert_forward(model.thinker.visual, module.Qwen2_5OmniVisionAttention,
                         qwen2_5_omni_vision_attention_forward)
         convert_forward(model.thinker.visual, module.Qwen2_5OmniVisionSdpaAttention,
