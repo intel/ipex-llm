@@ -1090,7 +1090,7 @@ def ggml_convert_low_bit(model, qtype, optimize_model=True,
                          mixed_precision=False,
                          disable_optimize_pre=False):
     if qtype == ggml_tensor_qtype["sym_int4"]:
-        logger.info(f"sym_int4 is deprecated, use woq_int4 instead.")
+        logger.info(f"sym_int4 is deprecated, use woq_int4 instead")
         logger.info(f"if you are loading saved sym_int4 low bit model, "
                     "please resaved it with woq_int4")
         qtype = ggml_tensor_qtype["woq_int4"]
