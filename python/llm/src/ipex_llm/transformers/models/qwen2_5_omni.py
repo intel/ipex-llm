@@ -17,17 +17,21 @@
 # https://github.com/huggingface/transformers/blob/3a1ead0aabed473eafe527915eea8c197d424356/src/transformers/models/qwen2_5_omni/modeling_qwen2_5_omni.py
 # which is licensed under Apache License 2.0
 
+import math
 import torch
 from typing import Optional, Tuple, List, Union
 from transformers.cache_utils import Cache
 from transformers.modeling_outputs import BaseModelOutputWithPast
 from transformers.models.qwen2_5_omni.modeling_qwen2_5_omni import Qwen2_5OmniAttention
+from transformers.models.qwen2_5_omni.modeling_qwen2_5_omni import apply_rotary_pos_emb_vision
 from transformers.models.qwen2_5_omni.modeling_qwen2_5_omni import apply_multimodal_rotary_pos_emb
 
 from ipex_llm.utils.common import invalidInputError
 from ipex_llm.transformers.kv import DynamicNormalCache
 from ipex_llm.transformers.models.common import merge_qkv_base
+from ipex_llm.transformers.models.common import attention_softmax
 from ipex_llm.transformers.models.common import scaled_dot_product_attention
+from ipex_llm.transformers.models.utils import use_sdp_non_causal
 
 
 def merge_qkv(module: torch.nn.Module):
@@ -197,3 +201,86 @@ def qwen2_5_omni_thinker_model_forward(
         hidden_states=all_hidden_states,
         attentions=all_self_attns,
     )
+
+
+def qwen2_5_omni_vision_attention_forward(
+    self,
+    hidden_states: torch.Tensor,
+    cu_seqlens: torch.Tensor,
+    rotary_pos_emb: torch.Tensor = None
+) -> torch.Tensor:
+    seq_length = hidden_states.shape[0]
+    q = self.q(hidden_states).reshape(seq_length, self.num_heads, -1)
+    k = self.k(hidden_states).reshape(seq_length, self.num_heads, -1)
+    v = self.v(hidden_states).reshape(seq_length, self.num_heads, -1)
+    q = apply_rotary_pos_emb_vision(q.unsqueeze(0), rotary_pos_emb).squeeze(0)
+    k = apply_rotary_pos_emb_vision(k.unsqueeze(0), rotary_pos_emb).squeeze(0)
+    # q, k, v: [seq_length, num_heads, head_dim]
+
+    seq_lens = cu_seqlens.tolist()
+    invalidInputError(seq_lens[0] == 0 and seq_lens[-1] == seq_length,
+                      "unexpected input")
+
+    head_dim = q.size(-1)
+    if use_sdp_non_causal(head_dim, q.device, q.dtype):
+        image_num = len(seq_lens) - 1
+        image_size = seq_lens[1] - seq_lens[0]
+        guessed_seq_lens = torch.arange(0, (image_num + 1) * image_size, image_size,
+                                        dtype=cu_seqlens.dtype, device=cu_seqlens.device)
+        if (guessed_seq_lens == cu_seqlens).all():
+            q = q.view(image_num, image_size, self.num_heads, head_dim).permute(0, 2, 1, 3)
+            k = k.view(image_num, image_size, self.num_heads, head_dim).permute(0, 2, 1, 3)
+            v = v.view(image_num, image_size, self.num_heads, head_dim).permute(0, 2, 1, 3)
+            # q, k, v: [image_num, num_heads, image_size, head_dim]
+
+            attn_output = scaled_dot_product_attention(
+                q, k.contiguous(), v.contiguous(),
+                None, False
+            )
+            attn_output = attn_output.permute(0, 2, 1, 3).contiguous()
+            attn_output = attn_output.view(seq_length, self.num_heads, head_dim)
+            # attn_output: [seq_length, num_heads, head_dim]
+        else:
+            q = q.transpose(0, 1).unsqueeze(0)
+            k = k.transpose(0, 1).unsqueeze(0).contiguous()
+            v = v.transpose(0, 1).unsqueeze(0).contiguous()
+            # q, k, v: [1, num_heads, seq_length, head_dim]
+
+            attn_outputs = []
+            for i in range(image_num):
+                start_idx = seq_lens[i]
+                end_idx = seq_lens[i + 1]
+                tmp_q = q[:, :, start_idx:end_idx, :]
+                tmp_k = k[:, :, start_idx:end_idx, :]
+                tmp_v = v[:, :, start_idx:end_idx, :]
+                attn_output = scaled_dot_product_attention(
+                    tmp_q, tmp_k, tmp_v,
+                    None, False
+                )
+                attn_output = attn_output.permute(0, 2, 1, 3)
+                # attn_output: [1, seq_length, num_heads, head_dim]
+                attn_outputs.append(attn_output)
+            attn_output = torch.cat(attn_outputs, dim=1).squeeze(0)
+            # attn_output: [seq_length, num_heads, head_dim]
+    else:
+        attention_mask = torch.full(
+            [1, seq_length, seq_length], torch.finfo(q.dtype).min, device=q.device, dtype=q.dtype
+        )
+        for i in range(1, len(seq_lens)):
+            attention_mask[..., seq_lens[i - 1]:seq_lens[i], seq_lens[i - 1]:seq_lens[i]] = 0
+
+        q = q.transpose(0, 1)
+        k = k.transpose(0, 1)
+        v = v.transpose(0, 1)
+        # q, k, v: [num_heads, seq_length, head_dim]
+
+        attn_weights = torch.matmul(q, k.transpose(1, 2)) / math.sqrt(head_dim)
+        attn_weights = attn_weights + attention_mask
+        attn_weights = attention_softmax(attn_weights)
+        attn_output = torch.matmul(attn_weights, v)
+        attn_output = attn_output.transpose(0, 1)
+        # attn_output: [seq_length, num_heads, head_dim]
+
+    attn_output = attn_output.reshape(seq_length, -1)
+    attn_output = self.proj(attn_output)
+    return attn_output

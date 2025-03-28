@@ -2049,6 +2049,8 @@ def _optimize_post(model):
     elif model.config.model_type == "qwen2_5_omni":
         modeling_module_name = model.__class__.__module__
         module = importlib.import_module(modeling_module_name)
+
+        # llm opt
         from ipex_llm.transformers.models.qwen2_5_omni import qwen2_5_omni_attention_forward
         from ipex_llm.transformers.models.qwen2_5_omni import qwen2_5_omni_thinker_model_forward
         from ipex_llm.transformers.models.qwen2 import qwen2_mlp_forward
@@ -2061,6 +2063,13 @@ def _optimize_post(model):
                         qwen2_5_omni_thinker_model_forward)
         convert_forward(model.thinker.model, module.Qwen2MLP, qwen2_mlp_forward)
         convert_forward(model, module.Qwen2RMSNorm, rms_norm_forward)
+
+        # vision opt
+        from ipex_llm.transformers.models.qwen2_vl import qwen2_vision_get_dtype
+        from ipex_llm.transformers.models.qwen2_5_omni import qwen2_5_omni_vision_attention_forward
+        model.thinker.visual.get_dtype = MethodType(qwen2_vision_get_dtype, model.thinker.visual)
+        convert_forward(model.thinker.visual, module.Qwen2_5OmniVisionAttention,
+                        qwen2_5_omni_vision_attention_forward)
     return model
 
 
