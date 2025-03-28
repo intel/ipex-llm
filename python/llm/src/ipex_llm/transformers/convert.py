@@ -2070,6 +2070,15 @@ def _optimize_post(model):
         model.thinker.visual.get_dtype = MethodType(qwen2_vision_get_dtype, model.thinker.visual)
         convert_forward(model.thinker.visual, module.Qwen2_5OmniVisionAttention,
                         qwen2_5_omni_vision_attention_forward)
+        convert_forward(model.thinker.visual, module.Qwen2_5OmniVisionSdpaAttention,
+                        qwen2_5_omni_vision_attention_forward)
+
+        # tts opt
+        if hasattr(model, "talker"):
+            convert_forward(model.talker, module.Qwen2_5OmniAttention,
+                            qwen2_5_omni_attention_forward)
+            convert_forward(model.talker, module.Qwen2_5OmniThinkerModel,
+                            qwen2_5_omni_thinker_model_forward)
     return model
 
 
