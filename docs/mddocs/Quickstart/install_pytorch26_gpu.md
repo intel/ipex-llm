@@ -64,6 +64,9 @@ With the `llm-pt26` environment active, use `pip` to install `ipex-llm` for GPU:
     pip install --pre --upgrade ipex-llm[xpu_2.6_arl] --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/arl/cn/
     ```
 
+> [!TIP]
+> For other processors from Arrow Lake product family, such as 2xxHX, please refer to the installation instruction below (i.e. for **other Intel iGPU and dGPU**).
+
 - For **other Intel iGPU and dGPU**:
 
    ```cmd
