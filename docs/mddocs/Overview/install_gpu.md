@@ -2,6 +2,9 @@
 
 ## Windows
 
+> [!NOTE]
+> For installation with PyTorch 2.6, please refer to this [guide](../Quickstart/install_pytorch26_gpu.md) for more information.
+
 ### Prerequisites
 
 IPEX-LLM on Windows supports Intel iGPU and dGPU.
@@ -170,6 +173,9 @@ If you met error when importing `intel_extension_for_pytorch`, please ensure tha
   ```
 
 ## Linux
+
+> [!NOTE]
+> For installation with PyTorch 2.6, please refer to this [guide](../Quickstart/install_pytorch26_gpu.md) for more information.
 
 ### Prerequisites
 
