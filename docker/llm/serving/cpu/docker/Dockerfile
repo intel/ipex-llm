@@ -95,7 +95,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git clone https://github.com/vllm-project/vllm.git && \
     cd ./vllm && \
     git checkout v0.6.6.post1 && \
-    pip install cmake>=3.26 wheel packaging ninja "setuptools-scm>=8" numpy && \
+    pip install cmake==3.31.6 wheel packaging ninja "setuptools-scm>=8" numpy && \
     pip uninstall -y intel-extension-for-pytorch && \
     pip install -v -r requirements-cpu.txt --extra-index-url https://download.pytorch.org/whl/cpu && \
     VLLM_TARGET_DEVICE=cpu python3 setup.py install && \
