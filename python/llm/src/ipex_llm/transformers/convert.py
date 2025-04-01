@@ -2072,6 +2072,13 @@ def _optimize_post(model):
         convert_forward(model.thinker.visual, module.Qwen2_5OmniVisionSdpaAttention,
                         qwen2_5_omni_vision_attention_forward)
 
+        # audio opt
+        from ipex_llm.transformers.models.qwen2_5_omni import qwen2_5_omni_audio_attention_forward
+        convert_forward(model.thinker.audio_tower, module.Qwen2_5OmniAudioAttention,
+                        qwen2_5_omni_audio_attention_forward)
+        convert_forward(model.thinker.audio_tower, module.Qwen2_5OmniAudioSdpaAttention,
+                        qwen2_5_omni_audio_attention_forward)
+
         # tts opt
         if hasattr(model, "talker"):
             convert_forward(model.talker, module.Qwen2_5OmniAttention,
