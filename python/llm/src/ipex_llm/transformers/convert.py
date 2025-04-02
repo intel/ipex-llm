@@ -2080,11 +2080,23 @@ def _optimize_post(model):
                         qwen2_5_omni_audio_attention_forward)
 
         # tts opt
-        if hasattr(model, "talker"):
-            convert_forward(model.talker, module.Qwen2_5OmniAttention,
+        if model.has_talker:
+            # talker part
+            convert_forward(model.talker.model, module.Qwen2_5OmniAttention,
                             qwen2_5_omni_attention_forward)
-            convert_forward(model.talker, module.Qwen2_5OmniThinkerModel,
+            convert_forward(model.talker.model, module.Qwen2_5OmniSdpaAttention,
+                            qwen2_5_omni_attention_forward)
+            convert_forward(model.talker.model, module.Qwen2_5OmniTalkerModel,
                             qwen2_5_omni_thinker_model_forward)
+            convert_forward(model.talker.model, module.Qwen2MLP, qwen2_mlp_forward)
+
+            # token2wav part
+            from ipex_llm.transformers.models.qwen2_5_omni import dit_attention_forward
+            from ipex_llm.transformers.models.qwen2_5_omni import _create_block_diff
+            convert_forward(model.token2wav, module.DiTAttention, dit_attention_forward)
+            dit_model = model.token2wav.code2wav_dit_model
+            dit_model._create_block_diff = MethodType(_create_block_diff, dit_model)
+
     return model
 
 

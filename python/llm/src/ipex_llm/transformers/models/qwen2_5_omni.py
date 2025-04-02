@@ -385,3 +385,59 @@ def qwen2_5_omni_audio_attention_forward(
     attn_output = self.out_proj(attn_output)
 
     return attn_output, attn_weights, past_key_value
+
+
+def dit_attention_forward(
+    self,
+    x,
+    rope=None,
+    mask=None,
+) -> torch.Tensor:
+    batch_size = x.shape[0]
+
+    # `sample` projections.
+    query = self.to_q(x)
+    key = self.to_k(x)
+    value = self.to_v(x)
+
+    # attention
+    inner_dim = key.shape[-1]
+    head_dim = inner_dim // self.heads
+    query = query.view(batch_size, -1, self.heads, head_dim).transpose(1, 2)
+    key = key.view(batch_size, -1, self.heads, head_dim).transpose(1, 2)
+    value = value.view(batch_size, -1, self.heads, head_dim).transpose(1, 2)
+
+    # apply rotary position embedding
+    # Due to training process, only first head is applied with RoPE, will be fixed at next release
+    cos, sin = rope
+    query[:, :1], key[:, :1] = apply_rotary_pos_emb(query[:, :1], key[:, :1], cos, sin)
+
+    if use_sdp_non_causal(head_dim, query.device, query.dtype):
+        mask = torch.where(mask, 0, torch.finfo(query.dtype).min)
+        x = scaled_dot_product_attention(query, key.contiguous(), value.contiguous(), mask, False)
+        x = x.transpose(1, 2)
+    else:
+        attention_interface = ALL_ATTENTION_FUNCTIONS[self._attn_implementation]
+        x, _ = attention_interface(self, query, key, value, attention_mask=mask, is_causal=False)
+
+    # mask
+    x = x.reshape(batch_size, -1, self.heads * head_dim)
+    x = x.to(query.dtype)
+
+    # linear proj
+    x = self.to_out[0](x)
+    # dropout
+    x = self.to_out[1](x)
+
+    return x
+
+
+def _create_block_diff(self, x):
+    batch, seq_len = x.shape[0], x.shape[1]
+    block_indices = torch.arange(seq_len, device=x.device) // self.block_size
+
+    block_i = block_indices.unsqueeze(1)  # [seq_length, 1]
+    block_j = block_indices.unsqueeze(0)  # [1, seq_length]
+
+    block_diff = block_j - block_i  # (n, n)
+    return block_diff.unsqueeze(0).unsqueeze(0)
