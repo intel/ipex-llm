@@ -21,8 +21,10 @@ import math
 import torch
 from typing import Optional, Tuple, List, Union
 from transformers.cache_utils import Cache, EncoderDecoderCache
+from transformers.modeling_utils import ALL_ATTENTION_FUNCTIONS
 from transformers.modeling_outputs import BaseModelOutputWithPast
 from transformers.models.qwen2_5_omni.modeling_qwen2_5_omni import Qwen2_5OmniAttention
+from transformers.models.qwen2_5_omni.modeling_qwen2_5_omni import apply_rotary_pos_emb
 from transformers.models.qwen2_5_omni.modeling_qwen2_5_omni import apply_rotary_pos_emb_vision
 from transformers.models.qwen2_5_omni.modeling_qwen2_5_omni import apply_multimodal_rotary_pos_emb
 
