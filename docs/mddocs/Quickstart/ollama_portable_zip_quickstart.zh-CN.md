@@ -218,4 +218,4 @@ Ollama 默认从 Ollama 库下载模型。通过在**运行 Ollama 之前**设�
 | Smallthinker | `ollama run smallthinker` |`./ollama run smallthinker` | [smallthinker](https://ollama.com/library/smallthinker) |
 | Granite3.1-Dense |  `ollama run granite3-dense` | `./ollama run granite3-dense` | [granite3.1-dense](https://ollama.com/library/granite3.1-dense) |
 | Granite3.1-Moe-3B | `ollama run granite3-moe` | `./ollama run granite3-moe` | [granite3.1-moe](https://ollama.com/library/granite3.1-moe) |
-| Gemma 3 1B | `ollama run gemma3:1b` | `./ollama run gemma3:1b`|  [gemma3:1b](https://ollama.com/library/gemma3:1b) |
+| Gemma 3 1B | `set IPEX_LLM_MODEL_SOURCE=modelscope` <br> `ollama run gemma3:1b` | `export IPEX_LLM_MODEL_SOURCE=modelscope` <br> `./ollama run gemma3:1b`|  [gemma3:1b](https://www.modelscope.cn/models/lmstudio-community/gemma-3-1b-it-GGUF) |
