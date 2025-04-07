@@ -80,7 +80,7 @@ First, verify that your NPU driver version meets the requirement. Then, check th
 For portable zip version 2.2.0, you could verify its signature with the following command:
 
 ```
-openssl cms -verify -in <portable-zip-or-tgz-file-name>.pkcs1.sig -inform DER -content <portable-zip-or-tgz-file-name> -out nul -noverify
+openssl cms -verify -in <portable-zip-file-name>.pkcs1.sig -inform DER -content <portable-zip-file-name> -out nul -noverify
 ```
 
 > [!NOTE]

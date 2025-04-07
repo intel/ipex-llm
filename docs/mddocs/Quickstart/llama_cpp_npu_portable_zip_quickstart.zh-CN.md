@@ -81,7 +81,7 @@ llama-cli-npu.exe -m DeepSeek-R1-Distill-Qwen-7B-Q6_K.gguf -n 32 --prompt "What 
 针对 2.2.0 版本的 portable zip, 可以使用如下命令验证其签名：
 
 ```
-openssl cms -verify -in <portable-zip-or-tgz-file-name>.pkcs1.sig -inform DER -content <portable-zip-or-tgz-file-name> -out nul -noverify
+openssl cms -verify -in <portable-zip-file-name>.pkcs1.sig -inform DER -content <portable-zip-file-name> -out nul -noverify
 ```
 
 > [!NOTE]
