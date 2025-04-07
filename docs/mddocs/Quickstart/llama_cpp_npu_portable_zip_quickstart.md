@@ -16,8 +16,8 @@ IPEX-LLM provides llama.cpp support for running GGUF models on Intel NPU. This g
 - [Step 1: Download and Unzip](#step-1-download-and-unzip)
 - [Step 2: Setup](#step-2-setup)
 - [Step 3: Run GGUF Model](#step-3-run-gguf-model)
+- [Tips & Troubleshooting](#tips--troubleshooting)
 - [More details](npu_quickstart.md)
-- [Troubleshooting](#troubleshooting)
 
 
 ## Prerequisites
@@ -69,8 +69,19 @@ llama-cli-npu.exe -m DeepSeek-R1-Distill-Qwen-7B-Q6_K.gguf -n 32 --prompt "What 
 > 
 > - The supported maximum number of input tokens is 960, and maximum sequence length for both input and output tokens is 1024 currently.
 
-## Troubleshooting
+## Tips & Troubleshooting
 
 ### `L0 pfnCreate2 result: ZE_RESULT_ERROR_INVALID_ARGUMENT, code 0x78000004` error
 
 First, verify that your NPU driver version meets the requirement. Then, check the runtime configuration based on your device. And please attention the difference between **Command Prompt** and **Windows PowerShell**. Take Arrow Lake for example, you need to use `set IPEX_LLM_NPU_ARL=1` in **Command Prompt** while `$env:IPEX_LLM_NPU_ARL = "1"` in **Windows PowerShell**.
+
+### Signature Verification
+
+For portable zip version 2.2.0, you could verify its signature with the following command:
+
+```
+openssl cms -verify -in <portable-zip-file-name>.pkcs1.sig -inform DER -content <portable-zip-file-name> -out nul -noverify
+```
+
+> [!NOTE]
+> Please ensure that `openssl` is installed on your system before verifying signature.

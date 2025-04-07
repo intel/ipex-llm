@@ -16,8 +16,8 @@ IPEX-LLM 提供了 llama.cpp 的相关支持以在 Intel NPU 上运行 GGUF 模�
 - [步骤 1：下载和解压](#步骤-1下载和解压)
 - [步骤 2：启动](#步骤-2启动)
 - [步骤 3：运行 GGUF 模型](#步骤-3运行-gguf-模型)
+- [提示与故障排除](#提示与故障排除)
 - [更多信息](npu_quickstart.md)
-- [故障排除](#故障排除)
 
 
 ## 系统环境准备
@@ -69,9 +69,20 @@ llama-cli-npu.exe -m DeepSeek-R1-Distill-Qwen-7B-Q6_K.gguf -n 32 --prompt "What 
 > 
 > - 目前支持的输入token数上限是960，输入和输出总token数上限是1024。
 
-## 故障排除
+## 提示与故障排除
 
 ### `L0 pfnCreate2 result: ZE_RESULT_ERROR_INVALID_ARGUMENT, code 0x78000004` 报错
 
 首先确认你的 NPU 驱动版本是否符合要求，然后根据你的设备检查运行时配置，请注意 **命令提示符** 和 **Windows PowerShell** 的区别。
 以 Arrow Lake 为例，在 **命令提示符** 中需要设置 `set IPEX_LLM_NPU_ARL=1`，而在 **Windows PowerShell** 中是 `$env:IPEX_LLM_NPU_ARL = "1"`。
+
+### 签名验证
+
+针对 2.2.0 版本的 portable zip, 可以使用如下命令验证其签名：
+
+```
+openssl cms -verify -in <portable-zip-file-name>.pkcs1.sig -inform DER -content <portable-zip-file-name> -out nul -noverify
+```
+
+> [!NOTE]
+> 在验证签名之前，请确保已在系统上安装 `openssl`。

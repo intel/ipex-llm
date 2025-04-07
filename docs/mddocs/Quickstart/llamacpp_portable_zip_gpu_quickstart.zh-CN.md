@@ -31,6 +31,7 @@
   - [错误：检测到不同的 sycl 设备](#错误检测到不同的-sycl-设备)
   - [多 GPU 配置](#多-gpu-配置)
   - [性能环境](#性能环境)
+  - [签名验证](#签名验证)
 - [更多详情](llama_cpp_quickstart.md)
 
 ## Windows 用户指南
@@ -335,3 +336,15 @@ Found 3 SYCL devices:
 
 > [!NOTE]
 > 环境变量 `SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS` 用于控制是否使用即时命令列表将任务提交到 GPU。启动此变量通常可以提高性能，但也有例外情况。因此，建议你在启用和禁用该环境变量的情况下进行测试，以找到最佳的性能设置。更多相关细节请参考[此处文章](https://www.intel.com/content/www/us/en/developer/articles/guide/level-zero-immediate-command-lists.html)。  
+
+
+### 签名验证
+
+针对 2.2.0 版本的 portable zip/tgz, 可以使用如下命令验证其签名：
+
+```
+openssl cms -verify -in <portable-zip-or-tgz-file-name>.pkcs1.sig -inform DER -content <portable-zip-or-tgz-file-name> -out nul -noverify
+```
+
+> [!NOTE]
+> 在验证签名之前，请确保已在系统上安装 `openssl`。
