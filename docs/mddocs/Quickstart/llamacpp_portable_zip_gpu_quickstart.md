@@ -6,7 +6,7 @@
 >[!Important]
 > You can now run **DeepSeek-R1-671B-Q4_K_M** with 1 or 2 Arc A770 on Xeon using the latest *llama.cpp Portable Zip*; see the [guide](#flashmoe-for-deepseek-v3r1) below.
 
-This guide demonstrates how to use [llama.cpp portable zip](https://github.com/intel/ipex-llm/releases/tag/v2.2.0-nightly) to directly run llama.cpp on Intel GPU with `ipex-llm` (without the need of manual installations).
+This guide demonstrates how to use [llama.cpp portable zip](https://github.com/intel/ipex-llm/releases/tag/v2.2.0) to directly run llama.cpp on Intel GPU with `ipex-llm` (without the need of manual installations).
 
 > [!NOTE]
 > llama.cpp portable zip has been verified on:
@@ -42,7 +42,7 @@ We recommend updating your GPU driver to the [latest](https://www.intel.com/cont
 
 ### Step 1: Download and Unzip
 
-Download IPEX-LLM llama.cpp portable zip for Windows users from the [link](https://github.com/intel/ipex-llm/releases/tag/v2.2.0-nightly).
+Download IPEX-LLM llama.cpp portable zip for Windows users from the [link](https://github.com/intel/ipex-llm/releases/tag/v2.2.0).
 
 Then, extract the zip file to a folder.
 
@@ -126,7 +126,7 @@ Check your GPU driver version, and update it if needed; we recommend following [
 
 ### Step 1: Download and Extract
 
-Download IPEX-LLM llama.cpp portable tgz for Linux users from the [link](https://github.com/intel/ipex-llm/releases/tag/v2.2.0-nightly).
+Download IPEX-LLM llama.cpp portable tgz for Linux users from the [link](https://github.com/intel/ipex-llm/releases/tag/v2.2.0).
 
 Then, extract the tgz file to a folder.
 
