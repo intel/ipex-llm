@@ -31,6 +31,7 @@ This guide demonstrates how to use [llama.cpp portable zip](https://github.com/i
   - [Error: Detected different sycl devices](#error-detected-different-sycl-devices)
   - [Multi-GPUs usage](#multi-gpus-usage)
   - [Performance Environment](#performance-environment)
+  - [Signature Verification](#signature-verification)
 - [More Details](llama_cpp_quickstart.md)
 
 ## Windows Quickstart
@@ -331,3 +332,14 @@ To enable SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS, you can run below comma
 - `export SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS=1`(Linux user)
 > [!NOTE]
 > The environment variable SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS determines the usage of immediate command lists for task submission to the GPU. While this mode typically enhances performance, exceptions may occur. Please consider experimenting with and without this environment variable for best performance. For more details, you can refer to [this article](https://www.intel.com/content/www/us/en/developer/articles/guide/level-zero-immediate-command-lists.html).  
+
+### Signature Verification
+
+For portable zip/tgz version 2.2.0, you could verify its signature with the following command:
+
+```
+openssl cms -verify -in <portable-zip-or-tgz-file-name>.pkcs1.sig -inform DER -content <portable-zip-or-tgz-file-name> -out nul -noverify
+```
+
+> [!NOTE]
+> Please ensure that `openssl` is installed on your system before verifying signature.

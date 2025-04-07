@@ -29,6 +29,7 @@
   - [在多块 GPU 可用时选择特定的 GPU 来运行 Ollama](#在多块-gpu-可用时选择特定的-gpu-来运行-ollama)
   - [性能调优](#性能调优)
   - [Ollama v0.5.4 之后新增模型支持](#ollama-v054-之后新增模型支持)
+  - [签名验证](#签名验证)
 - [更多信息](ollama_quickstart.zh-CN.md)
 
 ## Windows用户指南
@@ -219,3 +220,14 @@ Ollama 默认从 Ollama 库下载模型。通过在**运行 Ollama 之前**设�
 | Granite3.1-Dense |  `ollama run granite3-dense` | `./ollama run granite3-dense` | [granite3.1-dense](https://ollama.com/library/granite3.1-dense) |
 | Granite3.1-Moe-3B | `ollama run granite3-moe` | `./ollama run granite3-moe` | [granite3.1-moe](https://ollama.com/library/granite3.1-moe) |
 | Gemma 3 1B | `set IPEX_LLM_MODEL_SOURCE=modelscope` <br> `ollama run gemma3:1b` | `export IPEX_LLM_MODEL_SOURCE=modelscope` <br> `./ollama run gemma3:1b`|  [gemma3:1b](https://www.modelscope.cn/models/lmstudio-community/gemma-3-1b-it-GGUF) |
+
+### 签名验证
+
+针对 2.2.0 版本的 portable zip/tgz, 可以使用如下命令验证其签名：
+
+```
+openssl cms -verify -in <portable-zip-or-tgz-file-name>.pkcs1.sig -inform DER -content <portable-zip-or-tgz-file-name> -out nul -noverify
+```
+
+> [!NOTE]
+> 在验证签名之前，请确保已在系统上安装 `openssl`。
