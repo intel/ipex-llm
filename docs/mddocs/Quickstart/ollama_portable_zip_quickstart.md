@@ -29,6 +29,7 @@ This guide demonstrates how to use [Ollama portable zip](https://github.com/inte
   - [Select specific GPU(s) to run Ollama when multiple ones are available](#select-specific-gpus-to-run-ollama-when-multiple-ones-are-available)
   - [Tune performance](#tune-performance)
   - [Additional models supported after Ollama v0.5.4](#additional-models-supported-after-ollama-v054)
+  - [Signature Verification](#signature-verification)
 - [More details](ollama_quickstart.md)
 
 ## Windows Quickstart
@@ -220,3 +221,14 @@ The currently Ollama Portable Zip is based on Ollama v0.5.4; in addition, the fo
 | Granite3.1-Dense |  `ollama run granite3-dense` | `./ollama run granite3-dense` | [granite3.1-dense](https://ollama.com/library/granite3.1-dense) |
 | Granite3.1-Moe-3B | `ollama run granite3-moe` | `./ollama run granite3-moe` | [granite3.1-moe](https://ollama.com/library/granite3.1-moe) |
 | Gemma 3 1B | `set IPEX_LLM_MODEL_SOURCE=modelscope` <br> `ollama run gemma3:1b` | `export IPEX_LLM_MODEL_SOURCE=modelscope` <br> `./ollama run gemma3:1b`|  [gemma3:1b](https://www.modelscope.cn/models/lmstudio-community/gemma-3-1b-it-GGUF) |
+
+### Signature Verification
+
+For portable zip/tgz version 2.2.0, you could verify its signature with the following command:
+
+```
+openssl cms -verify -in <portable-zip-or-tgz-file-name>.pkcs1.sig -inform DER -content <portable-zip-or-tgz-file-name> -out nul -noverify
+```
+
+> [!NOTE]
+> Please ensure that `openssl` is installed on your system before verifying signature.
