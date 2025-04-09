@@ -13,7 +13,12 @@ Follow the [Docker installation Guide](./docker_windows_gpu.md#install-docker) t
 
 Prepare ipex-llm-serving-xpu Docker Image:
 ```bash
-docker pull intelanalytics/ipex-llm-serving-xpu:latest
+cd docker/llm/serving/xpu/docker
+docker build \
+  --build-arg http_proxy=.. \
+  --build-arg https_proxy=.. \
+  --build-arg no_proxy=.. \
+  --rm --no-cache -t intelanalytics/ipex-llm-serving-xpu:latest .
 ```
 
 Start ipex-llm-xpu Docker Container. Choose one of the following commands to start the container:
