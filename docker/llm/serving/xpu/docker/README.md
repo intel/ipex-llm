@@ -73,7 +73,7 @@ By default, the container is configured to automatically start the service when 
 
 ```bash
 #/bin/bash
-export DOCKER_IMAGE=intelanalytics/ipex-llm-serving-xpu:2.2.0-SNAPSHOT
+export DOCKER_IMAGE=intelanalytics/ipex-llm-serving-xpu:latest
 
 sudo docker run -itd \
         --net=host \
@@ -113,7 +113,7 @@ If you prefer to manually start the service or need to troubleshoot, you can ove
 
 ```bash
 #/bin/bash
-export DOCKER_IMAGE=intelanalytics/ipex-llm-serving-xpu:2.2.0-SNAPSHOT
+export DOCKER_IMAGE=intelanalytics/ipex-llm-serving-xpu:latest
 
 sudo docker run -itd \
         --net=host \
