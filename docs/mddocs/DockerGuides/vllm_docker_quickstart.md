@@ -6,13 +6,16 @@ This guide demonstrates how to run `vLLM` serving with `IPEX-LLM` on Intel GPUs 
 
 Follow the instructions in this [guide](./docker_windows_gpu.md#linux) to install Docker on Linux.
 
-## Pull the latest image
-
-*Note: For running vLLM serving on Intel GPUs, you can currently use either the `intelanalytics/ipex-llm-serving-xpu:latest` or `intelanalytics/ipex-llm-serving-vllm-xpu:latest` Docker image.*
+## Build the Image
+To build the `ipex-llm-serving-xpu` Docker image, use the following command:
 
 ```bash
-# This image will be updated every day
-docker pull intelanalytics/ipex-llm-serving-xpu:latest
+cd docker/llm/serving/xpu/docker
+docker build \
+  --build-arg http_proxy=.. \
+  --build-arg https_proxy=.. \
+  --build-arg no_proxy=.. \
+  --rm --no-cache -t intelanalytics/ipex-llm-serving-xpu:latest .
 ```
 
 ## Start Docker Container
