@@ -16,13 +16,7 @@ With this docker image, we can use all [ipex-llm finetune examples on Intel GPU]
 
 ## 1. Prepare Docker Image
 
-You can download directly from Dockerhub like:
-
-```bash
-docker pull intelanalytics/ipex-llm-finetune-xpu:2.2.0-SNAPSHOT
-```
-
-Or build the image from source:
+TO build the image from source:
 
 ```bash
 export HTTP_PROXY=your_http_proxy
@@ -31,7 +25,7 @@ export HTTPS_PROXY=your_https_proxy
 docker build \
   --build-arg http_proxy=${HTTP_PROXY} \
   --build-arg https_proxy=${HTTPS_PROXY} \
-  -t intelanalytics/ipex-llm-finetune-xpu:2.2.0-SNAPSHOT \
+  -t intelanalytics/ipex-llm-finetune-xpu:latest \
   -f ./Dockerfile .
 ```
 
@@ -55,7 +49,7 @@ docker run -itd \
    -v $BASE_MODE_PATH:/model \
    -v $DATA_PATH:/data/alpaca-cleaned \
    --shm-size="16g" \
-   intelanalytics/ipex-llm-finetune-xpu:2.2.0-SNAPSHOT
+   intelanalytics/ipex-llm-finetune-xpu:latest
 ```
 
 The download and mount of base model and data to a docker container demonstrates a standard fine-tuning process. You can skip this step for a quick start, and in this way, the fine-tuning codes will automatically download the needed files:
@@ -72,7 +66,7 @@ docker run -itd \
    -e http_proxy=${HTTP_PROXY} \
    -e https_proxy=${HTTPS_PROXY} \
    --shm-size="16g" \
-   intelanalytics/ipex-llm-finetune-xpu:2.2.0-SNAPSHOT
+   intelanalytics/ipex-llm-finetune-xpu:latest
 ```
 
 However, we do recommend you to handle them manually, because the download can be blocked by Internet access and Huggingface authentication etc. according to different environment, and the manual method allows you to fine-tune in a custom way (with different base model and dataset).
