@@ -20,6 +20,7 @@ Need to enable `--net=host`,follow [this guide](https://docs.docker.com/network/
 To build the `ipex-llm-inference-cpp-xpu` Docker image, use the following command:
 
 ```bash
+cd docker/llm/inference-cpp
 docker build \
   --build-arg http_proxy=.. \
   --build-arg https_proxy=.. \
