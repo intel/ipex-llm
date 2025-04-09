@@ -13,7 +13,7 @@ docker build \
   --build-arg http_proxy=.. \
   --build-arg https_proxy=.. \
   --build-arg no_proxy=.. \
-  --rm --no-cache -t intelanalytics/ipex-llm-serving-xpu:2.2.0-SNAPSHOT .
+  --rm --no-cache -t intelanalytics/ipex-llm-serving-xpu:latest .
 ```
 
 ---
@@ -26,11 +26,12 @@ To map the `XPU` into the container, you need to specify `--device=/dev/dri` whe
 
 ```bash
 #/bin/bash
-export DOCKER_IMAGE=intelanalytics/ipex-llm-serving-xpu:2.2.0-SNAPSHOT
+export DOCKER_IMAGE=intelanalytics/ipex-llm-serving-xpu:latest
 
 sudo docker run -itd \
         --net=host \
         --device=/dev/dri \
+        --privileged \
         --memory="32G" \
         --name=CONTAINER_NAME \
         --shm-size="16g" \
@@ -117,6 +118,7 @@ export DOCKER_IMAGE=intelanalytics/ipex-llm-serving-xpu:2.2.0-SNAPSHOT
 sudo docker run -itd \
         --net=host \
         --device=/dev/dri \
+        --privileged \
         --memory="32G" \
         --name=CONTAINER_NAME \
         --shm-size="16g" \
