@@ -14,7 +14,7 @@ docker build \
   --build-arg http_proxy=.. \
   --build-arg https_proxy=.. \
   --build-arg no_proxy=.. \
-  --rm --no-cache -t intelanalytics/ipex-llm-serving-cpu:2.2.0-SNAPSHOT .
+  --rm --no-cache -t intelanalytics/ipex-llm-serving-cpu:latest .
 ```
 
 ---
@@ -40,7 +40,7 @@ This ensures the container has access to the necessary models.
 Use the following command to start the container:  
 
 ```bash
-export DOCKER_IMAGE=intelanalytics/ipex-llm-serving-cpu:2.2.0-SNAPSHOT
+export DOCKER_IMAGE=intelanalytics/ipex-llm-serving-cpu:latest
 
 sudo docker run -itd \
         --net=host \  # Use host networking for performance
