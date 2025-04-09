@@ -6,13 +6,17 @@ This guide demonstrates how to run `vLLM` serving with `ipex-llm` on Intel CPU v
 
 Follow the instructions in this [guide](https://www.docker.com/get-started/) to install Docker on Linux.
 
-## Pull the latest image
 
-*Note: For running vLLM serving on Intel CPUs, you can currently use either the `intelanalytics/ipex-llm-serving-cpu:latest` or `intelanalytics/ipex-llm-serving-vllm-cpu:latest` Docker image.*
+## Build the Image
+To build the `ipex-llm-serving-cpu` Docker image, use the following command:
 
 ```bash
-# This image will be updated every day
-docker pull intelanalytics/ipex-llm-serving-cpu:latest
+cd docker/llm/serving/cpu/docker
+docker build \
+  --build-arg http_proxy=.. \
+  --build-arg https_proxy=.. \
+  --build-arg no_proxy=.. \
+  --rm --no-cache -t intelanalytics/ipex-llm-serving-cpu:latest .
 ```
 
 ## Start Docker Container
