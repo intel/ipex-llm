@@ -13,11 +13,17 @@
 #### Setting Docker on windows
 Need to enable `--net=host`,follow [this guide](https://docs.docker.com/network/drivers/host/#docker-desktop) so that you can easily access the service running on the docker. The [v6.1x kernel version wsl]( https://learn.microsoft.com/en-us/community/content/wsl-user-msft-kernel-v6#1---building-the-microsoft-linux-kernel-v61x) is recommended to use.Otherwise, you may encounter the blocking issue before loading the model to GPU.
 
-### Pull the latest image
+### Build the Image
+To build the `ipex-llm-inference-cpp-xpu` Docker image, use the following command:
+
 ```bash
-# This image will be updated every day
-docker pull intelanalytics/ipex-llm-inference-cpp-xpu:latest
+docker build \
+  --build-arg http_proxy=.. \
+  --build-arg https_proxy=.. \
+  --build-arg no_proxy=.. \
+  --rm --no-cache -t intelanalytics/ipex-llm-inference-cpp-xpu:latest .
 ```
+
 
 ### Start Docker Container
 
