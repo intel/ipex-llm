@@ -137,6 +137,47 @@ def append_fp8_kv_cache(k_cache, v_cache, key, value):
 
     return new_k_cache, new_v_cache
 
+def init_unbalanced_fp8_kv_cache(batch_size, num_heads, current_length, k_head_dim, v_head_dim, device):
+    # for case which k head dim is different from v head dim
+    max_length = current_length + FP8_KV_ALLOC_LENGTH
+
+    k_cache_storage = torch.empty(batch_size, num_heads, max_length, k_head_dim,
+                                  dtype=torch.uint8, device=device)
+    k_cache = k_cache_storage.as_strided((batch_size, num_heads, 0, k_head_dim),
+                                          k_cache_storage.stride(), storage_offset=0)
+
+    v_cache_storage = torch.empty(batch_size, num_heads, max_length, v_head_dim,
+                                  dtype=torch.uint8, device=device)
+    v_cache = v_cache_storage.as_strided((batch_size, num_heads, 0, v_head_dim),
+                                          v_cache_storage.stride(), storage_offset=0)
+    return k_cache, v_cache
+
+
+def append_unbalanced_fp8_kv_cache(k_cache, v_cache, key, value):
+    batch_size, num_heads, cur_length, k_head_dim = k_cache.shape
+    _, _, _, v_head_dim = v_cache.shape
+    new_length = cur_length + key.size(2)
+    new_k_size = (batch_size, num_heads, new_length, k_head_dim)
+    new_v_size = (batch_size, num_heads, new_length, v_head_dim)
+
+    if k_cache.stride(1) < new_length * k_cache.size(3):
+        new_k_cache, new_v_cache = init_fp8_kv_cache(batch_size, num_heads, new_length,
+                                                     k_head_dim, v_head_dim, key.device)
+        new_k_cache = new_k_cache.as_strided(new_k_size, new_k_cache.stride(), storage_offset=0)
+        new_v_cache = new_v_cache.as_strided(new_v_size, new_v_cache.stride(), storage_offset=0)
+        new_k_cache[:, :, :cur_length, :] = k_cache
+        new_v_cache[:, :, :cur_length, :] = v_cache
+    else:
+        new_k_cache = k_cache.as_strided(new_k_size, k_cache.stride(), storage_offset=0)
+        new_v_cache = v_cache.as_strided(new_v_size, v_cache.stride(), storage_offset=0)
+
+    import xe_addons
+    xe_addons.quantize_key_value(key, value,
+                                 new_k_cache[:, :, cur_length:new_length, :],
+                                 new_v_cache[:, :, cur_length:new_length, :])
+
+    return new_k_cache, new_v_cache
+
 
 def restore_fp8_kv_cache(k_cache, v_cache, dtype):
     key_states = torch.empty(k_cache.shape, device=k_cache.device, dtype=dtype)
