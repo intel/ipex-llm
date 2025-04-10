@@ -169,7 +169,7 @@ class DynamicUnbalancedFp8Cache(DynamicCache):
             return key_states, value_states
 
         batch_size, num_heads, seq_len, k_head_dim = key_states.shape
-        batch_size, num_heads, seq_len, v_head_dim = value_states.shape
+        _, _, _, v_head_dim = value_states.shape
 
         if layer_idx == 0:
             if hasattr(self, "_seen_tokens"):

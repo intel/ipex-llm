@@ -161,8 +161,8 @@ def append_unbalanced_fp8_kv_cache(k_cache, v_cache, key, value):
     new_v_size = (batch_size, num_heads, new_length, v_head_dim)
 
     if k_cache.stride(1) < new_length * k_cache.size(3):
-        new_k_cache, new_v_cache = init_fp8_kv_cache(batch_size, num_heads, new_length,
-                                                     k_head_dim, v_head_dim, key.device)
+        new_k_cache, new_v_cache = init_unbalanced_fp8_kv_cache(batch_size, num_heads, new_length,
+                                                                k_head_dim, v_head_dim, key.device)
         new_k_cache = new_k_cache.as_strided(new_k_size, new_k_cache.stride(), storage_offset=0)
         new_v_cache = new_v_cache.as_strided(new_v_size, new_v_cache.stride(), storage_offset=0)
         new_k_cache[:, :, :cur_length, :] = k_cache
