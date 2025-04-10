@@ -39043,7 +39043,7 @@ index 3ac7fb8df..249b3ed2d 100644
                      and self.observability_config.collect_model_execute_time):
                  output.tensors["model_execute_time"] = torch.tensor(
 diff --git a/vllm/worker/xpu_model_runner.py b/vllm/worker/xpu_model_runner.py
-index 9cf253875..df6ab56c6 100644
+index 9cf253875..6bf65fa7c 100644
 --- a/vllm/worker/xpu_model_runner.py
 +++ b/vllm/worker/xpu_model_runner.py
 @@ -3,8 +3,8 @@ import time
@@ -39606,7 +39606,7 @@ index 9cf253875..df6ab56c6 100644
  
          self.sampling_metadata_cache: SamplingMetadataCache = \
                SamplingMetadataCache() \
-@@ -415,10 +719,38 @@ class XPUModelRunner(ModelRunnerBase[ModelInputForXPUWithSamplingMetadata]):
+@@ -415,16 +719,74 @@ class XPUModelRunner(ModelRunnerBase[ModelInputForXPUWithSamplingMetadata]):
          logger.info("Loading model weights took %.4f GB",
                      self.model_memory_usage / float(2**30))
  
@@ -39643,12 +39643,19 @@ index 9cf253875..df6ab56c6 100644
 +        return rope_scaling.get("type", None) == "mrope" or rope_scaling.get("mrope_section", None) is not None
 +
      @torch.inference_mode()
-     def profile_run(self) -> None:
+-    def profile_run(self) -> None:
++    def profile_run(self, num_batched_tokens=-1, num_seqs=-1) -> None:
          # Enable top-k sampling to reflect the accurate memory usage.
-@@ -426,6 +758,30 @@ class XPUModelRunner(ModelRunnerBase[ModelInputForXPUWithSamplingMetadata]):
+         sampling_params = SamplingParams(top_p=0.99, top_k=self.vocab_size - 1)
          max_num_batched_tokens = self.scheduler_config.max_num_batched_tokens
++        assert (num_batched_tokens == -1 or num_batched_tokens > 0)
++        assert (num_seqs == -1 or num_seqs > 0)
          max_num_seqs = self.scheduler_config.max_num_seqs
- 
++        if num_batched_tokens != -1:
++            max_num_batched_tokens = num_batched_tokens
++        if num_seqs != -1:
++            max_num_seqs = num_seqs
++
 +        # This represents the maximum number of different requests
 +        # that will have unique loras, an therefore the max amount of memory
 +        # consumption create dummy lora request copies from the lora request
@@ -39672,11 +39679,10 @@ index 9cf253875..df6ab56c6 100644
 +                    dummy_lora_requests[idx % len(dummy_lora_requests)]
 +                    for idx in range(max_num_seqs)
 +                ]
-+
+ 
          # Profile memory usage with max_num_sequences sequences and the total
          # number of tokens equal to max_num_batched_tokens.
-         seqs: List[SequenceGroupMetadata] = []
-@@ -450,6 +806,15 @@ class XPUModelRunner(ModelRunnerBase[ModelInputForXPUWithSamplingMetadata]):
+@@ -450,6 +812,15 @@ class XPUModelRunner(ModelRunnerBase[ModelInputForXPUWithSamplingMetadata]):
                  max_num_seqs = 1
  
          batch_size = 0
@@ -39692,7 +39698,7 @@ index 9cf253875..df6ab56c6 100644
          for group_id in range(max_num_seqs):
              seq_len = (max_num_batched_tokens // max_num_seqs +
                         (group_id < max_num_batched_tokens % max_num_seqs))
-@@ -466,7 +831,8 @@ class XPUModelRunner(ModelRunnerBase[ModelInputForXPUWithSamplingMetadata]):
+@@ -466,7 +837,8 @@ class XPUModelRunner(ModelRunnerBase[ModelInputForXPUWithSamplingMetadata]):
                  seq_data={group_id: dummy_data.seq_data},
                  sampling_params=sampling_params,
                  block_tables=None,
@@ -39702,7 +39708,7 @@ index 9cf253875..df6ab56c6 100644
                  multi_modal_data=dummy_data.multi_modal_data,
                  multi_modal_placeholders=dummy_data.multi_modal_placeholders)
              seqs.append(seq)
-@@ -477,9 +843,7 @@ class XPUModelRunner(ModelRunnerBase[ModelInputForXPUWithSamplingMetadata]):
+@@ -477,9 +849,7 @@ class XPUModelRunner(ModelRunnerBase[ModelInputForXPUWithSamplingMetadata]):
          # it by reference, rather by specializing on the value ``None``.
          # the `dtype` argument does not matter, and we use `float32` as
          # a placeholder (it has wide hardware support).
@@ -39713,7 +39719,7 @@ index 9cf253875..df6ab56c6 100644
          finished_requests_ids = [seq.request_id for seq in seqs]
          model_input = self.prepare_model_input(
              seqs, finished_requests_ids=finished_requests_ids)
-@@ -493,21 +857,35 @@ class XPUModelRunner(ModelRunnerBase[ModelInputForXPUWithSamplingMetadata]):
+@@ -493,21 +863,35 @@ class XPUModelRunner(ModelRunnerBase[ModelInputForXPUWithSamplingMetadata]):
          torch.xpu.synchronize()
          return
  
@@ -39759,7 +39765,7 @@ index 9cf253875..df6ab56c6 100644
          """Helper method to prepare the model input based on a given sequence
          group. Prepares metadata needed for the base model forward pass but not
          metadata for possible additional steps, e.g., sampling.
-@@ -519,6 +897,22 @@ class XPUModelRunner(ModelRunnerBase[ModelInputForXPUWithSamplingMetadata]):
+@@ -519,6 +903,22 @@ class XPUModelRunner(ModelRunnerBase[ModelInputForXPUWithSamplingMetadata]):
  
          return builder.build()  # type: ignore
  
@@ -39782,7 +39788,7 @@ index 9cf253875..df6ab56c6 100644
      def prepare_model_input(
          self,
          seq_group_metadata_list: List[SequenceGroupMetadata],
-@@ -558,6 +952,12 @@ class XPUModelRunner(ModelRunnerBase[ModelInputForXPUWithSamplingMetadata]):
+@@ -558,6 +958,12 @@ class XPUModelRunner(ModelRunnerBase[ModelInputForXPUWithSamplingMetadata]):
              raise ValueError(
                  "XPUModelRunner does not support multi-step execution.")
  
@@ -39795,7 +39801,7 @@ index 9cf253875..df6ab56c6 100644
          model_executable = self.model
          if (self.observability_config is not None
                  and self.observability_config.collect_model_forward_time):
-@@ -607,3 +1007,9 @@ class XPUModelRunner(ModelRunnerBase[ModelInputForXPUWithSamplingMetadata]):
+@@ -607,3 +1013,9 @@ class XPUModelRunner(ModelRunnerBase[ModelInputForXPUWithSamplingMetadata]):
              output.model_forward_time = model_forward_time
  
          return [output]
@@ -40700,7 +40706,7 @@ index 000000000..6ad951824
 +        return model_input, worker_input, kwargs
 \ No newline at end of file
 diff --git a/vllm/worker/xpu_worker.py b/vllm/worker/xpu_worker.py
-index 129566605..43d306145 100644
+index 129566605..73888898f 100644
 --- a/vllm/worker/xpu_worker.py
 +++ b/vllm/worker/xpu_worker.py
 @@ -3,7 +3,8 @@ import gc
@@ -40729,15 +40735,62 @@ index 129566605..43d306145 100644
      """A worker class that executes (a partition of) the model on a GPU.
      
      Each worker is associated with a single XPU device. The worker is 
-@@ -98,6 +99,7 @@ class XPUWorker(LoraNotSupportedWorkerBase, Worker):
+@@ -97,7 +98,54 @@ class XPUWorker(LoraNotSupportedWorkerBase, Worker):
+         """
          # Profile the memory usage of the model and get the maximum number of
          # cache blocks that can be allocated with the remaining free memory.
++        flag = os.getenv("IPEX_LLM_FIND_MAX_LENGTH", None)
++        if flag:
++            torch.xpu.empty_cache()
++            before_memory = torch.xpu.memory_reserved()
++            # Start with 8000
++            max_num_batched_tokens = 8000
++            max_num_seqs = 1
++            support_input = []
++            support_kv_cache = []
++            while True:
++                print(f"Profiling with max_num_batched_tokens {max_num_batched_tokens}...")
++                self.model_runner.profile_run(max_num_batched_tokens, max_num_seqs)
++                torch.xpu.synchronize()
++                used_memory = torch.xpu.memory_reserved()
++                total_gpu_memory = torch.xpu.get_device_properties(
++                    self.local_rank).total_memory
++                free_gpu_memory = total_gpu_memory - used_memory
++                peak_memory = self.init_gpu_memory - free_gpu_memory
++                assert peak_memory > 0
++                cache_block_size = self.get_cache_block_size_bytes()
++                num_gpu_blocks = int(
++                    (total_gpu_memory * self.cache_config.gpu_memory_utilization -
++                    peak_memory) // cache_block_size)
++                num_cpu_blocks = int(self.cache_config.swap_space_bytes //
++                                    cache_block_size)
++                num_gpu_blocks = max(num_gpu_blocks, 0)
++                num_cpu_blocks = max(num_cpu_blocks, 0)
++                gc.collect()
++                torch.xpu.empty_cache()
++                # Begin to handle data...
++                if num_gpu_blocks == 0:
++                    break
++                kv_cache_support_length = num_gpu_blocks * self.cache_config.block_size
++                # Too long input...
++                if max_num_batched_tokens > kv_cache_support_length:
++                    break
++                support_input.append(max_num_batched_tokens)
++                support_kv_cache.append(kv_cache_support_length)
++                max_num_batched_tokens += 250
++
++            print(f"Recommended max input length: {support_input[len(support_input) - 1]}")
++            print(f"{'input length':<15} {'kv cache length':<15}")
++            print("-" * 30)
++
++            for inp, kv in zip(support_input, support_kv_cache):
++                print(f"{inp:<15} {kv:<15}")
          torch.xpu.empty_cache()
 +        before_memory = torch.xpu.memory_reserved()
  
          # Execute a forward pass with dummy inputs to profile the memory usage
          # of the model.
-@@ -106,7 +108,7 @@ class XPUWorker(LoraNotSupportedWorkerBase, Worker):
+@@ -106,7 +154,7 @@ class XPUWorker(LoraNotSupportedWorkerBase, Worker):
          # Calculate the number of blocks that can be allocated with the
          # profiled peak memory.
          torch.xpu.synchronize()
@@ -40746,7 +40799,7 @@ index 129566605..43d306145 100644
          total_gpu_memory = torch.xpu.get_device_properties(
              self.local_rank).total_memory
          free_gpu_memory = total_gpu_memory - used_memory
-@@ -130,6 +132,20 @@ class XPUWorker(LoraNotSupportedWorkerBase, Worker):
+@@ -130,6 +178,20 @@ class XPUWorker(LoraNotSupportedWorkerBase, Worker):
          num_cpu_blocks = max(num_cpu_blocks, 0)
          gc.collect()
          torch.xpu.empty_cache()
@@ -40767,7 +40820,7 @@ index 129566605..43d306145 100644
          return num_gpu_blocks, num_cpu_blocks
  
      def _warm_up_model(self) -> None:
-@@ -175,4 +191,10 @@ class XPUWorker(LoraNotSupportedWorkerBase, Worker):
+@@ -175,4 +237,10 @@ class XPUWorker(LoraNotSupportedWorkerBase, Worker):
              parallel_config.tensor_parallel_size,
              parallel_config.pipeline_parallel_size)
          # global all_reduce needed for overall oneccl warm up
