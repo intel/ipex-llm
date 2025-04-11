@@ -32,7 +32,7 @@ RUN set -eux && \
     # 
     # Install Python 3.12
     add-apt-repository ppa:deadsnakes/ppa -y && \
-    apt-get install -y --no-install-recommends python3.12 python3-pip python3.12-dev python3.12-distutils python3-wheel && \
+    apt-get install -y --no-install-recommends python3.12 python3-pip python3.12-dev python3-wheel && \
     rm /usr/bin/python3 && ln -s /usr/bin/python3.12 /usr/bin/python3 && \
     ln -s /usr/bin/python3 /usr/bin/python && \
     # 
@@ -114,7 +114,7 @@ RUN set -eux && \
     # 
     # Install Python 3.12
     add-apt-repository ppa:deadsnakes/ppa -y && \
-    apt-get install -y --no-install-recommends python3.12 python3-pip python3.12-dev python3.12-distutils python3-wheel && \
+    apt-get install -y --no-install-recommends python3.12 python3-pip python3.12-dev python3-wheel && \
     rm /usr/bin/python3 && ln -s /usr/bin/python3.12 /usr/bin/python3 && \
     ln -s /usr/bin/python3 /usr/bin/python && \
     # 
