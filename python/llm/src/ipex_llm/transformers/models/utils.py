@@ -137,19 +137,21 @@ def append_fp8_kv_cache(k_cache, v_cache, key, value):
 
     return new_k_cache, new_v_cache
 
-def init_unbalanced_fp8_kv_cache(batch_size, num_heads, current_length, k_head_dim, v_head_dim, device):
+
+def init_unbalanced_fp8_kv_cache(batch_size, num_heads, current_length,
+                                 k_head_dim, v_head_dim, device):
     # for case which k head dim is different from v head dim
     max_length = current_length + FP8_KV_ALLOC_LENGTH
 
     k_cache_storage = torch.empty(batch_size, num_heads, max_length, k_head_dim,
                                   dtype=torch.uint8, device=device)
     k_cache = k_cache_storage.as_strided((batch_size, num_heads, 0, k_head_dim),
-                                          k_cache_storage.stride(), storage_offset=0)
+                                         k_cache_storage.stride(), storage_offset=0)
 
     v_cache_storage = torch.empty(batch_size, num_heads, max_length, v_head_dim,
                                   dtype=torch.uint8, device=device)
     v_cache = v_cache_storage.as_strided((batch_size, num_heads, 0, v_head_dim),
-                                          v_cache_storage.stride(), storage_offset=0)
+                                         v_cache_storage.stride(), storage_offset=0)
     return k_cache, v_cache
 
 

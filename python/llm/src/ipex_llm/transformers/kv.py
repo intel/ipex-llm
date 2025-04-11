@@ -185,14 +185,16 @@ class DynamicUnbalancedFp8Cache(DynamicCache):
                 batch_size, num_heads, seq_len, k_head_dim, v_head_dim,
                 device=key_states.device,
             )
-            k_cache, v_cache = append_unbalanced_fp8_kv_cache(k_cache, v_cache, key_states, value_states)
+            k_cache, v_cache = append_unbalanced_fp8_kv_cache(k_cache, v_cache,
+                                                              key_states, value_states)
 
             self.key_cache.append(k_cache)
             self.value_cache.append(v_cache)
         else:
             k_cache = self.key_cache[layer_idx]
             v_cache = self.value_cache[layer_idx]
-            k_cache, v_cache = append_unbalanced_fp8_kv_cache(k_cache, v_cache, key_states, value_states)
+            k_cache, v_cache = append_unbalanced_fp8_kv_cache(k_cache, v_cache,
+                                                              key_states, value_states)
             self.key_cache[layer_idx] = k_cache
             self.value_cache[layer_idx] = v_cache
 
