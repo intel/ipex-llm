@@ -177,7 +177,7 @@ RUN set -eux && \
     VLLM_TARGET_DEVICE=xpu pip install --no-build-isolation -v /llm/vllm && \
     rm -rf /llm/vllm_for_multi_arc.patch && \
     pip install mpi4py fastapi uvicorn openai && \
-    pip install ray
+    pip install ray numba
 
 
 WORKDIR /llm/
