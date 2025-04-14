@@ -17548,6 +17548,16 @@ index 9033644e3..a46c67ad7 100644
  
      @property
      def url(self) -> str:
+diff --git a/vllm/assets/image.py b/vllm/assets/image.py
+index cb831cb0b..0a55506f8 100644
+--- a/vllm/assets/image.py
++++ b/vllm/assets/image.py
+@@ -26,4 +26,4 @@ class ImageAsset:
+         """
+         image_path = get_vllm_public_assets(filename=f"{self.name}.pt",
+                                             s3_prefix=VLM_IMAGES_DIR)
+-        return torch.load(image_path, map_location="cpu")
++        return torch.load(image_path, map_location="cpu", weights_only=True)
 diff --git a/vllm/attention/backends/ipex_attn.py b/vllm/attention/backends/ipex_attn.py
 index 21949874b..79ed61f35 100644
 --- a/vllm/attention/backends/ipex_attn.py
@@ -18812,6 +18822,44 @@ index 3e2bb436d..6372dab72 100644
 +    "MooncakeConnector",
 +    "vllm.distributed.kv_transfer.kv_connector.simple_connector",
 +    "SimpleConnector")
+diff --git a/vllm/distributed/kv_transfer/kv_pipe/mooncake_pipe.py b/vllm/distributed/kv_transfer/kv_pipe/mooncake_pipe.py
+index 8e4358672..69049ec76 100644
+--- a/vllm/distributed/kv_transfer/kv_pipe/mooncake_pipe.py
++++ b/vllm/distributed/kv_transfer/kv_pipe/mooncake_pipe.py
+@@ -1,12 +1,13 @@
+ import json
+ import os
+-import pickle
+ from concurrent.futures import ThreadPoolExecutor
+ from dataclasses import dataclass
+ from typing import Optional, Union
+ 
+ import torch
+ import zmq
++from safetensors.torch import load as safetensors_load
++from safetensors.torch import save as safetensors_save
+ 
+ from vllm.config import KVTransferConfig
+ from vllm.distributed.kv_transfer.kv_pipe.base import KVPipeBase
+@@ -235,14 +236,13 @@ class MooncakePipe(KVPipeBase):
+         return hash(tensor.data_ptr())
+ 
+     def _send_impl(self, tensor: torch.Tensor) -> None:
+-        """Implement the tensor sending logic."""
+-        value_bytes = pickle.dumps(tensor)
+-        self.transfer_engine.send_bytes(value_bytes)
++        """Implement the tensor sending logic using safetensors."""
++        self.transfer_engine.send_bytes(safetensors_save({"tensor": tensor}))
+ 
+     def _recv_impl(self) -> torch.Tensor:
+-        """Implement the tensor receiving logic."""
++        """Implement the tensor receiving logic using safetensors."""
+         data = self.transfer_engine.recv_bytes()
+-        return pickle.loads(data)
++        return safetensors_load(data)["tensor"].to(self.device)
+ 
+     def send_tensor(self, tensor: Optional[torch.Tensor]) -> None:
+         """Send tensor to the target process."""
 diff --git a/vllm/distributed/parallel_state.py b/vllm/distributed/parallel_state.py
 index 5b9236f8c..a837c1dc5 100644
 --- a/vllm/distributed/parallel_state.py
@@ -19375,10 +19423,19 @@ index fadf297e9..e4e0803c6 100644
      def get_engine_class() -> Type[LLMEngine]:
          if envs.VLLM_USE_V1:
 diff --git a/vllm/entrypoints/openai/api_server.py b/vllm/entrypoints/openai/api_server.py
-index 2e45b4742..c72581e6c 100644
+index 2e45b4742..b468085b5 100644
 --- a/vllm/entrypoints/openai/api_server.py
 +++ b/vllm/entrypoints/openai/api_server.py
-@@ -16,7 +16,7 @@ from http import HTTPStatus
+@@ -3,6 +3,8 @@ import atexit
+ import importlib
+ import inspect
+ import multiprocessing
++# Fix https://avd.aquasec.com/nvd/cve-2022-42919 
++multiprocessing.util.abstract_sockets_supported = False
+ import os
+ import re
+ import signal
+@@ -16,7 +18,7 @@ from http import HTTPStatus
  from typing import AsyncIterator, Optional, Set, Tuple
  
  import uvloop
@@ -19387,7 +19444,7 @@ index 2e45b4742..c72581e6c 100644
  from fastapi.exceptions import RequestValidationError
  from fastapi.middleware.cors import CORSMiddleware
  from fastapi.responses import JSONResponse, Response, StreamingResponse
-@@ -44,11 +44,15 @@ from vllm.entrypoints.openai.protocol import (ChatCompletionRequest,
+@@ -44,11 +46,15 @@ from vllm.entrypoints.openai.protocol import (ChatCompletionRequest,
                                                CompletionResponse,
                                                DetokenizeRequest,
                                                DetokenizeResponse,
@@ -19403,7 +19460,7 @@ index 2e45b4742..c72581e6c 100644
                                                PoolingRequest, PoolingResponse,
                                                ScoreRequest, ScoreResponse,
                                                TokenizeRequest,
-@@ -58,7 +62,9 @@ from vllm.entrypoints.openai.protocol import (ChatCompletionRequest,
+@@ -58,7 +64,9 @@ from vllm.entrypoints.openai.protocol import (ChatCompletionRequest,
  from vllm.entrypoints.openai.serving_chat import OpenAIServingChat
  from vllm.entrypoints.openai.serving_completion import OpenAIServingCompletion
  from vllm.entrypoints.openai.serving_embedding import OpenAIServingEmbedding
@@ -19414,7 +19471,7 @@ index 2e45b4742..c72581e6c 100644
  from vllm.entrypoints.openai.serving_pooling import OpenAIServingPooling
  from vllm.entrypoints.openai.serving_score import OpenAIServingScores
  from vllm.entrypoints.openai.serving_tokenization import (
-@@ -133,32 +139,21 @@ async def build_async_engine_client_from_engine_args(
+@@ -133,32 +141,21 @@ async def build_async_engine_client_from_engine_args(
      Returns the Client or None if the creation failed.
      """
  
@@ -19458,7 +19515,7 @@ index 2e45b4742..c72581e6c 100644
      else:
          if "PROMETHEUS_MULTIPROC_DIR" not in os.environ:
              # Make TemporaryDirectory for prometheus multiprocessing
-@@ -280,6 +275,10 @@ def base(request: Request) -> OpenAIServing:
+@@ -280,6 +277,10 @@ def base(request: Request) -> OpenAIServing:
      return tokenization(request)
  
  
@@ -19469,7 +19526,7 @@ index 2e45b4742..c72581e6c 100644
  def chat(request: Request) -> Optional[OpenAIServingChat]:
      return request.app.state.openai_serving_chat
  
-@@ -315,6 +314,12 @@ async def health(raw_request: Request) -> Response:
+@@ -315,6 +316,12 @@ async def health(raw_request: Request) -> Response:
      return Response(status_code=200)
  
  
@@ -19482,7 +19539,7 @@ index 2e45b4742..c72581e6c 100644
  @router.post("/tokenize")
  @with_cancellation
  async def tokenize(request: TokenizeRequest, raw_request: Request):
-@@ -347,10 +352,10 @@ async def detokenize(request: DetokenizeRequest, raw_request: Request):
+@@ -347,10 +354,10 @@ async def detokenize(request: DetokenizeRequest, raw_request: Request):
  
  @router.get("/v1/models")
  async def show_available_models(raw_request: Request):
@@ -19496,7 +19553,7 @@ index 2e45b4742..c72581e6c 100644
  
  
  @router.get("/version")
-@@ -488,6 +493,54 @@ async def create_score_v1(request: ScoreRequest, raw_request: Request):
+@@ -488,6 +495,54 @@ async def create_score_v1(request: ScoreRequest, raw_request: Request):
      return await create_score(request, raw_request)
  
  
@@ -19551,7 +19608,7 @@ index 2e45b4742..c72581e6c 100644
  if envs.VLLM_TORCH_PROFILER_DIR:
      logger.warning(
          "Torch Profiler is enabled in the API server. This should ONLY be "
-@@ -516,26 +569,22 @@ if envs.VLLM_ALLOW_RUNTIME_LORA_UPDATING:
+@@ -516,26 +571,22 @@ if envs.VLLM_ALLOW_RUNTIME_LORA_UPDATING:
      @router.post("/v1/load_lora_adapter")
      async def load_lora_adapter(request: LoadLoraAdapterRequest,
                                  raw_request: Request):
@@ -19588,7 +19645,7 @@ index 2e45b4742..c72581e6c 100644
  
          return Response(status_code=200, content=response)
  
-@@ -639,13 +688,18 @@ def init_app_state(
+@@ -639,13 +690,18 @@ def init_app_state(
      resolved_chat_template = load_chat_template(args.chat_template)
      logger.info("Using supplied chat template:\n%s", resolved_chat_template)
  
@@ -19610,7 +19667,7 @@ index 2e45b4742..c72581e6c 100644
          request_logger=request_logger,
          chat_template=resolved_chat_template,
          chat_template_content_format=args.chat_template_content_format,
-@@ -657,16 +711,14 @@ def init_app_state(
+@@ -657,16 +713,14 @@ def init_app_state(
      state.openai_serving_completion = OpenAIServingCompletion(
          engine_client,
          model_config,
@@ -19629,7 +19686,7 @@ index 2e45b4742..c72581e6c 100644
          request_logger=request_logger,
          chat_template=resolved_chat_template,
          chat_template_content_format=args.chat_template_content_format,
-@@ -674,7 +726,7 @@ def init_app_state(
+@@ -674,7 +728,7 @@ def init_app_state(
      state.openai_serving_embedding = OpenAIServingEmbedding(
          engine_client,
          model_config,
@@ -19638,7 +19695,7 @@ index 2e45b4742..c72581e6c 100644
          request_logger=request_logger,
          chat_template=resolved_chat_template,
          chat_template_content_format=args.chat_template_content_format,
-@@ -682,18 +734,18 @@ def init_app_state(
+@@ -682,18 +736,18 @@ def init_app_state(
      state.openai_serving_scores = OpenAIServingScores(
          engine_client,
          model_config,
@@ -19660,7 +19717,7 @@ index 2e45b4742..c72581e6c 100644
  
  
  def create_server_socket(addr: Tuple[str, int]) -> socket.socket:
-@@ -715,11 +767,11 @@ async def run_server(args, **uvicorn_kwargs) -> None:
+@@ -715,11 +769,11 @@ async def run_server(args, **uvicorn_kwargs) -> None:
      if args.tool_parser_plugin and len(args.tool_parser_plugin) > 3:
          ToolParserManager.import_tool_parser(args.tool_parser_plugin)
  
@@ -19675,7 +19732,7 @@ index 2e45b4742..c72581e6c 100644
  
      # workaround to make sure that we bind the port before the engine is set up.
      # This avoids race conditions with ray.
-@@ -765,6 +817,8 @@ async def run_server(args, **uvicorn_kwargs) -> None:
+@@ -765,6 +819,8 @@ async def run_server(args, **uvicorn_kwargs) -> None:
  if __name__ == "__main__":
      # NOTE(simon):
      # This section should be in sync with vllm/scripts.py for CLI entrypoints.
@@ -21049,7 +21106,7 @@ index dde347b78..93ad4651f 100644
      @classmethod
      def create_dummy_lora_weights(
 diff --git a/vllm/lora/models.py b/vllm/lora/models.py
-index 5c0e4e5cb..5b7225bdc 100644
+index 5c0e4e5cb..7e57d9c85 100644
 --- a/vllm/lora/models.py
 +++ b/vllm/lora/models.py
 @@ -4,7 +4,7 @@ import math
@@ -21078,6 +21135,16 @@ index 5c0e4e5cb..5b7225bdc 100644
          if os.path.isfile(lora_tensor_path):
              tensors: Dict[str, torch.Tensor] = {}
              # Find unexpected modules.
+@@ -280,7 +281,8 @@ class LoRAModel(AdapterModel):
+                 new_embeddings_tensor_path)
+         elif os.path.isfile(new_embeddings_bin_file_path):
+             embeddings = torch.load(new_embeddings_bin_file_path,
+-                                    map_location=device)
++                                    map_location=device,
++                                    weights_only=True)
+ 
+         return cls.from_lora_tensors(
+             lora_model_id=get_lora_id()
 diff --git a/vllm/lora/peft_helper.py b/vllm/lora/peft_helper.py
 index edf4ba565..ddd42ae93 100644
 --- a/vllm/lora/peft_helper.py
@@ -22555,6 +22622,39 @@ index f2d9293b3..b3d7d6977 100644
      if isinstance(load_config.load_format, type):
          return load_config.load_format(load_config)
  
+diff --git a/vllm/model_executor/model_loader/weight_utils.py b/vllm/model_executor/model_loader/weight_utils.py
+index 8aa0c98df..34c86a23a 100644
+--- a/vllm/model_executor/model_loader/weight_utils.py
++++ b/vllm/model_executor/model_loader/weight_utils.py
+@@ -93,7 +93,7 @@ def convert_bin_to_safetensor_file(
+     pt_filename: str,
+     sf_filename: str,
+ ) -> None:
+-    loaded = torch.load(pt_filename, map_location="cpu")
++    loaded = torch.load(pt_filename, map_location="cpu", weights_only=True)
+     if "state_dict" in loaded:
+         loaded = loaded["state_dict"]
+     shared = _shared_pointers(loaded)
+@@ -381,7 +381,9 @@ def np_cache_weights_iterator(
+                     disable=not enable_tqdm,
+                     bar_format=_BAR_FORMAT,
+             ):
+-                state = torch.load(bin_file, map_location="cpu")
++                state = torch.load(bin_file,
++                                   map_location="cpu",
++                                   weights_only=True)
+                 for name, param in state.items():
+                     param_path = os.path.join(np_folder, name)
+                     with open(param_path, "wb") as f:
+@@ -447,7 +449,7 @@ def pt_weights_iterator(
+             disable=not enable_tqdm,
+             bar_format=_BAR_FORMAT,
+     ):
+-        state = torch.load(bin_file, map_location="cpu")
++        state = torch.load(bin_file, map_location="cpu", weights_only=True)
+         yield from state.items()
+         del state
+         torch.cuda.empty_cache()
 diff --git a/vllm/model_executor/models/aria.py b/vllm/model_executor/models/aria.py
 index 9437ad968..2e649f10c 100644
 --- a/vllm/model_executor/models/aria.py
@@ -34955,6 +35055,19 @@ index 17f604ea0..c50eb2cef 100644
 +    # general plugins, we only need to execute the loaded functions
 +    for func in plugins.values():
 +        func()
+diff --git a/vllm/prompt_adapter/utils.py b/vllm/prompt_adapter/utils.py
+index 473b87c89..8b2732923 100644
+--- a/vllm/prompt_adapter/utils.py
++++ b/vllm/prompt_adapter/utils.py
+@@ -89,6 +89,7 @@ def load_peft_weights(model_id: str,
+         adapters_weights = safe_load_file(filename, device=device)
+     else:
+         adapters_weights = torch.load(filename,
+-                                      map_location=torch.device(device))
++                                      map_location=torch.device(device),
++                                      weights_only=True)
+ 
+     return adapters_weights
 diff --git a/vllm/sampling_params.py b/vllm/sampling_params.py
 index fc77f3ca5..605c09b8d 100644
 --- a/vllm/sampling_params.py
