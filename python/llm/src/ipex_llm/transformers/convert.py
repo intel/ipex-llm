@@ -1090,10 +1090,14 @@ def ggml_convert_low_bit(model, qtype, optimize_model=True,
                          mixed_precision=False,
                          disable_optimize_pre=False):
     if qtype == ggml_tensor_qtype["sym_int4"] and torch.__version__ >= "2.6":
-        logger.info(f"sym_int4 is deprecated, use woq_int4 instead")
-        logger.info(f"if you are loading saved sym_int4 low bit model, "
-                    "please resaved it with woq_int4")
+        logger.warning("sym_int4 is deprecated, use woq_int4 instead, "
+                       "if you are loading saved sym_int4 low bit model, "
+                       "please resaved it with woq_int4")
         qtype = ggml_tensor_qtype["woq_int4"]
+    elif qtype == ggml_tensor_qtype["woq_int4"] and torch.__version__ < "2.6":
+        logger.warning("woq_int4 is not supported with pytorch<2.6, "
+                       "use sym_int4 instead or use ipex-llm with pytorch>=2.6")
+        qtype = ggml_tensor_qtype["sym_int4"]
     if qtype in ggml_tensor_qtype.values():
         index = list(ggml_tensor_qtype.values()).index(qtype)
         logger.info(f"Converting the current model to "
