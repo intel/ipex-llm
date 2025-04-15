@@ -68,7 +68,9 @@ def glm_sdpa(query, key, value, attention_mask=None, is_causal=False):
         if use_sdp(query.shape[2], key.shape[2],
                    query.shape[-1], query):
             import xe_addons
-            attn_output = xe_addons.sdp(query, key, value, attn_bias)
+            head_dim = query.shape[-1]
+            scale = 1 / math.sqrt(head_dim)
+            attn_output = xe_addons.sdp(query, key, value, attn_bias, scale)
             context_layer = attn_output.view(query.shape)
         else:
             head_dim = query.size(-1)
