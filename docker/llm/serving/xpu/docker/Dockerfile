@@ -105,7 +105,7 @@ RUN set -eux && \
     # Update and install basic dependencies, upgrade linux-libc-dev to fix CT7 CVEs
     apt-get update && \
     apt-get install -y --no-install-recommends \
-      linux-libc-dev && \
+      linux-libc-dev \
       curl wget git libunwind8-dev vim less gnupg gpg-agent software-properties-common \
       libfabric-dev wrk libaio-dev numactl && \
     # 
