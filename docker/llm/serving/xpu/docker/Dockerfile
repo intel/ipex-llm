@@ -20,12 +20,11 @@ COPY ./1ccl_for_multi_arc.patch /build/
      
 RUN set -eux && \
     #
-    # Update and install basic dependencies, upgrade linux-libc-dev to fix CT7 CVEs
+    # Update and install basic dependencies
     apt-get update && \
     apt-get install -y --no-install-recommends \
       curl wget git libunwind8-dev vim less gnupg gpg-agent software-properties-common \
       libfabric-dev wrk libaio-dev numactl && \
-      linux-libc-dev && \
     # 
     # Set timezone
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
@@ -103,9 +102,10 @@ ENV TZ=Asia/Shanghai PYTHONUNBUFFERED=1 VLLM_RPC_TIMEOUT=100000
 
 RUN set -eux && \
     #
-    # Update and install basic dependencies
+    # Update and install basic dependencies, upgrade linux-libc-dev to fix CT7 CVEs
     apt-get update && \
     apt-get install -y --no-install-recommends \
+      linux-libc-dev && \
       curl wget git libunwind8-dev vim less gnupg gpg-agent software-properties-common \
       libfabric-dev wrk libaio-dev numactl && \
     # 
