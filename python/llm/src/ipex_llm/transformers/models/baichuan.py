@@ -325,15 +325,18 @@ def baichuan_attention_forward_13b(
             attention_mask = attention_mask[:, :, -q_len:, :]
         else:
             attention_mask = attention_mask[None, :, -q_len:, :]
+    
+    head_dim = query_states.shape[-1]
+    scale = 1 / math.sqrt(head_dim)
 
     if use_sdp(q_len, kv_seq_len, self.head_dim, query_states):
         import xe_addons
         if use_quantize_kv:
             attn_output = xe_addons.sdp_fp8(query_states, key_states, value_states,
-                                            attention_mask)
+                                            attention_mask, scale)
         else:
             attn_output = xe_addons.sdp(query_states, key_states, value_states,
-                                        attention_mask)
+                                        attention_mask, scale)
         attn_weights = None
     else:
         if use_quantize_kv:
