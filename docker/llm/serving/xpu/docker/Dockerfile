@@ -168,6 +168,10 @@ RUN set -eux && \
     mkdir -p /llm && \
     cd /llm && \
     rm -rf /tmp/neo && \
+    # Install intel_extension_for_pytorch
+    pip install intel-extension-for-pytorch==2.6.10+xpu --extra-index-url=https://pytorch-extension.intel.com/release-whl/stable/xpu/us/ && \
+    pip uninstall -y oneccl oneccl-devel && \
+    pip install intel-opencl-rt==2025.0.2 intel-openmp==2025.0.2 && \
     #
     # Install vllm
     git clone -b v0.6.6.post1 https://github.com/vllm-project/vllm /llm/vllm && \
