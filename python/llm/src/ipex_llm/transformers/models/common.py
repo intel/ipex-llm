@@ -335,3 +335,15 @@ def quantize_linear(weight: torch.Tensor, in_features: int, precision: str):
                              in_features=in_features,
                              enable_scale_search=False).to("cpu")
     return paramsLowBit, qtype
+
+
+def moe_group_topk(scores: torch.Tensor, e_score_correction_bias: torch.Tensor,
+                   n_group: int, topk_group: int, top_k: int, norm_topk_prob:float,
+                   routed_scaling_factor: float):
+    import xe_addons
+    topk_idx, topk_weight = xe_addons.moe_group_topk(
+        scores, e_score_correction_bias,
+        n_group, 2, topk_group, top_k,
+        top_k > 1 and norm_topk_prob, 1e-20, routed_scaling_factor
+    )
+    return topk_idx, topk_weight
