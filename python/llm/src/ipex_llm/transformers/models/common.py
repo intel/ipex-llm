@@ -17,6 +17,7 @@
 import math
 import torch
 from typing import List
+from ipex_llm.utils.common import invalidInputError
 
 
 def merge_linear(linears: List[torch.nn.Linear]) -> torch.nn.Linear:
@@ -303,3 +304,34 @@ def scaled_dot_product_attention(query: torch.Tensor, key: torch.Tensor,
             )
         attn_output = attn_output.to(dtype)    # workaround ipex 2.1's bug
         return attn_output
+
+
+def linear_forward(x: torch.Tensor, weight: torch.Tensor, qtype: int, out_features: int):
+    if weight.device.type == "xpu":
+        new_shape = x.shape[:-1] + (out_features,)
+        x = x.to(weight.device, dtype=torch.float16)
+        x_2d = x.contiguous().view(-1, x.shape[-1])
+        import xe_linear
+        x = xe_linear.forward_new(x_2d, weight, qtype, out_features)
+        x = x.view(new_shape)
+        return x
+    else:
+        raise ValueError("Unsupported device type: only support weight on xpu device.")
+
+
+def quantize_linear(weight: torch.Tensor, in_features: int, precision: str):
+    from ipex_llm.transformers.low_bit_linear import FP4Params
+    from ipex_llm.ggml.quantize import ggml_tensor_qtype
+
+    invalidInputError(precision in ggml_tensor_qtype.keys(),
+                      f"{precision} is not supported, only {ggml_tensor_qtype.keys()} are supported now.")
+    qtype = ggml_tensor_qtype[precision]
+    paramsLowBit = FP4Params(data=weight.data,
+                             requires_grad=False,
+                             quantized=False,
+                             _shape=None,
+                             convert_shape_only=False,
+                             qtype=qtype,
+                             in_features=in_features,
+                             enable_scale_search=False).to("cpu")
+    return paramsLowBit, qtype
