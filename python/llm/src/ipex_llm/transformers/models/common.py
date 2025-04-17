@@ -347,3 +347,11 @@ def moe_group_topk(scores: torch.Tensor, e_score_correction_bias: torch.Tensor,
         top_k > 1 and norm_topk_prob, 1e-20, routed_scaling_factor
     )
     return topk_idx, topk_weight
+
+
+def rotary_two_with_cache_inplaced(query_states: torch.Tensor, key_states: torch.Tensor,
+                                   cos: torch.Tensor, sin: torch.Tensor,
+                                   half_layout: bool):
+    import xe_addons
+    xe_addons.rotary_two_with_cache_inplaced(query_states, key_states,
+                                             cos, sin, half_layout)
