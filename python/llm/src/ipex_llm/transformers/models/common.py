@@ -316,7 +316,8 @@ def linear_forward(x: torch.Tensor, weight: torch.Tensor, qtype: int, out_featur
         x = x.view(new_shape)
         return x
     else:
-        raise ValueError("Unsupported device type: only support weight on xpu device.")
+        invalidInputError(False,
+                          "Unsupported device type: only support weight on xpu device.")
 
 
 def quantize_linear(weight: torch.Tensor, in_features: int, precision: str):
@@ -324,7 +325,8 @@ def quantize_linear(weight: torch.Tensor, in_features: int, precision: str):
     from ipex_llm.ggml.quantize import ggml_tensor_qtype
 
     invalidInputError(precision in ggml_tensor_qtype.keys(),
-                      f"{precision} is not supported, only {ggml_tensor_qtype.keys()} are supported now.")
+                      f"{precision} is not supported, "
+                      f"only {ggml_tensor_qtype.keys()} are supported now.")
     qtype = ggml_tensor_qtype[precision]
     paramsLowBit = FP4Params(data=weight.data,
                              requires_grad=False,
@@ -338,7 +340,7 @@ def quantize_linear(weight: torch.Tensor, in_features: int, precision: str):
 
 
 def moe_group_topk(scores: torch.Tensor, e_score_correction_bias: torch.Tensor,
-                   n_group: int, topk_group: int, top_k: int, norm_topk_prob:float,
+                   n_group: int, topk_group: int, top_k: int, norm_topk_prob: float,
                    routed_scaling_factor: float):
     import xe_addons
     topk_idx, topk_weight = xe_addons.moe_group_topk(
