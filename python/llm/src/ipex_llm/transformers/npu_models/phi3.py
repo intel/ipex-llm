@@ -127,7 +127,7 @@ def phi3_attention_forward(
                 invalidInputError(
                     False,
                     f"Attention mask should be of size {(bsz, 1, q_len, kv_seq_len)},"
-                    " but is {attention_mask.size()}"
+                    f" but is {attention_mask.size()}"
                 )
             attn_weights = attn_weights + attention_mask
 

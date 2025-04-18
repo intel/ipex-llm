@@ -217,7 +217,7 @@ class _BaseAutoModelClass:
                     max_prompt_len < max_context_len,
                     (
                         f"max_prompt_len ({max_prompt_len}) should be less"
-                        " than max_context_len ({max_context_len})"
+                        f" than max_context_len ({max_context_len})"
                     ),
                 )
                 optimize_kwargs = {
@@ -553,7 +553,7 @@ class _BaseAutoModelClass:
                     invalidInputError(
                         False,
                         f'`torch_dtype` can be either `torch.dtype` or `"auto"`,'
-                        "but received {torch_dtype}",
+                        f"but received {torch_dtype}",
                     )
             dtype_orig = model_class._set_default_torch_dtype(torch_dtype)
 
@@ -588,7 +588,7 @@ class _BaseAutoModelClass:
                 max_prompt_len < max_context_len,
                 (
                     f"max_prompt_len ({max_prompt_len}) should be less"
-                    " than max_context_len ({max_context_len})"
+                    f" than max_context_len ({max_context_len})"
                 ),
             )
             from ipex_llm.transformers.npu_models.convert_mp import optimize_llm_pre

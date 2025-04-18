@@ -92,7 +92,7 @@ def load_state_dict(checkpoint_file: Union[str, os.PathLike]):
     except Exception as e:
         invalidInputError(False,
                           f"Unable to load weights"
-                          "from pytorch checkpoint file for '{checkpoint_file}' "
+                          f"from pytorch checkpoint file for '{checkpoint_file}' "
                           f"at '{checkpoint_file}'. ")
 
 

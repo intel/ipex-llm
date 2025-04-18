@@ -112,7 +112,7 @@ def _load(pickle_fp, map_location, picklemoudle, pickle_file='data.pkl', zip_fil
                 data = fp.read(size)
                 return torch.frombuffer(bytearray(data), dtype=dtype)
             description = f'storage data_type={data_type} ' \
-                          'path-in-zip={filename} path={self.zip_file.filename}'
+                          f'path-in-zip={filename} path={self.zip_file.filename}'
             return LazyStorage(load=load, kind=pid[1], description=description)
 
         @staticmethod
