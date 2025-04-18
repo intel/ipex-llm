@@ -251,7 +251,7 @@ By using FP8 kv cache, we can reduce the memory footprint. This increases the nu
 To deploy the service with `FP8 kvcache format`, simply adding `--kv-cache-dtype fp8` when starting the service.
 For instance:
 
-```python
+```bash
 #!/bin/bash
 model="YOUR_MODEL_PATH"
 served_model_name="YOUR_MODEL_NAME"
