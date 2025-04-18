@@ -296,21 +296,6 @@ def setup_package():
     xpu_21_requires += oneapi_2024_0_requires
     # default to ipex 2.1 for linux and windows
     xpu_requires = copy.deepcopy(xpu_21_requires)
-
-    xpu_lnl_requires = copy.deepcopy(all_requires)
-    for exclude_require in cpu_torch_version:
-        xpu_lnl_requires.remove(exclude_require)
-    xpu_lnl_requires += ["torch==2.3.1.post0+cxx11.abi;platform_system=='Windows'",
-                         "torchvision==0.18.1.post0+cxx11.abi;platform_system=='Windows'",
-                         "intel-extension-for-pytorch==2.3.110.post0+xpu;platform_system=='Windows'",
-                         "torch==2.3.1+cxx11.abi;platform_system=='Linux'",
-                         "torchvision==0.18.1+cxx11.abi;platform_system=='Linux'",
-                         "intel-extension-for-pytorch==2.3.110+xpu;platform_system=='Linux'",
-                         "bigdl-core-xe-23==" + CORE_XE_VERSION,
-                         "bigdl-core-xe-batch-23==" + CORE_XE_VERSION,
-                         "bigdl-core-xe-addons-23==" + CORE_XE_VERSION,
-                         "onednn-devel==2024.1.1;platform_system=='Windows'",
-                         "onednn==2024.1.1;platform_system=='Windows'"]
     
     xpu_26_requires = copy.deepcopy(all_requires)
     for exclude_require in cpu_torch_version:
@@ -381,9 +366,6 @@ def setup_package():
                         "xpu": xpu_requires,  # default to ipex 2.1 for linux and windows
                         "npu": npu_requires,
                         "xpu-2-1": xpu_21_requires,
-                        "xpu-lnl": xpu_lnl_requires,
-                        "xpu-arl": xpu_lnl_requires,
-                        "xpu-arc": xpu_lnl_requires,
                         "xpu-2-6": xpu_26_requires,
                         "xpu-2-6-arl": xpu_26_arl_requires,
                         "serving": serving_requires,
