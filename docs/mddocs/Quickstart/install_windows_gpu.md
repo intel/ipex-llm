@@ -59,49 +59,25 @@ conda activate llm
 
 With the `llm` environment active, use `pip` to install `ipex-llm` for GPU:
 
-- For **Intel Core™ Ultra Processors (Series 2) with processor number 2xxV (code name Lunar Lake)**:
+Choose either US or CN website for `extra-index-url`:
 
-   Choose either US or CN website for `extra-index-url`:
+- For **US**:
 
-   - For **US**:
+   ```cmd
+   conda create -n llm python=3.11 libuv
+   conda activate llm
 
-      ```cmd
-      conda create -n llm python=3.11 libuv
-      conda activate llm
+   pip install --pre --upgrade ipex-llm[xpu] --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/xpu/us/
+   ```
 
-      pip install --pre --upgrade ipex-llm[xpu_lnl] --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/lnl/us/
-      ```
+- For **CN**:
 
-   - For **CN**:
+   ```cmd
+   conda create -n llm python=3.11 libuv
+   conda activate llm
 
-      ```cmd
-      conda create -n llm python=3.11 libuv
-      conda activate llm
-
-      pip install --pre --upgrade ipex-llm[xpu_lnl] --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/lnl/cn/
-      ```
-
-- For **other Intel iGPU and dGPU**:
-
-   Choose either US or CN website for `extra-index-url`:
-
-   - For **US**:
-
-      ```cmd
-      conda create -n llm python=3.11 libuv
-      conda activate llm
-
-      pip install --pre --upgrade ipex-llm[xpu] --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/xpu/us/
-      ```
-
-   - For **CN**:
-
-      ```cmd
-      conda create -n llm python=3.11 libuv
-      conda activate llm
-
-      pip install --pre --upgrade ipex-llm[xpu] --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/xpu/cn/
-      ```
+   pip install --pre --upgrade ipex-llm[xpu] --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/xpu/cn/
+   ```
 
 > [!NOTE]
 > If you encounter network issues while installing IPEX, refer to [this guide](../Overview/install_gpu.md#install-ipex-llm-from-wheel) for troubleshooting advice.

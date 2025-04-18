@@ -60,47 +60,26 @@ conda activate llm
 ## 安装 `ipex-llm`
 
 在 `llm` 环境处于激活状态下，使用 `pip` 安装适用于 GPU 的 `ipex-llm`。 
-- **对于处理器编号为 2xxV 的第二代 Intel Core™ Ultra Processors (代号 Lunar Lake)**：
 
-  可以根据区域选择不同的 `extra-index-url`，提供 US 和 CN 两个选项：
+可以根据区域选择不同的 `extra-index-url`，提供 US 和 CN 两个选项：
 
-  - **US**:
+- **US**:
 
-      ```cmd
-      conda create -n llm python=3.11 libuv
-      conda activate llm
+  ```cmd
+  conda create -n llm python=3.11 libuv
+  conda activate llm
 
-      pip install --pre --upgrade ipex-llm[xpu_lnl] --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/lnl/us/
-      ```
-  - **CN**:
+  pip install --pre --upgrade ipex-llm[xpu] --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/xpu/us/
+  ```
 
-      ```cmd
-      conda create -n llm python=3.11 libuv
-      conda activate llm
+- **CN**:
 
-      pip install --pre --upgrade ipex-llm[xpu_lnl] --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/lnl/cn/
-      ```
-- 对于**其他 Intel iGPU 和 dGPU**:
+  ```cmd
+  conda create -n llm python=3.11 libuv
+  conda activate llm
 
-   可以根据区域选择不同的 `extra-index-url`，提供 US 和 CN 两个选项：
-
-   - **US**:
-
-      ```cmd
-      conda create -n llm python=3.11 libuv
-      conda activate llm
-
-      pip install --pre --upgrade ipex-llm[xpu] --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/xpu/us/
-      ```
-
-   - **CN**:
-
-      ```cmd
-      conda create -n llm python=3.11 libuv
-      conda activate llm
-
-      pip install --pre --upgrade ipex-llm[xpu] --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/xpu/cn/
-      ```
+  pip install --pre --upgrade ipex-llm[xpu] --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/xpu/cn/
+  ```
 
 > [!NOTE]
 > 如果在安装 IPEX 时遇到网络问题，请参阅[本指南](../Overview/install_gpu.md#install-ipex-llm-from-wheel)获取故障排除建议。
