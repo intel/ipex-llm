@@ -228,11 +228,11 @@ def deepseek_attention_forward(
             [k_nope, k_pe.expand([-1, self.num_heads, -1, -1])],
             dim=-1
         )
-        import xe_addons
         cos, sin = position_embeddings
-        xe_addons.rotary_two_with_cache_inplaced(query_states[:, :, :, self.qk_nope_head_dim:],
-                                                 key_states[:, :, :, self.qk_nope_head_dim:],
-                                                 cos, sin, True)
+        from ipex_llm.transformers.models.common import rotary_two_with_cache_inplaced
+        rotary_two_with_cache_inplaced(query_states[:, :, :, self.qk_nope_head_dim:],
+                                       key_states[:, :, :, self.qk_nope_head_dim:],
+                                       cos, sin, True)
     else:
         q_nope, q_pe = torch.split(
             q, [self.qk_nope_head_dim, self.qk_rope_head_dim], dim=-1
@@ -279,11 +279,11 @@ def fuse_gate_forward(self, x: torch.Tensor):
         )
         scores = logits.sigmoid()
 
-        import xe_addons
-        topk_idx, topk_weight = xe_addons.moe_group_topk(
+        from ipex_llm.transformers.models.common import moe_group_topk
+        topk_idx, topk_weight = moe_group_topk(
             scores, self.e_score_correction_bias,
-            self.n_group, 2, self.topk_group, self.top_k,
-            self.top_k > 1 and self.norm_topk_prob, 1e-20, self.routed_scaling_factor
+            self.n_group, self.topk_group, self.top_k,
+            self.norm_topk_prob, self.routed_scaling_factor
         )
     else:
         topk_idx, topk_weight = self(x)
