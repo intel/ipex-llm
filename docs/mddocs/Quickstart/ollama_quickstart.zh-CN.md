@@ -12,9 +12,9 @@
 > 如果是在 Intel Arc B 系列 GPU 上安装(例如 **B580**)，请参阅本[指南](./bmg_quickstart.md)。
 
 > [!NOTE]
->  `ipex-llm[cpp]` 的最新版本与官方 ollama 的 [v0.5.4](https://github.com/ollama/ollama/releases/tag/v0.5.4) 版本保持一致。
+>  `ipex-llm[cpp]` 的最新版本与官方 ollama 的 [v0.6.2](https://github.com/ollama/ollama/releases/tag/v0.6.2) 版本保持一致。
 >
-> `ipex-llm[cpp]==2.2.0b20250123` 与官方 ollama 的 [v0.5.1](https://github.com/ollama/ollama/releases/tag/v0.5.1) 版本保持一致。
+> `ipex-llm[cpp]==2.2.0b20250413` 与官方 ollama 的 [v0.5.4](https://github.com/ollama/ollama/releases/tag/v0.5.4) 版本保持一致。
 
 以下是在 Intel Arc GPU 上运行 LLaMA2-7B 的 DEMO 演示。
 
