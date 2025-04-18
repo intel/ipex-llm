@@ -242,8 +242,105 @@ When finish executing, the low-bit model has been saved at `/llm/fp8-model-path`
 
 Later we can use the option `--low-bit-model-path /llm/fp8-model-path` to use the low-bit model.
 
+### 5. Other features
+#### FP8 kv cache
+> Note: Currently, we only support FP8 KV Cache with GQA models.
 
-### 5. Known issues
+By using FP8 kv cache, we can reduce the memory footprint. This increases the number of tokens that can be stored in the cache.
+
+To deploy the service with `FP8 kvcache format`, simply adding `--kv-cache-dtype fp8` when starting the service.
+For instance:
+
+```python
+#!/bin/bash
+model="YOUR_MODEL_PATH"
+served_model_name="YOUR_MODEL_NAME"
+
+# CCL needed environment variables
+export CCL_WORKER_COUNT=2
+export FI_PROVIDER=shm
+export CCL_ATL_TRANSPORT=ofi
+export CCL_ZE_IPC_EXCHANGE=sockets
+export CCL_ATL_SHM=1
+ # You may need to adjust the value of
+ # --max-model-len, --max-num-batched-tokens, --max-num-seqs
+ # to acquire the best performance
+
+python -m ipex_llm.vllm.xpu.entrypoints.openai.api_server \
+  --served-model-name $served_model_name \
+  --port 8000 \
+  --model $model \
+  --trust-remote-code \
+  --gpu-memory-utilization 0.75 \
+  --device xpu \
+  --dtype float16 \
+  --enforce-eager \
+  --load-in-low-bit sym_int4 \
+  --max-model-len 2000 \
+  --max-num-batched-tokens 3000 \
+  --max-num-seqs 256 \
+  --tensor-parallel-size 1 \
+  --distributed-executor-backend ray \
+  --kv-cache-dtype fp8 \
+  --disable-async-output-proc
+```
+
+If the service is booted successfully, you can find the following log:
+![FP8 KV Cache](./fp8_kv.png)
+
+
+#### Varlen Prefill
+The `Varlen Prefill` feature will reduce the memory usage for first token generation, which will leads to longer context support and more kv cache space.  However, this feature will slow down the first token generation speed by around 30%.
+
+To enable this feature, you can set the environment variable `IPEX_LLM_PREFILL_VARLEN_BACKEND` to 1.
+
+#### Find maximum supported context
+
+To find the maximum supported context, you can set the environment variable `IPEX_LLM_FIND_MAX_LENGTH` to a starting value such as 8000. This value serves as the initial position for searching the maximum context length, and the search proceeds in steps of 250. Note that 8000 is just an example — you can adjust this starting value based on your expected context size.
+
+After seaching has completed, it will show the recommended maximum context length in the log like:
+![max_length](./max_length.png)
+
+Then, you can start the service with this maximum length:
+
+```bash
+export IPEX_LLM_SELF_MAX_NUM_BATCHED_TOKENS=28500 # Depends on the profiling value
+#!/bin/bash
+model="YOUR_MODEL_PATH"
+served_model_name="YOUR_MODEL_NAME"
+
+# CCL needed environment variables
+export CCL_WORKER_COUNT=2
+export FI_PROVIDER=shm
+export CCL_ATL_TRANSPORT=ofi
+export CCL_ZE_IPC_EXCHANGE=sockets
+export CCL_ATL_SHM=1
+source /opt/intel/1ccl-wks/setvars.sh
+
+ # You may need to adjust the value of
+ # --max-model-len, --max-num-batched-tokens, --max-num-seqs
+ # to acquire the best performance
+
+python -m ipex_llm.vllm.xpu.entrypoints.openai.api_server \
+  --served-model-name $served_model_name \
+  --port 8000 \
+  --model $model \
+  --trust-remote-code \
+  --gpu-memory-utilization 0.95 \
+  --device xpu \
+  --dtype float16 \
+  --enforce-eager \
+  --load-in-low-bit sym_int4 \
+  --max-model-len 28500 \
+  --max-num-batched-tokens 28500 \
+  --max-num-seqs 256 \
+  --tensor-parallel-size 1 \
+  --distributed-executor-backend ray \
+  --disable-async-output-proc
+```
+
+
+### 6. Known issues
 
 #### Runtime memory
 
