@@ -9,7 +9,6 @@
 > - ***70+ models** have been optimized/verified on `ipex-llm` (e.g., Llama, Phi, Mistral, Mixtral, DeepSeek, Qwen, ChatGLM, MiniCPM, Qwen-VL, MiniCPM-V and more), with state-of-art **LLM optimizations**, **XPU acceleration** and **low-bit (FP8/FP6/FP4/INT4) support**; see the complete list [here](#verified-models).*
 
 ## Latest Update 🔥 
-- [2025/04] We released [Ollama Portable Zip v2.3.0-nightly](https://github.com/ipex-llm/ipex-llm/releases/tag/v2.3.0-nightly).
 - [2025/04] We released `ipex-llm 2.2.0`, which includes [Ollama Portable Zip and llama.cpp Portable Zip](https://github.com/ipex-llm/ipex-llm/releases/tag/v2.2.0).
 - [2025/03] We added support for **Gemma3** model in the latest [llama.cpp Portable Zip](https://github.com/intel/ipex-llm/issues/12963#issuecomment-2724032898).
 - [2025/03] We can now run **DeepSeek-R1-671B-Q4_K_M** with 1 or 2 Arc A770 on Xeon using the latest [llama.cpp Portable Zip](docs/mddocs/Quickstart/llamacpp_portable_zip_gpu_quickstart.md#flashmoe-for-deepseek-v3r1).
