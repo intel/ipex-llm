@@ -4,16 +4,16 @@ In this directory, you will find examples on how you could apply IPEX-LLM INT4 o
 
 ## 0. Requirements & Installation
 
-To run these examples with IPEX-LLM on Intel GPUs, we have some recommended requirements for your machine, please refer to [here](../../../README.md#requirements) for more information.
+To run these examples with IPEX-LLM on Intel GPUs, we have some recommended requirements for your machine, please refer to here ([Windows](../../../../../../../docs/mddocs/Quickstart/install_pytorch26_gpu.md#install-prerequisites) or [Linux](../../../../../../../docs/mddocs/Quickstart/install_pytorch26_gpu.md#install-prerequisites-1)) for more information.
 
 ### 0.1 Installation
 
-```bash
-conda create -n llm python=3.11
-conda activate llm
+Visit [Install IPEX-LLM on Intel GPU with PyTorch 2.6](../../../../../../../docs/mddocs/Quickstart/install_pytorch26_gpu.md), and follow **Install `ipex-llm`** ([Windows](../../../../../../../docs/mddocs/Quickstart/install_pytorch26_gpu.md#install-ipex-llm) or [Linux](../../../../../../../docs/mddocs/Quickstart/install_pytorch26_gpu.md#install-ipex-llm-1)).
 
-# install IPEX-LLM with PyTorch 2.6 supports
-pip install --pre --upgrade ipex-llm[xpu_2.6] --extra-index-url https://download.pytorch.org/whl/xpu
+Then, install other dependencies for Moonlight model with IPEX-LLM optimizations:
+
+```bash
+conda activate llm-pt26
 
 pip install transformers==4.45.0
 pip install accelerate==0.33.0
@@ -24,23 +24,7 @@ pip install tiktoken blobfile
 
 ### 0.2 Runtime Configuration
 
-- For Windows users:
-  ```cmd
-  set SYCL_CACHE_PERSISTENT=1
-  :: optional
-  set SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS=1
-  ``` 
-
-- For Linux users:
-  ```cmd
-  unset OCL_ICD_VENDOR
-  export SYCL_CACHE_PERSISTENT=1
-  # optional
-  export SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS=1
-  ``` 
-
-> [!NOTE]
-> The environment variable `SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS` determines the usage of immediate command lists for task submission to the GPU. Enabling this mode may improve performance, but sometimes this may also cause performance degradation. Please consider experimenting with and without this environment variable for best performance. For more details, you can refer to [this article](https://www.intel.com/content/www/us/en/developer/articles/guide/level-zero-immediate-command-lists.html)
+Visit [Install IPEX-LLM on Intel GPU with PyTorch 2.6](../../../../../../../docs/mddocs/Quickstart/install_pytorch26_gpu.md), and follow **Runtime Configurations** ([Windows](../../../../../../../docs/mddocs/Quickstart/install_pytorch26_gpu.md#runtime-configurations) or [Linux](../../../../../../../docs/mddocs/Quickstart/install_pytorch26_gpu.md#runtime-configurations-1)).
 
 ## 1. Download & Convert Model
 

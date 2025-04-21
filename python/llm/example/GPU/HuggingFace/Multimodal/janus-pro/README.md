@@ -5,29 +5,12 @@ In the following examples, we will guide you to apply IPEX-LLM optimizations on 
 
 ## 0. Requirements & Installation
 
-To run these examples with IPEX-LLM on Intel GPUs, we have some recommended requirements for your machine, please refer to [here](../../../README.md#requirements) for more information.
+To run these examples with IPEX-LLM on Intel GPUs, we have some recommended requirements for your machine, please refer to here ([Windows](../../../../../../../docs/mddocs/Quickstart/install_pytorch26_gpu.md#install-prerequisites) or [Linux](../../../../../../../docs/mddocs/Quickstart/install_pytorch26_gpu.md#install-prerequisites-1)) for more information.
 
 ### 0.1 Install IPEX-LLM
 
-- For **Intel Core™ Ultra Processors (Series 2) with processor number 2xxV (code name Lunar Lake)** on Windows:
-  ```cmd
-  conda create -n llm python=3.11 libuv
-  conda activate llm
+Visit [Install IPEX-LLM on Intel GPU with PyTorch 2.6](../../../../../../../docs/mddocs/Quickstart/install_pytorch26_gpu.md), and follow **Install `ipex-llm`** ([Windows](../../../../../../../docs/mddocs/Quickstart/install_pytorch26_gpu.md#install-ipex-llm) or [Linux](../../../../../../../docs/mddocs/Quickstart/install_pytorch26_gpu.md#install-ipex-llm-1)).
 
-  :: or --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/lnl/cn/
-  pip install --pre --upgrade ipex-llm[xpu_lnl] --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/lnl/us/
-  ``` 
-- For **Intel Arc B-Series GPU (code name Battlemage)** on Linux:
-  ```cmd
-  conda create -n llm python=3.11
-  conda activate llm
-
-  # or --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/xpu/cn/
-  pip install --pre --upgrade ipex-llm[xpu-arc] --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/xpu/us/
-  ``` 
-
-> [!NOTE]
-> We will update for installation on more Intel GPU platforms.
 
 ###  0.2 Install Required Pacakges for Janus-Pro
 
@@ -55,18 +38,7 @@ cd ..
 
 ### 0.3 Runtime Configuration
 
-- For **Intel Core™ Ultra Processors (Series 2) with processor number 2xxV (code name Lunar Lake)** on Windows:
-  ```cmd
-  set SYCL_CACHE_PERSISTENT=1
-  ``` 
-- For **Intel Arc B-Series GPU (code name Battlemage)** on Linux:
-  ```bash
-  unset OCL_ICD_VENDOR
-  export SYCL_CACHE_PERSISTENT=1
-  ``` 
-
-> [!NOTE]
-> We will update for runtime configuration on more Intel GPU platforms.
+Visit [Install IPEX-LLM on Intel GPU with PyTorch 2.6](../../../../../../../docs/mddocs/Quickstart/install_pytorch26_gpu.md), and follow **Runtime Configurations** ([Windows](../../../../../../../docs/mddocs/Quickstart/install_pytorch26_gpu.md#runtime-configurations) or [Linux](../../../../../../../docs/mddocs/Quickstart/install_pytorch26_gpu.md#runtime-configurations-1)).
 
 ## 1. Example: Predict Tokens using `generate()` API
 In [generate.py](./generate.py), we show a use case for a Janus-Pro model to predict the next N tokens using `generate()` API based on text/image inputs, or a combination of two of them, with IPEX-LLM low-bit optimizations on Intel GPUs.
