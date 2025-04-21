@@ -67,27 +67,18 @@ conda activate llm
 With the `llm` environment active, install the appropriate `ipex-llm` package based on your use case:
 
 #### For PyTorch and HuggingFace:
-Install the `ipex-llm[xpu-arc]` package. Choose either the US or CN website for `extra-index-url`:
+Install the `ipex-llm[xpu_2.6]` package:
 
-- For **US**:
-  ```bash
-  pip install --pre --upgrade ipex-llm[xpu-arc] --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/xpu/us/
-  ```
-
-- For **CN**:
-  ```bash
-  pip install --pre --upgrade ipex-llm[xpu-arc] --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/xpu/cn/
-  ```
+```bash
+pip install --pre --upgrade ipex-llm[xpu_2.6] --extra-index-url https://download.pytorch.org/whl/xpu
+```
 
 #### For llama.cpp and Ollama:
-Install the `ipex-llm[cpp]` package.
+Install the `ipex-llm[cpp]` package:
 
-  ```bash
-  pip install --pre --upgrade ipex-llm[cpp] 
-  ```
-
-> [!NOTE]  
-> If you encounter network issues during installation, refer to the [troubleshooting guide](../Overview/install_gpu.md#install-ipex-llm-from-wheel-1) for alternative steps.
+```bash
+pip install --pre --upgrade ipex-llm[cpp] 
+```
 
 ---
 
@@ -106,7 +97,7 @@ If your driver version is lower than `32.0.101.6449/32.0.101.101.6256`, update i
 Download and install Miniforge for Windows from the [official page](https://conda-forge.org/download/). After installation, create and activate a Python environment:
 
 ```cmd
-conda create -n llm python=3.11 libuv
+conda create -n llm python=3.11
 conda activate llm
 ```
 
@@ -117,27 +108,18 @@ conda activate llm
 With the `llm` environment active, install the appropriate `ipex-llm` package based on your use case:
 
 #### For PyTorch and HuggingFace:
-Install the `ipex-llm[xpu-arc]` package. Choose either the US or CN website for `extra-index-url`:
+Install the `ipex-llm[xpu_2.6]` package:
 
-- For **US**:
-  ```cmd
-  pip install --pre --upgrade ipex-llm[xpu-arc] --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/xpu/us/
-  ```
-
-- For **CN**:
-  ```cmd
-  pip install --pre --upgrade ipex-llm[xpu-arc] --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/xpu/cn/
-  ```
+```bash
+pip install --pre --upgrade ipex-llm[xpu_2.6] --extra-index-url https://download.pytorch.org/whl/xpu
+```
 
 #### For llama.cpp and Ollama:
-Install the `ipex-llm[cpp]` package. 
+Install the `ipex-llm[cpp]` package.:
 
-  ```cmd
-  pip install --pre --upgrade ipex-llm[cpp] 
-  ```
-
-> [!NOTE]  
-> If you encounter network issues while installing IPEX, refer to [this guide](../Overview/install_gpu.md#install-ipex-llm-from-wheel) for troubleshooting advice.
+```cmd
+pip install --pre --upgrade ipex-llm[cpp] 
+```
 
 ---
 
@@ -166,21 +148,24 @@ Run a Quick PyTorch Example:
    torch.Size([1, 1, 40, 40])
    ```
 
-For benchmarks and performance measurement, refer to the [Benchmark Quickstart guide](https://github.com/intel-analytics/ipex-llm/blob/main/docs/mddocs/Quickstart/benchmark_quickstart.md).
+> [!TIP]
+> Please refer to here ([Linux](./install_pytorch26_gpu.md#runtime-configurations-1) or [Windows](./install_pytorch26_gpu.md#runtime-configurations)) regarding runtime configurations for PyTorch with IPEX-LLM on B-Series GPU.
+
+For benchmarks and performance measurement, refer to the [Benchmark Quickstart guide](./benchmark_quickstart.md).
 
 ---
 
 ### 3.2 Ollama
 
-To integrate and run with **Ollama**, follow the [Ollama Quickstart guide](https://github.com/intel-analytics/ipex-llm/blob/main/docs/mddocs/Quickstart/ollama_quickstart.md).
+To integrate and run with **Ollama**, follow the [Ollama Quickstart guide](./ollama_quickstart.md).
 
 ### 3.3 llama.cpp
 
-For instructions on how to run **llama.cpp** with IPEX-LLM, refer to the [llama.cpp Quickstart guide](https://github.com/intel-analytics/ipex-llm/blob/main/docs/mddocs/Quickstart/llama_cpp_quickstart.md).
+For instructions on how to run **llama.cpp** with IPEX-LLM, refer to the [llama.cpp Quickstart guide](./llama_cpp_quickstart.md).
 
 ### 3.4 vLLM
 
-To set up and run **vLLM**, follow the [vLLM Quickstart guide](https://github.com/intel-analytics/ipex-llm/blob/main/docs/mddocs/Quickstart/vLLM_quickstart.md).
+To set up and run **vLLM**, follow the [vLLM Quickstart guide](./vLLM_quickstart.md).
 
 ## 4. Troubleshooting
 
