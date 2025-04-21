@@ -6,7 +6,7 @@ Here, we provide how to run [torch graph mode](https://pytorch.org/blog/optimizi
 ```bash
 conda create -n ipex-llm python=3.11
 conda activate ipex-llm
-pip install --pre --upgrade ipex-llm[xpu_arc] --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/xpu/cn/
+pip install --pre --upgrade ipex-llm[xpu_arc]==2.2.0 --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/xpu/cn/
 pip install --pre pytorch-triton-xpu==3.0.0+1b2f15840e --index-url https://download.pytorch.org/whl/nightly/xpu
 conda install -c conda-forge libstdcxx-ng
 unset OCL_ICD_VENDORS
