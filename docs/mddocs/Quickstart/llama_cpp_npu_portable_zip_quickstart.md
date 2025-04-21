@@ -3,7 +3,7 @@
   <b>< English</b> | <a href='./llama_cpp_npu_portable_zip_quickstart.zh-CN.md'>中文</a> >
 </p>
 
-IPEX-LLM provides llama.cpp support for running GGUF models on Intel NPU. This guide demonstrates how to use [llama.cpp NPU portable zip](https://github.com/intel/ipex-llm/releases/tag/v2.2.0) to directly run on Intel NPU (without the need of manual installations).
+IPEX-LLM provides llama.cpp support for running GGUF models on Intel NPU. This guide demonstrates how to use [llama.cpp NPU portable zip](https://github.com/ipex-llm/ipex-llm/releases/tag/v2.2.0) to directly run on Intel NPU (without the need of manual installations).
 
 > [!IMPORTANT]
 > 
@@ -29,7 +29,7 @@ Check your NPU driver version, and update it if needed:
 
 ## Step 1: Download and Unzip
 
-Download IPEX-LLM llama.cpp NPU portable zip for Windows users from the [link](https://github.com/intel/ipex-llm/releases/tag/v2.2.0).
+Download IPEX-LLM llama.cpp NPU portable zip for Windows users from the [link](https://github.com/ipex-llm/ipex-llm/releases/tag/v2.2.0).
 
 Then, extract the zip file to a folder.
 
