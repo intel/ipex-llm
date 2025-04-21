@@ -3,7 +3,7 @@
    < <a href='./ollama_portable_zip_quickstart.md'>English</a> | <b>中文</b> >
 </p>
 
-本指南演示如何使用 [Ollama portable zip](https://github.com/ipex-llm/ipex-llm/releases/tag/v2.2.0) 通过 `ipex-llm` 在 Intel GPU 上直接免安装运行 Ollama。
+本指南演示如何使用 [Ollama portable zip](https://github.com/ipex-llm/ipex-llm/releases/tag/v2.3.0-nightly) 通过 `ipex-llm` 在 Intel GPU 上直接免安装运行 Ollama。
 
 > [!NOTE]
 > Ollama portable zip 在如下设备上进行了验证:
@@ -43,7 +43,7 @@
 
 ### 步骤 1：下载和解压
 
-从此[链接](https://github.com/ipex-llm/ipex-llm/releases/tag/v2.2.0)下载 IPEX-LLM Ollama portable zip。
+从此[链接](https://github.com/ipex-llm/ipex-llm/releases/tag/v2.3.0-nightly)下载 IPEX-LLM Ollama portable zip。
 
 然后，将 zip 文件解压到一个文件夹中。
 
@@ -76,7 +76,7 @@
 
 ### 步骤 1：下载和解压
 
-从此[链接](https://github.com/ipex-llm/ipex-llm/releases/tag/v2.2.0)下载 IPEX-LLM Ollama portable tgz。
+从此[链接](https://github.com/ipex-llm/ipex-llm/releases/tag/v2.3.0-nightly)下载 IPEX-LLM Ollama portable tgz。
 
 然后，开启一个终端，输入如下命令将 tgz 文件解压到一个文件夹中。
 ```bash
