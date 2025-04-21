@@ -6,7 +6,7 @@
 **`ipex-llm`** 是一个将大语言模型高效地运行于 Intel [GPU](docs/mddocs/Quickstart/install_windows_gpu.md) *(如搭载集成显卡的个人电脑，Arc 独立显卡、Flex 及 Max 数据中心 GPU 等)*、[NPU](docs/mddocs/Quickstart/npu_quickstart.md) 和 CPU 上的大模型 XPU 加速库[^1]。 
 
 ## 最新更新 🔥 
-- [2025/04] 发布 `ipex-llm 2.2.0`, 其中包括 [Ollama Portable Zip 和 llama.cpp Portable Zip](https://github.com/intel/ipex-llm/releases/tag/v2.2.0)。
+- [2025/04] 发布 `ipex-llm 2.2.0`, 其中包括 [Ollama Portable Zip 和 llama.cpp Portable Zip](https://github.com/ipex-llm/ipex-llm/releases/tag/v2.2.0)。
 - [2025/03] 使用最新 [llama.cpp Portable Zip](Quickstart/llamacpp_portable_zip_gpu_quickstart.zh-CN.md#flashmoe-运行-deepseek-v3r1), 可以在 Xeon 上通过1到2张 Arc A770 GPU 运行 **DeepSeek-R1-671B-Q4_K_M**。
 - [2025/02] 新增 [llama.cpp Portable Zip](https://github.com/intel/ipex-llm/releases/tag/v2.2.0-nightly) 在 Intel **GPU** (包括 [Windows](Quickstart/llamacpp_portable_zip_gpu_quickstart.zh-CN.md#windows-用户指南) 和 [Linux](Quickstart/llamacpp_portable_zip_gpu_quickstart.zh-CN.md#linux-用户指南)) 和 **NPU** (仅 [Windows](Quickstart/llama_cpp_npu_portable_zip_quickstart.zh-CN.md)) 上直接**免安装运行 llama.cpp**。
 - [2025/02] 新增 [Ollama Portable Zip](https://github.com/intel/ipex-llm/releases/tag/v2.2.0-nightly) 在 Intel **GPU** 上直接**免安装运行 Ollama** (包括 [Windows](Quickstart/ollama_portable_zip_quickstart.zh-CN.md#windows用户指南) 和 [Linux](Quickstart/ollama_portable_zip_quickstart.zh-CN.md#linux用户指南))。
