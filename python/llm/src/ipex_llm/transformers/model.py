@@ -775,12 +775,15 @@ class _BaseAutoModelClass:
                                                                 model)
             torch.distributed.barrier()
 
-        # add lookup_generate to loaded model
-        from .lookup import lookup_generate
-        import types
-        model.lookup_generate = types.MethodType(lookup_generate, model)
-        if model.config.model_type == "minicpmv" and hasattr(model, 'llm'):
-            model.llm.lookup_generate = types.MethodType(lookup_generate, model.llm)
+        try:
+            # add lookup_generate to loaded model
+            from .lookup import lookup_generate
+            import types
+            model.lookup_generate = types.MethodType(lookup_generate, model)
+            if model.config.model_type == "minicpmv" and hasattr(model, 'llm'):
+                model.llm.lookup_generate = types.MethodType(lookup_generate, model.llm)
+        except ImportError as e:
+            pass
 
         return model
 

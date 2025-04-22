@@ -32,7 +32,7 @@ from ipex_llm.utils.common.log4Error import invalidInputError
 from ipex_llm.transformers.kv import DynamicNormalCache
 from ipex_llm.transformers.models.common import padding_mla_v_hd_base
 from ipex_llm.transformers.models.common import scaled_dot_product_attention
-from ipex_llm.transformers.models.utils import rotate_half
+from ipex_llm.transformers.models.utils import rotate_half, use_fuse_moe
 
 
 def padding_mla_v_hd(module: torch.nn.Module):
@@ -291,11 +291,8 @@ def fuse_gate_forward(self, x: torch.Tensor):
 
 
 def moe_infer_decode(self, x: torch.Tensor, topk_ids: torch.Tensor, topk_weight: torch.Tensor):
-    if (
-        x.device.type == "xpu"
-        and x.dtype in [torch.float, torch.half]
-        and self.experts[0].down_proj.qtype == 2
-    ):
+    qtype = self.experts[0].down_proj.qtype
+    if use_fuse_moe(x, qtype):
         if getattr(self, "gates", None) is None:
             gate_addrs = [expert.gate_proj.weight.data_ptr() for expert in self.experts]
             up_addrs = [expert.up_proj.weight.data_ptr() for expert in self.experts]
@@ -310,7 +307,7 @@ def moe_infer_decode(self, x: torch.Tensor, topk_ids: torch.Tensor, topk_weight:
         import xe_linear
         final_out = xe_linear.moe_forward_vec(
             x, topk_ids, topk_weight, self.gates, self.ups, self.downs,
-            x.size(-1), self.experts[0].intermediate_size, 2
+            x.size(-1), self.experts[0].intermediate_size, qtype
         )
     else:
         idxs = topk_ids.flatten().tolist()

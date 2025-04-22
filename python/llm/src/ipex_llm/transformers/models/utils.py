@@ -394,3 +394,11 @@ def make_cache_contiguous_inplaced(cos: torch.Tensor, sin: torch.Tensor):
         new_sin = sin.contiguous()
         cos.set_(new_cos)
         sin.set_(new_sin)
+
+
+def use_fuse_moe(hidden_states: torch.Tensor, qtype: int):
+    return (
+        hidden_states.device.type == "xpu"
+        and hidden_states.dtype in [torch.float, torch.half]
+        and qtype in [ggml_tensor_qtype["sym_int4"], ggml_tensor_qtype["woq_int4"]]
+    )
