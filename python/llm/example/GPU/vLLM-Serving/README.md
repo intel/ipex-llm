@@ -290,7 +290,7 @@ If the service is booted successfully, you can find the following log:
 
 
 #### Varlen Prefill
-The `Varlen Prefill` feature will reduce the memory usage for first token generation, which will leads to longer context support and more kv cache space.  Performance may slow down on Arc A770, but may improve on BMG platform.
+The `Varlen Prefill` feature will reduce the memory usage for first token generation, which will leads to longer context support and more kv cache space.
 
 To enable this feature, you can set the environment variable `IPEX_LLM_PREFILL_VARLEN_BACKEND` to 1.
 
