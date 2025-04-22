@@ -407,7 +407,7 @@ We recommend using [Miniforge](https://conda-forge.org/download/) to create a py
       > The ``xpu`` option will install IPEX-LLM with PyTorch 2.1 by default, which is equivalent to
       >
       > ```bash
-      > pip install --pre --upgrade ipex-llm[xpu_2.1] --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/> xpu/us/
+      > pip install --pre --upgrade ipex-llm[xpu_2.1] --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/xpu/us/
       > ```
 
    - For **CN**:
@@ -424,7 +424,7 @@ We recommend using [Miniforge](https://conda-forge.org/download/) to create a py
       > The ``xpu`` option will install IPEX-LLM with PyTorch 2.1 by default, which is equivalent to
       >
       > ```bash
-      > pip install --pre --upgrade ipex-llm[xpu_2.1] --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/> xpu/cn/
+      > pip install --pre --upgrade ipex-llm[xpu_2.1] --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/xpu/us/
       > ```
 
 - For **PyTorch 2.0** (deprecated for versions ``ipex-llm >= 2.1.0b20240511``):
