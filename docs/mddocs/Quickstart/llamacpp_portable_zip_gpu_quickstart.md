@@ -274,11 +274,12 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 <answer>XXXX</answer> [end of text]
 ```
 
-##### server
+##### Serving
 ```bash
 ./flash-moe -m /PATH/TO/DeepSeek-R1-Q4_K_M-00001-of-00009.gguf --serve -n 512 -np 2 -c 4096
 ```
 > `-n` means number of tokens to predict, `-np` means number of parallel sequences to decode, `-c` means the size of whole context, you can adjust these values based on your requirements.
+> Serving function is available from [v2.3.0 nightly build](https://github.com/ipex-llm/ipex-llm/releases/tag/v2.3.0-nightly).
 
 Part of outputs
 
