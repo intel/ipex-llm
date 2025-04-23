@@ -281,11 +281,12 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 ./flash-moe -m /PATH/TO/DeepSeek-R1-Q4_K_M-00001-of-00009.gguf --serve -n 512 -np 2 -c 4096
 ```
 > `-n`代表预测字符的数目, `-np`代表并行解码序列的数目, `-c`代表整个上下文序列的最大长度，你可以根据你的需要自行调整这些参数数值。
+>
 > 推理服务需要[v2.3.0 nightly build](https://github.com/ipex-llm/ipex-llm/releases/tag/v2.3.0-nightly)或者更新的版本。
 
-Part of outputs
+部分输出：
 
-```部分输出
+```bash
 ...
 llama_init_from_model: graph nodes  = 3560
 llama_init_from_model: graph splits = 121
