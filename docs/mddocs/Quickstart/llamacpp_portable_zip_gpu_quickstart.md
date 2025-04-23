@@ -16,23 +16,32 @@ This guide demonstrates how to use [llama.cpp portable zip](https://github.com/i
 > - Intel Arc B-Series GPU
 
 ## Table of Contents
-- [Windows Quickstart](#windows-quickstart)
-  - [Prerequisites](#prerequisites)
-  - [Step 1: Download and Unzip](#step-1-download-and-unzip)
-  - [Step 2: Runtime Configuration](#step-2-runtime-configuration)
-  - [Step 3: Run GGUF models](#step-3-run-gguf-models)
-- [Linux Quickstart](#linux-quickstart)
-  - [Prerequisites](#prerequisites-1)
-  - [Step 1: Download and Extract](#step-1-download-and-extract)
-  - [Step 2: Runtime Configuration](#step-2-runtime-configuration-1)
-  - [Step 3: Run GGUF models](#step-3-run-gguf-models-1)
-  - [(New) FlashMoE for DeepSeek V3/R1 671B using llama.cpp](#flashmoe-for-deepseek-v3r1)
-- [Tips & Troubleshooting](#tips--troubleshooting)
-  - [Error: Detected different sycl devices](#error-detected-different-sycl-devices)
-  - [Multi-GPUs usage](#multi-gpus-usage)
-  - [Performance Environment](#performance-environment)
-  - [Signature Verification](#signature-verification)
-- [More Details](llama_cpp_quickstart.md)
+- [Run llama.cpp Portable Zip on Intel GPU with IPEX-LLM](#run-llamacpp-portable-zip-on-intel-gpu-with-ipex-llm)
+  - [Table of Contents](#table-of-contents)
+  - [Windows Quickstart](#windows-quickstart)
+    - [Prerequisites](#prerequisites)
+    - [Step 1: Download and Unzip](#step-1-download-and-unzip)
+    - [Step 2: Runtime Configuration](#step-2-runtime-configuration)
+    - [Step 3: Run GGUF models](#step-3-run-gguf-models)
+      - [Model Download](#model-download)
+      - [Run GGUF model](#run-gguf-model)
+  - [Linux Quickstart](#linux-quickstart)
+    - [Prerequisites](#prerequisites-1)
+    - [Step 1: Download and Extract](#step-1-download-and-extract)
+    - [Step 2: Runtime Configuration](#step-2-runtime-configuration-1)
+    - [Step 3: Run GGUF models](#step-3-run-gguf-models-1)
+      - [Model Download](#model-download-1)
+      - [Run GGUF model](#run-gguf-model-1)
+    - [FlashMoE for DeepSeek V3/R1](#flashmoe-for-deepseek-v3r1)
+      - [Run DeepSeek V3/R1 with FlashMoE](#run-deepseek-v3r1-with-flashmoe)
+        - [cli](#cli)
+        - [server](#server)
+  - [Tips \& Troubleshooting](#tips--troubleshooting)
+    - [Error: Detected different sycl devices](#error-detected-different-sycl-devices)
+    - [Multi-GPUs usage](#multi-gpus-usage)
+    - [Performance Environment](#performance-environment)
+      - [SYCL\_PI\_LEVEL\_ZERO\_USE\_IMMEDIATE\_COMMANDLISTS](#sycl_pi_level_zero_use_immediate_commandlists)
+    - [Signature Verification](#signature-verification)
 
 ## Windows Quickstart
 
@@ -204,6 +213,8 @@ Tested MoE GGUF Models (other MoE GGUF models are also supported):
 - [DeepSeek-V3-Q6_K](https://huggingface.co/unsloth/DeepSeek-V3-GGUF/tree/main/DeepSeek-V3-Q6_K)
 - [DeepSeek-R1-Q4_K_M.gguf](https://huggingface.co/unsloth/DeepSeek-R1-GGUF/tree/main/DeepSeek-R1-Q4_K_M)
 - [DeepSeek-R1-Q6_K](https://huggingface.co/unsloth/DeepSeek-R1-GGUF/tree/main/DeepSeek-R1-Q6_K)
+- [DeepSeek-V3-0324-GGUF/Q4_K_M](https://huggingface.co/unsloth/DeepSeek-V3-0324-GGUF/tree/main/Q4_K_M)
+- [DeepSeek-V3-0324-GGUF/Q6_K](https://huggingface.co/unsloth/DeepSeek-V3-0324-GGUF/tree/main/Q6_K)
 
 #### Run DeepSeek V3/R1 with FlashMoE
 
@@ -221,6 +232,7 @@ Before running, you should download or copy community GGUF model to your local d
 
 Change `/PATH/TO/DeepSeek-R1-Q4_K_M-00001-of-00009.gguf` to your model path, then run `DeepSeek-R1-Q4_K_M.gguf`
 
+##### cli
 ```bash
 ./flash-moe -m /PATH/TO/DeepSeek-R1-Q4_K_M-00001-of-00009.gguf --prompt "What's AI?" -no-cnv
 ```
@@ -271,6 +283,30 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 <answer>XXXX</answer> [end of text]
 ```
 
+##### server
+```bash
+./flash-moe -m /PATH/TO/DeepSeek-R1-Q4_K_M-00001-of-00009.gguf --serve -n 512 -np 2 -c 4096
+```
+> `-n` means number of tokens to predict, `-np` means number of parallel sequences to decode, `-c` means the size of whole context, you can adjust these values based on your requirements.
+
+Part of outputs
+
+```bash
+...
+llama_init_from_model: graph nodes  = 3560
+llama_init_from_model: graph splits = 121
+common_init_from_params: setting dry_penalty_last_n to ctx_size = 4096
+common_init_from_params: warming up the model with an empty run - please wait ... (--no-warmup to disable)
+srv          init: initializing slots, n_slots = 2
+slot         init: id  0 | task -1 | new slot n_ctx_slot = 2048
+slot         init: id  1 | task -1 | new slot n_ctx_slot = 2048
+main: model loaded
+main: chat template, chat_template: {% if not add_generation_prompt is defined %}{% set add_generation_prompt = false %}{% endif %}{% set ns = namespace(is_first=false, is_tool=false, is_output_first=true, system_prompt='', is_first_sp=true) %}{%- for message in messages %}{%- if message['role'] == 'system' %}{%- if ns.is_first_sp %}{% set ns.system_prompt = ns.system_prompt + message['content'] %}{% set ns.is_first_sp = false %}{%- else %}{% set ns.system_prompt = ns.system_prompt + '\n\n' + message['content'] %}{%- endif %}{%- endif %}{%- endfor %}{{ bos_token }}{{ ns.system_prompt }}{%- for message in messages %}{%- if message['role'] == 'user' %}{%- set ns.is_tool = false -%}{{'<｜User｜>' + message['content']}}{%- endif %}{%- if message['role'] == 'assistant' and 'tool_calls' in message %}{%- set ns.is_tool = false -%}{%- for tool in message['tool_calls'] %}{%- if not ns.is_first %}{%- if message['content'] is none %}{{'<｜Assistant｜><｜tool▁calls▁begin｜><｜tool▁call▁begin｜>' + tool['type'] + '<｜tool▁sep｜>' + tool['function']['name'] + '\n' + '```json' + '\n' + tool['function']['arguments'] + '\n' + '```' + '<｜tool▁call▁end｜>'}}{%- else %}{{'<｜Assistant｜>' + message['content'] + '<｜tool▁calls▁begin｜><｜tool▁call▁begin｜>' + tool['type'] + '<｜tool▁sep｜>' + tool['function']['name'] + '\n' + '```json' + '\n' + tool['function']['arguments'] + '\n' + '```' + '<｜tool▁call▁end｜>'}}{%- endif %}{%- set ns.is_first = true -%}{%- else %}{{'\n' + '<｜tool▁call▁begin｜>' + tool['type'] + '<｜tool▁sep｜>' + tool['function']['name'] + '\n' + '```json' + '\n' + tool['function']['arguments'] + '\n' + '```' + '<｜tool▁call▁end｜>'}}{%- endif %}{%- endfor %}{{'<｜tool▁calls▁end｜><｜end▁of▁sentence｜>'}}{%- endif %}{%- if message['role'] == 'assistant' and 'tool_calls' not in message %}{%- if ns.is_tool %}{{'<｜tool▁outputs▁end｜>' + message['content'] + '<｜end▁of▁sentence｜>'}}{%- set ns.is_tool = false -%}{%- else %}{% set content = message['content'] %}{% if '</think>' in content %}{% set content = content.split('</think>')[-1] %}{% endif %}{{'<｜Assistant｜>' + content + '<｜end▁of▁sentence｜>'}}{%- endif %}{%- endif %}{%- if message['role'] == 'tool' %}{%- set ns.is_tool = true -%}{%- if ns.is_output_first %}{{'<｜tool▁outputs▁begin｜><｜tool▁output▁begin｜>' + message['content'] + '<｜tool▁output▁end｜>'}}{%- set ns.is_output_first = false %}{%- else %}{{'<｜tool▁output▁begin｜>' + message['content'] + '<｜tool▁output▁end｜>'}}{%- endif %}{%- endif %}{%- endfor -%}{% if ns.is_tool %}{{'<｜tool▁outputs▁end｜>'}}{% endif %}{% if add_generation_prompt and not ns.is_tool %}{{'<｜Assistant｜>'}}{% endif %}, example_format: 'You are a helpful assistant
+
+<｜User｜>Hello<｜Assistant｜>Hi there<｜end▁of▁sentence｜><｜User｜>How are you?<｜Assistant｜>'
+main: server is listening on http://127.0.0.1:8080 - starting the main loop
+srv  update_slots: all slots are idle
+```
 
 ## Tips & Troubleshooting
 
