@@ -64,6 +64,9 @@ pip install ray
 export USE_XETLA=OFF
 export SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS=2
 export SYCL_CACHE_PERSISTENT=1
+
+# If you are using woq_int4, be sure to setup the following environment variable based on the cards you want to use:
+export ONEAPI_DEVICE_SELECTOR=level_zero:0,1,2,3   # In case of four cards
 ```
 ### 3. Offline inference/Service
 
