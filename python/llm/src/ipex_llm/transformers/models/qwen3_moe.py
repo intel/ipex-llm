@@ -85,8 +85,9 @@ def qwen3_moe_attention_forward(
         query_states, key_states = apply_rotary_pos_emb(query_states, key_states, cos, sin)
 
     if past_key_value is not None:
+        cache_kwargs = {"sin": sin, "cos": cos, "cache_position": cache_position}
         key_states, value_states = past_key_value.update(key_states, value_states,
-                                                         self.layer_idx, None)
+                                                         self.layer_idx, cache_kwargs)
     attn_weights = None
     attn_output = scaled_dot_product_attention(
         query_states, key_states, value_states,
