@@ -94,7 +94,7 @@ def qwen3_moe_attention_forward(
     )
     attn_output = attn_output.transpose(1, 2).contiguous()
 
-    attn_output = attn_output.reshape(bsz, q_len, -1).contiguous()
+    attn_output = attn_output.reshape(bsz, q_len, -1)
     attn_output = self.o_proj(attn_output)
     return attn_output, attn_weights
 
@@ -112,7 +112,7 @@ def qwen3_moe_moe_forward(self, hidden_states: torch.Tensor) -> torch.Tensor:
     else:
         routing_weights = torch.nn.functional.softmax(router_logits, dim=1, dtype=torch.float)
         routing_weights, selected_experts = torch.topk(routing_weights, self.top_k, dim=-1)
-        if self.norm_topk_prob:  # only diff with mixtral sparse moe block!
+        if self.norm_topk_prob:
             routing_weights /= routing_weights.sum(dim=-1, keepdim=True)
         routing_weights = routing_weights.to(hidden_states.dtype)
 
