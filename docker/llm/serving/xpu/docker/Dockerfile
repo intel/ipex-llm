@@ -115,7 +115,7 @@ RUN set -eux && \
     # 
     # Install Python 3.11
     add-apt-repository ppa:deadsnakes/ppa -y && \
-    apt-get install -y --no-install-recommends python3.11 python3-pip python3.11-dev python3.11-distutils python3-wheel && \
+    apt-get install -y --no-install-recommends python3.11 python3.11-dev python3.11-distutils python3-wheel && \
     rm /usr/bin/python3 && ln -s /usr/bin/python3.11 /usr/bin/python3 && \
     ln -s /usr/bin/python3 /usr/bin/python && \
     # 
