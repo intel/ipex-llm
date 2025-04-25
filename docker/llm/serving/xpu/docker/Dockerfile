@@ -186,7 +186,10 @@ RUN set -eux && \
     VLLM_TARGET_DEVICE=xpu pip install --no-build-isolation -v /llm/vllm && \
     rm -rf /llm/vllm_for_multi_arc.patch && \
     pip install mpi4py fastapi uvicorn openai && \
-    pip install ray
+    pip install ray && \
+    # Link libze_loader.so
+    cd /usr/lib/x86_64-linux-gnu && \
+    ln -s libze_loader.so.1 libze_loader.so
 
 
 WORKDIR /llm/
