@@ -74,11 +74,7 @@ pip install --pre --upgrade ipex-llm[xpu_2.6] --extra-index-url https://download
 ```
 
 #### For llama.cpp and Ollama:
-Install the `ipex-llm[cpp]` package:
-
-```bash
-pip install --pre --upgrade ipex-llm[cpp] 
-```
+You may use [Ollama Portable Zip](./ollama_portable_zip_quickstart.md#linux-quickstart) and [llama.cpp Portable Zip](./llamacpp_portable_zip_gpu_quickstart.md#linux-quickstart).
 
 ---
 
@@ -100,7 +96,6 @@ Download and install Miniforge for Windows from the [official page](https://cond
 conda create -n llm python=3.11
 conda activate llm
 ```
-
 ---
 
 ### 2.2 Install IPEX-LLM
@@ -115,11 +110,8 @@ pip install --pre --upgrade ipex-llm[xpu_2.6] --extra-index-url https://download
 ```
 
 #### For llama.cpp and Ollama:
-Install the `ipex-llm[cpp]` package.:
 
-```cmd
-pip install --pre --upgrade ipex-llm[cpp] 
-```
+You may use [Ollama Portable Zip](./ollama_portable_zip_quickstart.md#windows-quickstart) and [llama.cpp Portable Zip](./llamacpp_portable_zip_gpu_quickstart.md#windows-quickstart).
 
 ---
 
@@ -157,11 +149,11 @@ For benchmarks and performance measurement, refer to the [Benchmark Quickstart g
 
 ### 3.2 Ollama
 
-To integrate and run with **Ollama**, follow the [Ollama Quickstart guide](./ollama_quickstart.md).
+To integrate and run with **Ollama**, follow the [Ollama Quickstart guide](./ollama_portable_zip_quickstart.md).
 
 ### 3.3 llama.cpp
 
-For instructions on how to run **llama.cpp** with IPEX-LLM, refer to the [llama.cpp Quickstart guide](./llama_cpp_quickstart.md).
+For instructions on how to run **llama.cpp** with IPEX-LLM, refer to the [llama.cpp Quickstart guide](./llamacpp_portable_zip_gpu_quickstart.md).
 
 ### 3.4 vLLM
 
@@ -184,4 +176,3 @@ unset OCL_ICD_VENDORS
 This will remove the conflicting environment variable and allow your program to function correctly.
 
 **Note:** This issue only occurs on Linux systems. It does not affect Windows environments.
-
