@@ -15,9 +15,7 @@ prompt = "What is in the image?"
 def run_gemma3(question: str, modality: str):
     assert modality == "image"
 
-    prompt = f"<|User|>: <image>\n{question}\n\n<|Assistant|>:"
-
-    prompts =   ("<bos><start_of_turn>user\n"
+    prompt =   ("<bos><start_of_turn>user\n"
                 f"<start_of_image>{question}<end_of_turn>\n"
                  "<start_of_turn>model\n")
     stop_token_ids = None
@@ -105,7 +103,9 @@ llm = LLM(
           device="xpu",
           dtype=dtype,
           enforce_eager=True,
-          load_in_low_bit="fp8",
+          hf_overrides=hf_override,
+          mm_processor_kwargs=mm_processor_kwarg,
+          load_in_low_bit="sym_int4",
           tensor_parallel_size=2,
           disable_async_output_proc=True,
           distributed_executor_backend="ray",
