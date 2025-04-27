@@ -9,6 +9,7 @@ model_path = "/llm/models/Qwen2-VL-7B-Instruct"
 model_path = "/llm/models/glm-4v-9b"
 model_path = "/llm/models/InternVL2-8B"
 model_path = "/llm/models/gemma-3-12b-it"
+model_path = "/llm/models/Qwen2.5-VL-7B-Instruct"
 
 prompt = "What is in the image?"
 
@@ -79,6 +80,7 @@ def run_qwen2_vl(question, modality):
 model_example_map = {
     "minicpmv": run_minicpmv,
     "qwen2_vl": run_qwen2_vl,
+    "qwen2_5_vl": run_qwen2_vl,
     # only for glm4v
     "chatglm": run_glm4v,
     "internvl_chat": run_internvl,
