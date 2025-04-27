@@ -8,8 +8,20 @@ model_path = "/llm/models/MiniCPM-V-2_6"
 model_path = "/llm/models/Qwen2-VL-7B-Instruct"
 model_path = "/llm/models/glm-4v-9b"
 model_path = "/llm/models/InternVL2-8B"
+model_path = "/llm/models/gemma-3-12b-it"
 
 prompt = "What is in the image?"
+
+def run_gemma3(question: str, modality: str):
+    assert modality == "image"
+
+    prompt = f"<|User|>: <image>\n{question}\n\n<|Assistant|>:"
+
+    prompts =   ("<bos><start_of_turn>user\n"
+                f"<start_of_image>{question}<end_of_turn>\n"
+                 "<start_of_turn>model\n")
+    stop_token_ids = None
+    return prompt, stop_token_ids
 
 def run_internvl(question: str, modality: str):
     assert modality == "image"
@@ -72,15 +84,29 @@ model_example_map = {
     # only for glm4v
     "chatglm": run_glm4v,
     "internvl_chat": run_internvl,
+    "gemma3": run_gemma3,
 }
+
+if "glm-4v" in model_path:
+    hf_override = {"architectures": ["GLM4VForCausalLM"]}
+else:
+    hf_override = None
+
+dtype = "float16"
+if "gemma-3" in model_path:
+    mm_processor_kwarg = {"do_pan_and_scan": True}
+    dtype = "float32"
+else:
+    mm_processor_kwarg = None
+
 
 llm = LLM(
           model=model_path,
           device="xpu",
-          dtype="float16",
+          dtype=dtype,
           enforce_eager=True,
           load_in_low_bit="fp8",
-          tensor_parallel_size=1,
+          tensor_parallel_size=2,
           disable_async_output_proc=True,
           distributed_executor_backend="ray",
           max_model_len=4000,

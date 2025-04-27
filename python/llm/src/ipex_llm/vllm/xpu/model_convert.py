@@ -77,7 +77,8 @@ def _ipex_llm_convert(load_in_low_bit):
 
 def get_load_function(low_bit):
     def _ipex_llm_load_model(self) -> None:
-        _model_sample_convert()
+        if "gemma-3" not in self.model_config.model.lower():
+            _model_sample_convert()
 
         # from vllm.utils import measure_device_memory
         from vllm.utils import DeviceMemoryProfiler
