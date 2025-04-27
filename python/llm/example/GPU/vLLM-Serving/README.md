@@ -336,6 +336,8 @@ python -m ipex_llm.vllm.xpu.entrypoints.openai.api_server \
 ```
 
 After seaching has completed, it will show the recommended maximum context length in the log like:
+
+
 ![max_length](./max_length.png)
 
 Then, you can start the service with this maximum length:
