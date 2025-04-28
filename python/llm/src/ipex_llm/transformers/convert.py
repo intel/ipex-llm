@@ -1077,6 +1077,9 @@ def _optimize_pre(model, qtype=None):
     elif model.config.model_type == "qwen2_5_omni":
         from ipex_llm.transformers.models.qwen2_5_omni import merge_qkv
         model.apply(merge_qkv)
+    elif model.config.model_type == "qwen3":
+        from ipex_llm.transformers.models.qwen3 import merge_qkv
+        model.apply(merge_qkv)
     elif model.config.model_type == "qwen3_moe":
         from ipex_llm.transformers.models.qwen3_moe import merge_qkv
         model.apply(merge_qkv)
@@ -2108,17 +2111,27 @@ def _optimize_post(model):
             convert_forward(model.token2wav, module.DiTAttention, dit_attention_forward)
             dit_model = model.token2wav.code2wav_dit_model
             dit_model._create_block_diff = MethodType(_create_block_diff, dit_model)
+    elif model.config.model_type == "qwen3":
+        modeling_module_name = model.__class__.__module__
+        module = importlib.import_module(modeling_module_name)
+        from ipex_llm.transformers.models.common import rms_norm_forward
+        from ipex_llm.transformers.models.qwen3 import qwen3_model_forward
+        from ipex_llm.transformers.models.qwen3 import qwen3_attention_forward
+        from ipex_llm.transformers.models.common import mlp_silu_forward
+        convert_forward(model, module.Qwen3RMSNorm, rms_norm_forward)
+        convert_forward(model, module.Qwen3Model, qwen3_model_forward)
+        convert_forward(model, module.Qwen3Attention, qwen3_attention_forward)
+        convert_forward(model, module.Qwen3MLP, mlp_silu_forward)
     elif model.config.model_type == "qwen3_moe":
-        # for Qwen1.5-MOE-A2.7B
         modeling_module_name = model.__class__.__module__
         module = importlib.import_module(modeling_module_name)
         from ipex_llm.transformers.models.common import rms_norm_forward
         from ipex_llm.transformers.models.qwen3_moe import qwen3_moe_model_forward
-        from ipex_llm.transformers.models.qwen3_moe import qwen3_moe_attention_forward
+        from ipex_llm.transformers.models.qwen3 import qwen3_attention_forward
         from ipex_llm.transformers.models.qwen3_moe import qwen3_moe_moe_forward
         convert_forward(model, module.Qwen3MoeRMSNorm, rms_norm_forward)
         convert_forward(model, module.Qwen3MoeModel, qwen3_moe_model_forward)
-        convert_forward(model, module.Qwen3MoeAttention, qwen3_moe_attention_forward)
+        convert_forward(model, module.Qwen3MoeAttention, qwen3_attention_forward)
         convert_forward(model, module.Qwen3MoeSparseMoeBlock, qwen3_moe_moe_forward)
     return model
 

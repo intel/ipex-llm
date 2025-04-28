@@ -1,18 +1,14 @@
 import torch
-from typing import Optional, List, Tuple
+from typing import Optional, List
 from transformers.processing_utils import Unpack
-from transformers.cache_utils import Cache
 from transformers.modeling_outputs import MoeModelOutputWithPast
 from transformers.modeling_flash_attention_utils import FlashAttentionKwargs
 
-from transformers.models.qwen3_moe.modeling_qwen3_moe import apply_rotary_pos_emb
 from transformers.models.qwen3_moe.modeling_qwen3_moe import Qwen3MoeModel, Qwen3MoeAttention
 
 from ipex_llm.transformers.kv import DynamicNormalCache
 from ipex_llm.transformers.models.common import merge_qkv_base
-from ipex_llm.transformers.models.common import scaled_dot_product_attention
 from ipex_llm.transformers.models.utils import use_fuse_moe
-from ipex_llm.transformers.models.utils import make_cache_contiguous_inplaced
 
 
 def merge_qkv(module: torch.nn.Module):
@@ -53,51 +49,6 @@ def qwen3_moe_model_forward(
         cache_position=cache_position,
         **flash_attn_kwargs,
     )
-
-
-def qwen3_moe_attention_forward(
-    self,
-    hidden_states: torch.Tensor,
-    position_embeddings: Tuple[torch.Tensor, torch.Tensor],
-    attention_mask: Optional[torch.Tensor],
-    past_key_value: Optional[Cache] = None,
-    cache_position: Optional[torch.LongTensor] = None,
-    **kwargs: Unpack[FlashAttentionKwargs],
-):
-    bsz, q_len, _ = hidden_states.size()
-    device = hidden_states.device
-
-    qkv = self.qkv_proj(hidden_states)
-    qkv = qkv.view(bsz, q_len, -1, self.head_dim)
-    qkv = qkv.transpose(1, 2)
-    query_states, key_states, value_states = qkv.split([self.config.num_attention_heads,
-                                                        self.config.num_key_value_heads,
-                                                        self.config.num_key_value_heads], dim=1)
-    query_states = self.q_norm(query_states)
-    key_states = self.k_norm(key_states)
-
-    cos, sin = position_embeddings
-    if device.type == "xpu":
-        import xe_addons
-        make_cache_contiguous_inplaced(cos, sin)
-        xe_addons.rotary_half_with_cache_inplaced(query_states, key_states, cos, sin)
-    else:
-        query_states, key_states = apply_rotary_pos_emb(query_states, key_states, cos, sin)
-
-    if past_key_value is not None:
-        cache_kwargs = {"sin": sin, "cos": cos, "cache_position": cache_position}
-        key_states, value_states = past_key_value.update(key_states, value_states,
-                                                         self.layer_idx, cache_kwargs)
-    attn_weights = None
-    attn_output = scaled_dot_product_attention(
-        query_states, key_states, value_states,
-        attention_mask, q_len == key_states.size(2), self.scaling
-    )
-    attn_output = attn_output.transpose(1, 2).contiguous()
-
-    attn_output = attn_output.reshape(bsz, q_len, -1)
-    attn_output = self.o_proj(attn_output)
-    return attn_output, attn_weights
 
 
 def qwen3_moe_moe_forward(self, hidden_states: torch.Tensor) -> torch.Tensor:
