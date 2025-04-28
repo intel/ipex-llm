@@ -323,6 +323,16 @@ def setup_package():
                             "onednn-devel==2025.0.1",
                             "onednn==2025.0.1",
                             "dpcpp-cpp-rt==2025.0.2"]
+    
+    xpu_27_requires = copy.deepcopy(all_requires)
+    for exclude_require in cpu_torch_version:
+        xpu_26_requires.remove(exclude_require)
+    xpu_26_requires += ["torch==2.7.0+xpu",
+                        "torchvision==0.22.0+xpu",
+                        "torchaudio==2.7.0+xpu",
+                        "bigdl-core-xe-all==" + CORE_XE_VERSION,
+                        "onednn-devel==2025.1.0",
+                        "onednn==2025.1.0"]
 
     cpp_requires = ["bigdl-core-cpp==" + CORE_XE_VERSION,
                     "onednn-devel==2025.0.1;platform_system=='Windows'",
@@ -368,6 +378,7 @@ def setup_package():
                         "xpu-2-1": xpu_21_requires,
                         "xpu-2-6": xpu_26_requires,
                         "xpu-2-6-arl": xpu_26_arl_requires,
+                        "xpu-2-7": xpu_27_requires,
                         "serving": serving_requires,
                         "cpp": cpp_requires,
                         "llama-index": llama_index_requires}, # for internal usage when upstreaming for llama-index
