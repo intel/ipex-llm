@@ -326,8 +326,8 @@ def setup_package():
     
     xpu_27_requires = copy.deepcopy(all_requires)
     for exclude_require in cpu_torch_version:
-        xpu_26_requires.remove(exclude_require)
-    xpu_26_requires += ["torch==2.7.0+xpu",
+        xpu_27_requires.remove(exclude_require)
+    xpu_27_requires += ["torch==2.7.0+xpu",
                         "torchvision==0.22.0+xpu",
                         "torchaudio==2.7.0+xpu",
                         "bigdl-core-xe-all==" + CORE_XE_VERSION,
