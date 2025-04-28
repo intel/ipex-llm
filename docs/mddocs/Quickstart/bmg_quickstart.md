@@ -192,5 +192,5 @@ sudo sysctl -w net.ipv6.conf.lo.disable_ipv6=1
 Afterward, disconnect and reconnect your network adapter before attempting the installation again.
 
 > [!TIP]
-> - Please note that the disabling of IPv6 by the above command is temporary and will be reverted after a system reboot.
+> - The disabling of IPv6 by the above command is temporary and will be reverted after a system reboot.
 > - You could find more information about this issue [here](https://github.com/intel/ipex-llm/issues/13112).
