@@ -1,3 +1,19 @@
+#
+# Copyright 2016 The BigDL Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
 import torch
 from typing import Optional, List, Tuple
 from transformers.processing_utils import Unpack
@@ -5,13 +21,12 @@ from transformers.cache_utils import Cache
 from transformers.modeling_outputs import MoeModelOutputWithPast
 from transformers.modeling_flash_attention_utils import FlashAttentionKwargs
 
-from transformers.models.qwen3_moe.modeling_qwen3_moe import apply_rotary_pos_emb
-from transformers.models.qwen3_moe.modeling_qwen3_moe import Qwen3Model, Qwen3Attention
+from transformers.models.qwen3_moe.modeling_qwen3 import apply_rotary_pos_emb
+from transformers.models.qwen3_moe.modeling_qwen3 import Qwen3Model, Qwen3Attention
 
 from ipex_llm.transformers.kv import DynamicNormalCache
 from ipex_llm.transformers.models.common import merge_qkv_base
 from ipex_llm.transformers.models.common import scaled_dot_product_attention
-from ipex_llm.transformers.models.utils import use_fuse_moe
 from ipex_llm.transformers.models.utils import make_cache_contiguous_inplaced
 
 
