@@ -21,8 +21,8 @@ from transformers.cache_utils import Cache
 from transformers.modeling_outputs import MoeModelOutputWithPast
 from transformers.modeling_flash_attention_utils import FlashAttentionKwargs
 
-from transformers.models.qwen3_moe.modeling_qwen3 import apply_rotary_pos_emb
-from transformers.models.qwen3_moe.modeling_qwen3 import Qwen3Model, Qwen3Attention
+from transformers.models.qwen3.modeling_qwen3 import apply_rotary_pos_emb
+from transformers.models.qwen3.modeling_qwen3 import Qwen3Model, Qwen3Attention
 
 from ipex_llm.transformers.kv import DynamicNormalCache
 from ipex_llm.transformers.models.common import merge_qkv_base
