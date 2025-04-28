@@ -24,6 +24,7 @@ This guide demonstrates how to install and use IPEX-LLM on the Intel Arc B-Serie
    3.4 [vLLM](#34-vllm)
 4. [Troubleshooting](#4-troubleshooting)  
    4.1 [RuntimeError: could not create an engine](#41-runtimeerror-could-not-create-an-engine)
+   4.2 [Connection time out error when installing the intel-graphics PPA](#42-connection-time-out-error-when-installing-the-intel-graphics-ppa)
 ---
 
 ## 1. Linux
@@ -176,3 +177,19 @@ unset OCL_ICD_VENDORS
 This will remove the conflicting environment variable and allow your program to function correctly.
 
 **Note:** This issue only occurs on Linux systems. It does not affect Windows environments.
+
+### 4.2 Connection time out error when installing the intel-graphics PPA
+
+While [installting prerequisites on Linux](#11-install-prerequisites), if you encounter a connection time out error when adding the intel-graphics PPA, consider disabling IPv6 first through:
+
+```bash
+sudo sysctl -w net.ipv6.conf.all.disable_ipv6=1
+sudo sysctl -w net.ipv6.conf.default.disable_ipv6=1
+sudo sysctl -w net.ipv6.conf.lo.disable_ipv6=1
+```
+
+Afterward, disconnect and reconnect your network adapter before attempting the installation again.
+
+> [!TIP]
+> - Please note that the disabling of IPv6 by the above command is temporary and will be reverted after a system reboot.
+> - You could find more information about this issue [here](https://github.com/intel/ipex-llm/issues/13112).
