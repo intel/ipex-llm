@@ -48,12 +48,12 @@ from vllm.entrypoints.openai.protocol import (ChatCompletionRequest,
                                               EmbeddingResponse,
                                               EmbeddingResponseData,
                                               ErrorResponse,
-                                              LoadLoraAdapterRequest,
+                                              LoadLoRAAdapterRequest,
                                               PoolingRequest, PoolingResponse,
                                               ScoreRequest, ScoreResponse,
                                               TokenizeRequest,
                                               TokenizeResponse,
-                                              UnloadLoraAdapterRequest)
+                                              UnloadLoRAAdapterRequest)
 # yapf: enable
 from vllm.entrypoints.openai.serving_chat import OpenAIServingChat
 from vllm.entrypoints.openai.serving_completion import OpenAIServingCompletion
@@ -516,7 +516,7 @@ if envs.VLLM_ALLOW_RUNTIME_LORA_UPDATING:
         "This should ONLY be used for local development!")
 
     @router.post("/v1/load_lora_adapter")
-    async def load_lora_adapter(request: LoadLoraAdapterRequest,
+    async def load_lora_adapter(request: LoadLoRAAdapterRequest,
                                 raw_request: Request):
         for route in [chat, completion, embedding]:
             handler = route(raw_request)
@@ -529,7 +529,7 @@ if envs.VLLM_ALLOW_RUNTIME_LORA_UPDATING:
         return Response(status_code=200, content=response)
 
     @router.post("/v1/unload_lora_adapter")
-    async def unload_lora_adapter(request: UnloadLoraAdapterRequest,
+    async def unload_lora_adapter(request: UnloadLoRAAdapterRequest,
                                   raw_request: Request):
         for route in [chat, completion, embedding]:
             handler = route(raw_request)
