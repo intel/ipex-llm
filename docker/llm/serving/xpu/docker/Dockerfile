@@ -106,8 +106,6 @@ COPY docker/llm/serving/xpu/docker/vllm_for_multi_arc.patch /llm/
 COPY docker/llm/serving/xpu/docker/setvars.sh /opt/intel/1ccl-wks/
 
 # Copy required code from the build context (project root) instead of cloning
-# Copy the main ipex-llm source code
-COPY python/llm /llm/llm
 COPY python/llm/dev/benchmark/ /llm/benchmark/
 COPY python/llm/example/GPU/HuggingFace/LLM /llm/examples/
 COPY python/llm/example/GPU/vLLM-Serving/ /llm/vLLM-Serving/
@@ -154,6 +152,8 @@ RUN set -eux && \
 RUN set -eux && \
     pip install --upgrade requests argparse urllib3
 
+# Copy the main ipex-llm source code
+COPY python/llm /llm/llm
 # Install ipex-llm from the copied local source directory, using the extra index for dependencies
 RUN set -eux && \
     pip install --pre /llm/llm[xpu_2.6] --extra-index-url https://download.pytorch.org/whl/xpu
