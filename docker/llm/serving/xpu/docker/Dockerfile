@@ -156,7 +156,7 @@ RUN set -eux && \
 
 # Install ipex-llm from the copied local source directory, using the extra index for dependencies
 RUN set -eux && \
-    pip install /llm/llm[xpu_2.6] --extra-index-url https://download.pytorch.org/whl/xpu
+    pip install --pre /llm/llm[xpu_2.6] --extra-index-url https://download.pytorch.org/whl/xpu
 
 # Install other Python packages
 RUN set -eux && \
