@@ -58,7 +58,7 @@ RUN set -eux && \
     wget https://github.com/intel/compute-runtime/releases/download/24.52.32224.5/intel-opencl-icd_24.52.32224.5_amd64.deb && \
     wget https://github.com/intel/compute-runtime/releases/download/24.52.32224.5/libigdgmm12_22.5.5_amd64.deb && \
     dpkg -i *.deb
-# Install Intel PyTorch extension for LLM inference  
+# Install Intel PyTorch extension for LLM inference
 RUN set -eux && \
     pip install --pre --upgrade ipex-llm[xpu_2.6] --extra-index-url https://download.pytorch.org/whl/xpu && \
     pip install intel-extension-for-pytorch==2.6.10+xpu --extra-index-url=https://pytorch-extension.intel.com/release-whl/stable/xpu/cn/
@@ -124,53 +124,69 @@ ARG PIP_NO_CACHE_DIR=false
 # Set environment variables
 ENV TZ=Asia/Shanghai PYTHONUNBUFFERED=1 VLLM_RPC_TIMEOUT=100000
 
-# ai! split the below a bit into logical parts as a RUN statement each
+# Update and install basic dependencies, upgrade linux-libc-dev to fix CT7 CVEs
 RUN set -eux && \
-    #
-    # Update and install basic dependencies, upgrade linux-libc-dev to fix CT7 CVEs
     apt-get update && \
     apt-get install -y --no-install-recommends \
       linux-libc-dev \
       curl wget git libunwind8-dev vim less gnupg gpg-agent software-properties-common \
-      libfabric-dev wrk libaio-dev numactl && \
-    #
-    # Set timezone
+      libfabric-dev wrk libaio-dev numactl
+
+# Set timezone
+RUN set -eux && \
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
-    echo $TZ > /etc/timezone && \
-    #
-    # Install Python 3.11
+    echo $TZ > /etc/timezone
+
+# Install Python 3.11
+RUN set -eux && \
     add-apt-repository ppa:deadsnakes/ppa -y && \
+    apt-get update && \
     apt-get install -y --no-install-recommends python3.11 python3-pip python3.11-dev python3.11-distutils python3-wheel && \
     rm /usr/bin/python3 && ln -s /usr/bin/python3.11 /usr/bin/python3 && \
-    ln -s /usr/bin/python3 /usr/bin/python && \
-    #
-    # Install pip and essential Python packages
+    ln -s /usr/bin/python3 /usr/bin/python
+
+# Install pip
+RUN set -eux && \
     wget https://bootstrap.pypa.io/get-pip.py -O get-pip.py && \
-    python3 get-pip.py && rm get-pip.py && \
-    pip install --upgrade requests argparse urllib3 && \
-    # Install ipex-llm from the copied local source directory, using the extra index for dependencies
-    pip install /llm/ipex-llm-src[xpu_2.6] --extra-index-url https://download.pytorch.org/whl/xpu && \
+    python3 get-pip.py && rm get-pip.py
+
+# Install essential Python packages
+RUN set -eux && \
+    pip install --upgrade requests argparse urllib3
+
+# Install ipex-llm from the copied local source directory, using the extra index for dependencies
+RUN set -eux && \
+    pip install /llm/ipex-llm-src[xpu_2.6] --extra-index-url https://download.pytorch.org/whl/xpu
+
+# Install other Python packages
+RUN set -eux && \
     pip install transformers_stream_generator einops tiktoken && \
     pip install --upgrade colorama
 
-# ai! split the below a bit into logical parts as a RUN statement each
+# Install vllm dependencies
 RUN set -eux && \
-    #
-    # Install vllm dependencies
     pip install --upgrade fastapi && \
-    pip install --upgrade "uvicorn[standard]" && \
-    pip install intel-extension-for-pytorch==2.6.10+xpu --extra-index-url=https://pytorch-extension.intel.com/release-whl/stable/xpu/cn/ && \
-    #
-    # Install torch-ccl
-    pip install /opt/oneccl_bind_pt-2.6.0+xpu-cp311-cp311-linux_x86_64.whl && \
-    #
+    pip install --upgrade "uvicorn[standard]"
+
+# Install Intel Extension for PyTorch
+RUN set -eux && \
+    pip install intel-extension-for-pytorch==2.6.10+xpu --extra-index-url=https://pytorch-extension.intel.com/release-whl/stable/xpu/cn/
+
+# Install torch-ccl
+RUN set -eux && \
+    pip install /opt/oneccl_bind_pt-2.6.0+xpu-cp311-cp311-linux_x86_64.whl
+
+# Install system dependencies for vLLM/CCL
+RUN set -eux && \
     apt-get update && \
-    apt-get install -y --no-install-recommends libfabric-dev wrk libaio-dev numactl && \
-    #
-    # Remove breaks install packages
-    apt-get remove -y libze-dev libze-intel-gpu1 && \
-    #
-    # Install compute runtime
+    apt-get install -y --no-install-recommends libfabric-dev wrk libaio-dev numactl
+
+# Remove potentially conflicting packages
+RUN set -eux && \
+    apt-get remove -y libze-dev libze-intel-gpu1 || true # Allow failure if packages are not installed
+
+# Install compute runtime
+RUN set -eux && \
     mkdir -p /tmp/neo && \
     cd /tmp/neo && \
     wget https://github.com/intel/intel-graphics-compiler/releases/download/v2.5.6/intel-igc-core-2_2.5.6+18417_amd64.deb && \
@@ -180,11 +196,12 @@ RUN set -eux && \
     wget https://github.com/intel/compute-runtime/releases/download/24.52.32224.5/intel-opencl-icd-dbgsym_24.52.32224.5_amd64.ddeb && \
     wget https://github.com/intel/compute-runtime/releases/download/24.52.32224.5/intel-opencl-icd_24.52.32224.5_amd64.deb && \
     wget https://github.com/intel/compute-runtime/releases/download/24.52.32224.5/libigdgmm12_22.5.5_amd64.deb && \
-    dpkg -i *.deb && rm -rf /tmp/neo && \
+    dpkg -i *.deb && rm -rf /tmp/neo
+
+# Clone, patch, and install vllm
+RUN set -eux && \
     mkdir -p /llm && \
     cd /llm && \
-    rm -rf /tmp/neo && \
-    # Install vllm
     git clone --depth 1 -b v0.8.3 https://github.com/vllm-project/vllm /llm/vllm && \
     cd /llm/vllm && \
     git apply /llm/vllm_for_multi_arc.patch && \
@@ -192,9 +209,13 @@ RUN set -eux && \
     pip install --upgrade cmake && \
     pip install -v -r requirements/xpu.txt && \
     VLLM_TARGET_DEVICE=xpu python setup.py install && \
+    # Reinstall IPEX to ensure compatibility after vLLM install
     pip install intel-extension-for-pytorch==2.6.10+xpu --extra-index-url=https://pytorch-extension.intel.com/release-whl/stable/xpu/cn/ && \
     pip uninstall -y oneccl oneccl-devel && \
-    rm -rf /llm/vllm_for_multi_arc.patch && \
+    rm -rf /llm/vllm_for_multi_arc.patch
+
+# Install final serving/MPI dependencies
+RUN set -eux && \
     pip install mpi4py fastapi uvicorn openai && \
     pip install ray numba
 
