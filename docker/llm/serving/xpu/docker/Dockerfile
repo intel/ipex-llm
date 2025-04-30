@@ -72,13 +72,7 @@ RUN set -eux && \
     git submodule sync && \
     git submodule update --init --recursive --depth 1 && \
     # This patch will enable build torch-ccl with pytorch 2.6 environment
-    # Apply the patch if needed for PT 2.6
-    git apply /tmp/ccl_torch.patch && \
-    # Set compiler flags for better compatibility under QEMU (x86_64 on ARM64)
-    # Target a generic baseline to avoid problematic instructions like AVX512
-    export CFLAGS="-march=x86-64" && \
-    export CXXFLAGS="-march=x86-64" && \
-    # Build with the flags
+    # git apply /tmp/ccl_torch.patch && \
     USE_SYSTEM_ONECCL=ON COMPUTE_BACKEND=dpcpp python setup.py bdist_wheel
     # File path: /build/torch-ccl/dist/oneccl_bind_pt-2.6.0+xpu-cp311-cp311-linux_x86_64.whl
 
@@ -86,7 +80,7 @@ RUN set -eux && \
     # Build oneCCL
     pip install ninja && \
     cd /build/ && \
-    git clone --depth 1 https://github.com/analytics-zoo/oneCCL.git oneCCL && \
+    git clone https://github.com/analytics-zoo/oneCCL.git oneCCL && \
     cd oneCCL && \
     git checkout 3afa1bb7936f57683a2503c34b29c0daca6a9ccb && \
     git apply /build/1ccl_for_multi_arc.patch && \
@@ -130,6 +124,7 @@ ARG PIP_NO_CACHE_DIR=false
 # Set environment variables
 ENV TZ=Asia/Shanghai PYTHONUNBUFFERED=1 VLLM_RPC_TIMEOUT=100000
 
+# ai! split the below a bit into logical parts as a RUN statement each
 RUN set -eux && \
     #
     # Update and install basic dependencies, upgrade linux-libc-dev to fix CT7 CVEs
@@ -158,6 +153,7 @@ RUN set -eux && \
     pip install transformers_stream_generator einops tiktoken && \
     pip install --upgrade colorama
 
+# ai! split the below a bit into logical parts as a RUN statement each
 RUN set -eux && \
     #
     # Install vllm dependencies
