@@ -107,7 +107,7 @@ COPY docker/llm/serving/xpu/docker/setvars.sh /opt/intel/1ccl-wks/
 
 # Copy required code from the build context (project root) instead of cloning
 # Copy the main ipex-llm source code
-COPY python/llm /llm/ipex-llm-src
+COPY python/llm /llm/llm
 COPY python/llm/dev/benchmark/ /llm/benchmark/
 COPY python/llm/example/GPU/HuggingFace/LLM /llm/examples/
 COPY python/llm/example/GPU/vLLM-Serving/ /llm/vLLM-Serving/
@@ -156,7 +156,7 @@ RUN set -eux && \
 
 # Install ipex-llm from the copied local source directory, using the extra index for dependencies
 RUN set -eux && \
-    pip install /llm/ipex-llm-src[xpu_2.6] --extra-index-url https://download.pytorch.org/whl/xpu
+    pip install /llm/llm[xpu_2.6] --extra-index-url https://download.pytorch.org/whl/xpu
 
 # Install other Python packages
 RUN set -eux && \
