@@ -80,7 +80,7 @@ RUN set -eux && \
     # Build oneCCL
     pip install ninja && \
     cd /build/ && \
-    git clone --depth 1 https://github.com/analytics-zoo/oneCCL.git oneCCL && \
+    git clone https://github.com/analytics-zoo/oneCCL.git oneCCL && \
     cd oneCCL && \
     git checkout 3afa1bb7936f57683a2503c34b29c0daca6a9ccb && \
     git apply /build/1ccl_for_multi_arc.patch && \
