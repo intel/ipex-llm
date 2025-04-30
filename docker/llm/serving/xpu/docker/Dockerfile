@@ -11,13 +11,19 @@ ARG PIP_NO_CACHE_DIR=false
 # Set environment variables
 ENV TZ=Asia/Shanghai PYTHONUNBUFFERED=1
 
-# Copy patch file and benchmark scripts
-COPY ./ccl_torch.patch /tmp/
-COPY ./vllm_online_benchmark.py ./vllm_offline_inference.py ./vllm_offline_inference_vision_language.py \
-     ./payload-1024.lua ./start-vllm-service.sh ./benchmark_vllm_throughput.py ./benchmark_vllm_latency.py \
-     ./start-pp_serving-service.sh /llm/
-COPY ./1ccl_for_multi_arc.patch /build/
-     
+# Copy patch file and benchmark scripts relative to project root
+COPY docker/llm/serving/xpu/docker/ccl_torch.patch /tmp/
+COPY docker/llm/serving/xpu/docker/vllm_online_benchmark.py \
+     docker/llm/serving/xpu/docker/vllm_offline_inference.py \
+     docker/llm/serving/xpu/docker/vllm_offline_inference_vision_language.py \
+     docker/llm/serving/xpu/docker/payload-1024.lua \
+     docker/llm/serving/xpu/docker/start-vllm-service.sh \
+     docker/llm/serving/xpu/docker/benchmark_vllm_throughput.py \
+     docker/llm/serving/xpu/docker/benchmark_vllm_latency.py \
+     docker/llm/serving/xpu/docker/start-pp_serving-service.sh \
+     /llm/
+COPY docker/llm/serving/xpu/docker/1ccl_for_multi_arc.patch /build/
+
 RUN set -eux && \
     #
     # Update and install basic dependencies
@@ -25,22 +31,23 @@ RUN set -eux && \
     apt-get install -y --no-install-recommends \
       curl wget git libunwind8-dev vim less gnupg gpg-agent software-properties-common \
       libfabric-dev wrk libaio-dev numactl && \
-    # 
+    #
     # Set timezone
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
     echo $TZ > /etc/timezone && \
-    # 
+    #
     # Install Python 3.11
     add-apt-repository ppa:deadsnakes/ppa -y && \
     apt-get install -y --no-install-recommends python3.11 python3-pip python3.11-dev python3.11-distutils python3-wheel && \
     rm /usr/bin/python3 && ln -s /usr/bin/python3.11 /usr/bin/python3 && \
     ln -s /usr/bin/python3 /usr/bin/python && \
-    # 
+    #
     # Install pip and essential Python packages
     wget https://bootstrap.pypa.io/get-pip.py -O get-pip.py && \
-    python3 get-pip.py && rm get-pip.py && \
-    #
-    # Install Intel GPU OpenCL Driver and Compute Runtime
+    python3 get-pip.py && rm get-pip.py
+
+# Install Intel GPU OpenCL Driver and Compute Runtime
+RUN set -eux && \
     mkdir -p /tmp/neo && \
     cd /tmp/neo && \
     wget https://github.com/intel/intel-graphics-compiler/releases/download/v2.5.6/intel-igc-core-2_2.5.6+18417_amd64.deb && \
@@ -50,28 +57,30 @@ RUN set -eux && \
     wget https://github.com/intel/compute-runtime/releases/download/24.52.32224.5/intel-opencl-icd-dbgsym_24.52.32224.5_amd64.ddeb && \
     wget https://github.com/intel/compute-runtime/releases/download/24.52.32224.5/intel-opencl-icd_24.52.32224.5_amd64.deb && \
     wget https://github.com/intel/compute-runtime/releases/download/24.52.32224.5/libigdgmm12_22.5.5_amd64.deb && \
-    dpkg -i *.deb && \
-    #
-    # Install Intel PyTorch extension for LLM inference
+    dpkg -i *.deb
+# Install Intel PyTorch extension for LLM inference  
+RUN set -eux && \
     pip install --pre --upgrade ipex-llm[xpu_2.6] --extra-index-url https://download.pytorch.org/whl/xpu && \
-    pip install intel-extension-for-pytorch==2.6.10+xpu --extra-index-url=https://pytorch-extension.intel.com/release-whl/stable/xpu/cn/ && \
-    #
-    # Build torch-ccl
+    pip install intel-extension-for-pytorch==2.6.10+xpu --extra-index-url=https://pytorch-extension.intel.com/release-whl/stable/xpu/cn/
+
+# Build torch-ccl
+RUN set -eux && \
     mkdir -p /build && \
     cd /build && \
-    git clone https://github.com/intel/torch-ccl.git && \
+    git clone --depth 1 --branch ccl_torch2.6.0+xpu https://github.com/intel/torch-ccl.git torch-ccl && \
     cd torch-ccl && \
-    git checkout ccl_torch2.6.0+xpu && \
     git submodule sync && \
-    git submodule update --init --recursive && \
+    git submodule update --init --recursive --depth 1 && \
     # This patch will enable build torch-ccl with pytorch 2.6 environment
     # git apply /tmp/ccl_torch.patch && \
-    USE_SYSTEM_ONECCL=ON COMPUTE_BACKEND=dpcpp python setup.py bdist_wheel && \
+    USE_SYSTEM_ONECCL=ON COMPUTE_BACKEND=dpcpp python setup.py bdist_wheel
     # File path: /build/torch-ccl/dist/oneccl_bind_pt-2.6.0+xpu-cp311-cp311-linux_x86_64.whl
+
+RUN set -eux && \
     # Build oneCCL
     pip install ninja && \
     cd /build/ && \
-    git clone https://github.com/analytics-zoo/oneCCL.git && \
+    git clone --depth 1 https://github.com/analytics-zoo/oneCCL.git oneCCL && \
     cd oneCCL && \
     git checkout 3afa1bb7936f57683a2503c34b29c0daca6a9ccb && \
     git apply /build/1ccl_for_multi_arc.patch && \
@@ -91,8 +100,20 @@ COPY --from=build /llm/ /llm/
 COPY --from=build /build/oneCCL/build/src/libccl.so.1.0 /opt/intel/1ccl-wks/lib/
 COPY --from=build /build/oneCCL/build/src/libccl.so.1 /opt/intel/1ccl-wks/lib/
 COPY --from=build /build/oneCCL/build/src/libccl.so /opt/intel/1ccl-wks/lib/
-COPY ./vllm_for_multi_arc.patch /llm/
-COPY ./setvars.sh /opt/intel/1ccl-wks/
+
+# Copy patch files and scripts relative to project root
+COPY docker/llm/serving/xpu/docker/vllm_for_multi_arc.patch /llm/
+COPY docker/llm/serving/xpu/docker/setvars.sh /opt/intel/1ccl-wks/
+
+# Copy required code from the build context (project root) instead of cloning
+COPY python/llm/dev/benchmark/ /llm/benchmark/
+COPY python/llm/example/GPU/HuggingFace/LLM /llm/examples/
+COPY python/llm/example/GPU/vLLM-Serving/ /llm/vLLM-Serving/
+# Create serving directories and copy scripts early
+RUN mkdir -p /llm/pp_serving && \
+    mkdir -p /llm/lightweight_serving
+COPY python/llm/example/GPU/Pipeline-Parallel-Serving/*.py /llm/pp_serving/
+COPY python/llm/example/GPU/Lightweight-Serving/*.py /llm/lightweight_serving/
 
 ARG http_proxy
 ARG https_proxy
@@ -109,38 +130,26 @@ RUN set -eux && \
       linux-libc-dev \
       curl wget git libunwind8-dev vim less gnupg gpg-agent software-properties-common \
       libfabric-dev wrk libaio-dev numactl && \
-    # 
+    #
     # Set timezone
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
     echo $TZ > /etc/timezone && \
-    # 
+    #
     # Install Python 3.11
     add-apt-repository ppa:deadsnakes/ppa -y && \
     apt-get install -y --no-install-recommends python3.11 python3-pip python3.11-dev python3.11-distutils python3-wheel && \
     rm /usr/bin/python3 && ln -s /usr/bin/python3.11 /usr/bin/python3 && \
     ln -s /usr/bin/python3 /usr/bin/python && \
-    # 
+    #
     # Install pip and essential Python packages
     wget https://bootstrap.pypa.io/get-pip.py -O get-pip.py && \
     python3 get-pip.py && rm get-pip.py && \
     pip install --upgrade requests argparse urllib3 && \
     pip install --pre --upgrade ipex-llm[xpu_2.6] --extra-index-url https://download.pytorch.org/whl/xpu && \
     pip install transformers_stream_generator einops tiktoken && \
-    pip install --upgrade colorama && \
-    # 
-    git clone https://github.com/intel/ipex-llm.git && \
-    cp -r ./ipex-llm/python/llm/dev/benchmark/ ./benchmark && \
-    cp -r ./ipex-llm/python/llm/example/GPU/HuggingFace/LLM ./examples && \
-    cp -r ./ipex-llm/python/llm/example/GPU/vLLM-Serving/ ./vLLM-Serving && \
-    #
-    # Download pp_serving
-    mkdir -p /llm/pp_serving && \
-    cp ./ipex-llm/python/llm/example/GPU/Pipeline-Parallel-Serving/*.py /llm/pp_serving/ && \
-    #
-    # Download lightweight_serving
-    mkdir -p /llm/lightweight_serving && \
-    cp ./ipex-llm/python/llm/example/GPU/Lightweight-Serving/*.py /llm/lightweight_serving/ && \
-    rm -rf ./ipex-llm && \
+    pip install --upgrade colorama
+
+RUN set -eux && \
     #
     # Install vllm dependencies
     pip install --upgrade fastapi && \
@@ -152,7 +161,7 @@ RUN set -eux && \
     #
     apt-get update && \
     apt-get install -y --no-install-recommends libfabric-dev wrk libaio-dev numactl && \
-    # 
+    #
     # Remove breaks install packages
     apt-get remove -y libze-dev libze-intel-gpu1 && \
     #
@@ -171,7 +180,7 @@ RUN set -eux && \
     cd /llm && \
     rm -rf /tmp/neo && \
     # Install vllm
-    git clone -b v0.8.3 https://github.com/vllm-project/vllm /llm/vllm && \
+    git clone --depth 1 -b v0.8.3 https://github.com/vllm-project/vllm /llm/vllm && \
     cd /llm/vllm && \
     git apply /llm/vllm_for_multi_arc.patch && \
     pip install setuptools-scm==8.2.0 setuptools==78.1.0 && \

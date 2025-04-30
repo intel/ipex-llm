@@ -6,14 +6,20 @@ This document outlines the steps to build and use the `IPEX-LLM-serving-xpu` Doc
 
 ## 1. Build the Image
 
-To build the `IPEX-LLM-serving-xpu` Docker image, use the following command:
+**Important:** Ensure you run the build command from the **root directory of the ipex-llm project**, not from within the `docker/llm/serving/xpu/docker/` subdirectory.
+
+To build the `IPEX-LLM-serving-xpu` Docker image, navigate to the project root and use the following command, specifying the Dockerfile location with the `-f` flag:
 
 ```bash
+# Run from the project root directory
 docker build \
   --build-arg http_proxy=.. \
   --build-arg https_proxy=.. \
   --build-arg no_proxy=.. \
-  --rm --no-cache -t intelanalytics/ipex-llm-serving-xpu:latest .
+  --rm --no-cache \
+  -t intelanalytics/ipex-llm-serving-xpu:latest \
+  -f docker/llm/serving/xpu/docker/Dockerfile .
+# The '.' at the end specifies the project root as the build context
 ```
 
 ---
