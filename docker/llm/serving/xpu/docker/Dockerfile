@@ -72,7 +72,13 @@ RUN set -eux && \
     git submodule sync && \
     git submodule update --init --recursive --depth 1 && \
     # This patch will enable build torch-ccl with pytorch 2.6 environment
-    # git apply /tmp/ccl_torch.patch && \
+    # Apply the patch if needed for PT 2.6
+    git apply /tmp/ccl_torch.patch && \
+    # Set compiler flags for better compatibility under QEMU (x86_64 on ARM64)
+    # Target a generic baseline to avoid problematic instructions like AVX512
+    export CFLAGS="-march=x86-64" && \
+    export CXXFLAGS="-march=x86-64" && \
+    # Build with the flags
     USE_SYSTEM_ONECCL=ON COMPUTE_BACKEND=dpcpp python setup.py bdist_wheel
     # File path: /build/torch-ccl/dist/oneccl_bind_pt-2.6.0+xpu-cp311-cp311-linux_x86_64.whl
 
@@ -80,7 +86,7 @@ RUN set -eux && \
     # Build oneCCL
     pip install ninja && \
     cd /build/ && \
-    git clone https://github.com/analytics-zoo/oneCCL.git oneCCL && \
+    git clone --depth 1 https://github.com/analytics-zoo/oneCCL.git oneCCL && \
     cd oneCCL && \
     git checkout 3afa1bb7936f57683a2503c34b29c0daca6a9ccb && \
     git apply /build/1ccl_for_multi_arc.patch && \
@@ -106,6 +112,8 @@ COPY docker/llm/serving/xpu/docker/vllm_for_multi_arc.patch /llm/
 COPY docker/llm/serving/xpu/docker/setvars.sh /opt/intel/1ccl-wks/
 
 # Copy required code from the build context (project root) instead of cloning
+# Copy the main ipex-llm source code
+COPY python/llm /llm/ipex-llm-src
 COPY python/llm/dev/benchmark/ /llm/benchmark/
 COPY python/llm/example/GPU/HuggingFace/LLM /llm/examples/
 COPY python/llm/example/GPU/vLLM-Serving/ /llm/vLLM-Serving/
@@ -145,7 +153,8 @@ RUN set -eux && \
     wget https://bootstrap.pypa.io/get-pip.py -O get-pip.py && \
     python3 get-pip.py && rm get-pip.py && \
     pip install --upgrade requests argparse urllib3 && \
-    pip install --pre --upgrade ipex-llm[xpu_2.6] --extra-index-url https://download.pytorch.org/whl/xpu && \
+    # Install ipex-llm from the copied local source directory, using the extra index for dependencies
+    pip install /llm/ipex-llm-src[xpu_2.6] --extra-index-url https://download.pytorch.org/whl/xpu && \
     pip install transformers_stream_generator einops tiktoken && \
     pip install --upgrade colorama
 
