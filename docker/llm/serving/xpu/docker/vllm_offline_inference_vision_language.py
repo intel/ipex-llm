@@ -94,10 +94,9 @@ else:
 
 dtype = "float16"
 if "gemma-3" in model_path:
-    mm_processor_kwarg = {"do_pan_and_scan": True}
     dtype = "float32"
 else:
-    mm_processor_kwarg = None
+    pass
 
 
 llm = LLM(
@@ -106,7 +105,7 @@ llm = LLM(
           dtype=dtype,
           enforce_eager=True,
           hf_overrides=hf_override,
-          mm_processor_kwargs=mm_processor_kwarg,
+          mm_processor_kwargs=None,
           load_in_low_bit="sym_int4",
           tensor_parallel_size=2,
           disable_async_output_proc=True,
