@@ -239,8 +239,9 @@ P95 next token latency: xxx milliseconds.
 After starting the vLLM service, you can benchmark multimodal inputs using `vllm_online_benchmark_multimodal.py`:
 
 ```bash
-export image_url="http://farm6.staticflickr.com/5268/5602445367_3504763978_z.jpg"
-python vllm_online_benchmark_multimodal.py --model-name $model_name --image-url $image_url --prompt "What is in the image?" --port 8000
+wget -O /llm/models/test.webp https://gd-hbimg.huaban.com/b7764d5f9c19b3e433d54ba66cce6a112050783e8182-Cjds3e_fw1200webp
+export image_url="/llm/models/test.webp"
+python vllm_online_benchmark_multimodal.py --model-name $model_name --image-url $image_url --port 8000 --max-seq 1 --input-length 512 --output-length 100
 ```
 
 The `image_url` can be a local path (e.g., `/llm/xxx.jpg`) or an external URL (e.g., `"http://xxx.jpg`).

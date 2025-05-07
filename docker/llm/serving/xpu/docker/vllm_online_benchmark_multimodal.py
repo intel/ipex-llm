@@ -11,6 +11,9 @@ import argparse
 
 
 PROMPT_128 = "In a distant future, humanity has expanded across the galaxy, establishing colonies on numerous planets. The interstellar community thrives under the guidance of the United Galactic Federation, which ensures peace and prosperity. However, a new threat emerges from the unknown regions of space, challenging the stability and security of the galaxy. Brave explorers and seasoned warriors must unite to uncover the secrets of this mysterious force and protect the future of all sentient beings.  Please continue the above story as long as possible, preferably more than 1000 tokens."
+
+PROMPT_1024 = "Once upon a time, there existed a little girl who liked to have adventures. She wanted to go to places and meet new people, and have fun. However, her parents were always telling her to stay close to home, to be careful, and to avoid any danger. But the little girl was stubborn, and she wanted to see what was on the other side of the mountain. So she sneaked out of the house one night, leaving a note for her parents, and set off on her journey. As she climbed the mountain, the little girl felt a sense of excitement and wonder. She had never been this far away from home before, and she couldnt wait to see what she would find on the other side. She climbed higher and higher, her lungs burning from the thin air, until she finally reached the top of the mountain. And there, she found a beautiful meadow filled with wildflowers and a sparkling stream. The little girl danced and played in the meadow, feeling free and alive. She knew she had to return home eventually, but for now, she was content to enjoy her adventure. As the sun began to set, the little girl reluctantly made her way back down the mountain, but she knew that she would never forget her adventure and the joy of discovering something new and exciting. And whenever she felt scared or unsure, she would remember the thrill of climbing the mountain and the beauty of the meadow on the other side, and she would know that she could face any challenge that came her way, with courage and determination. She carried the memories of her journey in her heart, a constant reminder of the strength she possessed. The little girl returned home to her worried parents, who had discovered her note and anxiously awaited her arrival. They scolded her for disobeying their instructions and venturing into the unknown. But as they looked into her sparkling eyes and saw the glow on her face, their anger softened. They realized that their little girl had grown, that she had experienced something extraordinary. The little girl shared her tales of the mountain and the meadow with her parents, painting vivid pictures with her words. She spoke of the breathtaking view from the mountaintop, where the world seemed to stretch endlessly before her. She described the delicate petals of the wildflowers, vibrant hues that danced in the gentle breeze. And she recounted the soothing melody of the sparkling stream, its waters reflecting the golden rays of the setting sun. Her parents listened intently, captivated by her story. They realized that their daughter had discovered a part of herself on that journey—a spirit of curiosity and a thirst for exploration. They saw that she had learned valuable lessons about independence, resilience, and the beauty that lies beyond ones comfort zone. From that day forward, the little girls parents encouraged her to pursue her dreams and embrace new experiences. They understood that while there were risks in the world, there were also rewards waiting to be discovered. They supported her as she continued to embark on adventures, always reminding her to stay safe but never stifling her spirit. As the years passed, the little girl grew into a remarkable woman, fearlessly exploring the world and making a difference wherever she went. The lessons she had learned on that fateful journey stayed with her, guiding her through challenges and inspiring her to live life to the fullest. And so, the once timid little girl became a symbol of courage and resilience, a reminder to all who knew her that the greatest joys in life often lie just beyond the mountains we fear to climb. Her story spread far and wide, inspiring others to embrace their own journeys and discover the wonders that awaited them. In the end, the little girls adventure became a timeless tale, passed down through generations, reminding us all that sometimes, the greatest rewards come to those who dare to step into the unknown and follow their hearts. With each passing day, the little girls story continued to inspire countless individuals, igniting a spark within their souls and encouraging them to embark on their own extraordinary adventures. The tale of her bravery and determination resonated deeply with people from all walks of life, reminding them of the limitless possibilities that awaited them beyond the boundaries of their comfort zones. People marveled at the little girls unwavering spirit and her unwavering belief in the power of dreams. They saw themselves reflected in her journey, finding solace in the knowledge that they too could overcome their fears and pursue their passions. The little girl\'s story became a beacon of hope, a testament to the human spirit"
+
 model_name = ""
 
 
@@ -248,9 +251,11 @@ def main(args):
     model_name = args.model_name
     max_seq = args.max_seq
     image_url = args.image_url
-    prompt = args.prompt
 
-    output_length = args.output_length if args.output_length else 512
+    output_length = args.output_length if args.output_length else 100
+    input_length = args.input_length if args.input_length else 512
+
+
     port = args.port
     # 设置benchmark参数
     LLM_URLS = [f"http://localhost:{PORT}/v1/chat/completions" for PORT in [port]]
@@ -259,6 +264,17 @@ def main(args):
     MAX_TOKENS = output_length  # 修改 MAX_TOKENS 为 output_length
 
     PROMPT = PROMPT_128
+
+    in_len = input_length
+    from transformers import AutoTokenizer
+    tokenizer = AutoTokenizer.from_pretrained(MODEL, trust_remote_code=True)
+    input_ids = tokenizer.encode(PROMPT_1024, return_tensors="pt")
+    print("old input_ids.shape:"+ str(input_ids.shape))
+    input_ids = input_ids[:, :in_len]
+    print("latest input_ids.shape:"+ str(input_ids.shape))
+    true_str = tokenizer.batch_decode(input_ids)[0]
+    prompt = true_str
+
 
     max_batch=int(max_seq)
 
@@ -277,9 +293,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Benchmarking script for LLM")
     parser.add_argument("--model-name", type=str, help="Model name")
     parser.add_argument("--max-seq", type=int, default=1, help="Maximum sequence length")
-    parser.add_argument("--prompt", type=str, default="What is in the image?", help="prompt for model to response")
     parser.add_argument("--image-url", type=str, help="image_url for model to generate")
-    parser.add_argument("--output-length", type=int, default=512, help="Output length")
+    parser.add_argument("--input-length", type=int, default=512, help="Input length")
+    parser.add_argument("--output-length", type=int, default=100, help="Output length")
     parser.add_argument("--port", type=int, default=8000, help="Port number")
 
     args = parser.parse_args()
