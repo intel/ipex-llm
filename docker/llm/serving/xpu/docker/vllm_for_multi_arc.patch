@@ -14147,7 +14147,7 @@ index c0a3c59ba..8614c2273 100644
      "Zamba2ForCausalLM": ("zamba2", "Zamba2ForCausalLM"),
      # [Encoder-decoder]
 diff --git a/vllm/model_executor/models/siglip.py b/vllm/model_executor/models/siglip.py
-index cecad9e89..df4cf4776 100644
+index cecad9e89..7eaabd1db 100644
 --- a/vllm/model_executor/models/siglip.py
 +++ b/vllm/model_executor/models/siglip.py
 @@ -140,6 +140,74 @@ class SiglipVisionEmbeddings(nn.Module):
@@ -14195,9 +14195,9 @@ index cecad9e89..df4cf4776 100644
 +
 +        query, key, value = (x.transpose(1, 2)
 +                                for x in (query, key, value))
-+        from ipex_llm.transformers.models.utils import use_sdp_causal
 +        from vllm.attention.backends.ipex_attn import use_sdp_causal
 +        import xe_addons, math
++        from vllm.attention.backends.abstract import AttentionType
 +        mask = None
 +        scale = 1 / math.sqrt(self.head_size) if self.scale is None else self.scale
 +        from ipex_llm.transformers.models.common import padding_qkv_hd
@@ -14209,7 +14209,7 @@ index cecad9e89..df4cf4776 100644
 +            query, key, value,
 +            self.head_size, num
 +        )
-+        if use_sdp_causal(query.shape[-1], query, 0):
++        if use_sdp_causal(query.shape[-1], query, 0, AttentionType.DECODER):
 +            out = xe_addons.sdp_non_causal(query.contiguous(), key.contiguous(), value.contiguous(), mask, scale)[:, :, :, :self.head_size].transpose(1, 2)
 +        # import torch.nn.functional as F
 +        # out = F.scaled_dot_product_attention(query,
@@ -14319,7 +14319,7 @@ index b6f6029de..b90fea9fd 100644
      def is_neuron(self) -> bool:
          return self._enum == PlatformEnum.NEURON
 diff --git a/vllm/platforms/xpu.py b/vllm/platforms/xpu.py
-index 225e756cd..4fd7fe220 100644
+index 225e756cd..25b83549a 100644
 --- a/vllm/platforms/xpu.py
 +++ b/vllm/platforms/xpu.py
 @@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, Optional
@@ -14330,7 +14330,17 @@ index 225e756cd..4fd7fe220 100644
  from vllm.logger import init_logger
  
  from .interface import DeviceCapability, Platform, PlatformEnum, _Backend
-@@ -33,8 +34,13 @@ class XPUPlatform(Platform):
+@@ -25,6 +26,9 @@ class XPUPlatform(Platform):
+     # see https://github.com/ray-project/ray/blob/6a5eb5865eeb9ccf058a79b44f107e327e360673/python/ray/_private/accelerators/intel_gpu.py#L20 # noqa: E501
+     ray_device_key: str = "GPU"
+     device_control_env_var: str = "ONEAPI_DEVICE_SELECTOR"
++    additional_env_vars: list[str] = [
++        "IPEX_LLM_LOWBIT",
++    ]
+ 
+     @classmethod
+     def get_attn_backend_cls(cls, selected_backend: _Backend, head_size: int,
+@@ -33,8 +37,13 @@ class XPUPlatform(Platform):
                               use_mla: bool) -> str:
          if selected_backend != _Backend.IPEX:
              logger.info("Cannot use %s backend on XPU.", selected_backend)
@@ -14346,7 +14356,7 @@ index 225e756cd..4fd7fe220 100644
  
      @staticmethod
      def get_device_capability(
-@@ -63,6 +69,8 @@ class XPUPlatform(Platform):
+@@ -63,6 +72,8 @@ class XPUPlatform(Platform):
      @classmethod
      def check_and_update_config(cls, vllm_config: VllmConfig) -> None:
          cache_config = vllm_config.cache_config
@@ -14355,7 +14365,7 @@ index 225e756cd..4fd7fe220 100644
          if cache_config and cache_config.block_size is None:
              cache_config.block_size = 16
  
-@@ -87,31 +95,46 @@ class XPUPlatform(Platform):
+@@ -87,31 +98,46 @@ class XPUPlatform(Platform):
              raise NotImplementedError(
                  "XPU does not support speculative decoding")
  
@@ -14412,6 +14422,15 @@ index 225e756cd..4fd7fe220 100644
  
      @classmethod
      def is_pin_memory_available(cls):
+@@ -140,3 +166,7 @@ class XPUPlatform(Platform):
+     @classmethod
+     def get_device_communicator_cls(cls) -> str:
+         return "vllm.distributed.device_communicators.xpu_communicator.XpuCommunicator"  # noqa
++
++    @classmethod
++    def use_all_gather(cls) -> bool:
++        return False
+\ No newline at end of file
 diff --git a/vllm/transformers_utils/configs/__init__.py b/vllm/transformers_utils/configs/__init__.py
 index 53699341b..6bc039068 100644
 --- a/vllm/transformers_utils/configs/__init__.py
@@ -15648,10 +15667,10 @@ index 000000000..8612d3d77
 +            self.kv_caches)
 diff --git a/vllm/v1/worker/xpu_worker.py b/vllm/v1/worker/xpu_worker.py
 new file mode 100644
-index 000000000..1bc531e28
+index 000000000..1fb0dca87
 --- /dev/null
 +++ b/vllm/v1/worker/xpu_worker.py
-@@ -0,0 +1,168 @@
+@@ -0,0 +1,175 @@
 +# SPDX-License-Identifier: Apache-2.0
 +import os
 +from typing import Optional
@@ -15685,9 +15704,16 @@ index 000000000..1bc531e28
 +        assert device_config.device_type == "xpu"
 +        assert current_platform.is_xpu()
 +
-+    def load_model(self) -> None:
-+        self.model_runner.load_model()
++        import os
++        lowbit = os.getenv("IPEX_LLM_LOWBIT", None)
++        if lowbit is not None:
++            from ipex_llm.vllm.xpu.model_convert import _ipex_llm_convert
++            _ipex_llm_convert(lowbit)
 +
++
++    def compile_or_warm_up_model(self) -> None:
++        pass
++        
 +    # we provide this function due to `torch.xpu.mem_get_info()` doesn't
 +    # return correct free_gpu_memory on intel client GPU. We need to
 +    # calculate/estiamte it.
