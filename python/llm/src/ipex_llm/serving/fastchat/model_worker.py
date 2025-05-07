@@ -470,7 +470,7 @@ if __name__ == "__main__":
 
     if args.gpus:
         invalidInputError(len(args.gpus.split(",")) > args.num_gpus, f"Larger --num-gpus "
-                          "({args.num_gpus}) than --gpus {args.gpus}!")
+                          f"({args.num_gpus}) than --gpus {args.gpus}!")
         os.environ["CUDA_VISIBLE_DEVICES"] = args.gpus
 
     gptq_config = GptqConfig(
