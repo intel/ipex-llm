@@ -65,13 +65,14 @@ def _model_sample_convert():
 def _ipex_llm_convert(load_in_low_bit):
     # import pdb
     # pdb.set_trace()
-    from vllm.worker.xpu_model_runner import XPUModelRunner
+    from vllm.worker.xpu_model_runner import XPUModelRunner, XPUModelRunnerBase
     from ipex_llm.vllm.xpu.ipex_llm_wrapper import get_ipex_llm_wrapper
     from ipex_llm.vllm.xpu.ipex_llm_v1_wrapper import get_ipex_llm_v1_wrapper
     import vllm.executor.ray_utils as ray_utils_v0
     import vllm.v1.executor.ray_utils as ray_utils_v1
     from vllm.v1.worker.gpu_model_runner import GPUModelRunner
     setattr(XPUModelRunner, "load_model", get_load_function(load_in_low_bit))
+    setattr(XPUModelRunnerBase, "load_model", get_load_function(load_in_low_bit))
     setattr(GPUModelRunner, "load_model", get_load_function(load_in_low_bit))
     setattr(ray_utils_v0, "RayWorkerWrapper", get_ipex_llm_wrapper(load_in_low_bit))
     setattr(ray_utils_v1, "RayWorkerWrapper", get_ipex_llm_v1_wrapper(load_in_low_bit))
