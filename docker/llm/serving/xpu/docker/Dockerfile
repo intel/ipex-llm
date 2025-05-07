@@ -15,7 +15,7 @@ ENV TZ=Asia/Shanghai PYTHONUNBUFFERED=1
 COPY ./ccl_torch.patch /tmp/
 COPY ./vllm_online_benchmark.py ./vllm_offline_inference.py ./vllm_offline_inference_vision_language.py \
      ./payload-1024.lua ./start-vllm-service.sh ./benchmark_vllm_throughput.py ./benchmark_vllm_latency.py \
-     ./start-pp_serving-service.sh /llm/
+     ./vllm_online_benchmark_multimodal.py ./start-pp_serving-service.sh /llm/
 COPY ./1ccl_for_multi_arc.patch /build/
      
 RUN set -eux && \
