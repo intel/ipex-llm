@@ -1,3 +1,9 @@
+> 💡 **Tip**:  
+> For a detailed and up-to-date guide on running `vLLM` serving with `IPEX-LLM` on Intel GPUs **via Docker**, please refer to our official documentation:  
+> [vllm_docker_quickstart.md](https://github.com/intel-analytics/ipex-llm/blob/main/docs/mddocs/DockerGuides/vllm_docker_quickstart.md)  
+>  
+> If you prefer to run **without Docker**, you can refer to this guide: 
+
 # vLLM continuous batching on Intel GPUs
 
 This example demonstrates how to serve a LLaMA2-7B model using vLLM continuous batching on Intel GPU (with IPEX-LLM low-bits optimizations).
