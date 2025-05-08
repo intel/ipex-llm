@@ -12,11 +12,20 @@ Follow the instructions in [this guide](./docker_windows_gpu.md#linux) to instal
 
 ## 2. Prepare the Docker Image
 
-You can either **pull the prebuilt image** from DockerHub:
+You can either pull a prebuilt Docker image from DockerHub, depending on your hardware platform:
 
-```bash
-docker pull intelanalytics/ipex-llm-serving-xpu:0.8.3-b19
-```
+* **For Intel Arc A770 GPUs**, use:
+
+  ```bash
+  docker pull intelanalytics/ipex-llm-serving-xpu:0.8.3-b19
+  ```
+
+* **For Intel Arc BMG GPUs**, use:
+
+  ```bash
+  docker pull intelanalytics/multi-arc-serving:0.2.0-b1
+  ```
+
 
 Or **build the image locally** from source:
 
