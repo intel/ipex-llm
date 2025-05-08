@@ -93,9 +93,8 @@ def qwen3_attention_forward(
 
     cos, sin = position_embeddings
     if device.type == "xpu":
-        import xe_addons
-        make_cache_contiguous_inplaced(cos, sin)
-        xe_addons.rotary_half_with_cache_inplaced(query_states, key_states, cos, sin)
+        from ipex_llm.transformers.model.common import rotary_half_with_cache_inplaced
+        rotary_half_with_cache_inplaced(query_states, key_states, cos, sin)
     else:
         query_states, key_states = apply_rotary_pos_emb(query_states, key_states, cos, sin)
 

@@ -357,3 +357,11 @@ def rotary_two_with_cache_inplaced(query_states: torch.Tensor, key_states: torch
     import xe_addons
     xe_addons.rotary_two_with_cache_inplaced(query_states, key_states,
                                              cos, sin, half_layout)
+
+
+def rotary_half_with_cache_inplaced(query_states: torch.Tensor, key_states: torch.Tensor,
+                                    cos: torch.Tensor, sin: torch.Tensor):
+    import xe_addons
+    from ipex_llm.transformers.models.utils import make_cache_contiguous_inplaced
+    make_cache_contiguous_inplaced(cos, sin)
+    xe_addons.rotary_half_with_cache_inplaced(query_states, key_states, cos, sin)
