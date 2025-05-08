@@ -15,7 +15,7 @@ Follow the instructions in [this guide](./docker_windows_gpu.md#linux) to instal
 You can either **pull the prebuilt image** from DockerHub:
 
 ```bash
-docker pull intelanalytics/ipex-llm-serving-xpu:latest
+docker pull intelanalytics/ipex-llm-serving-xpu:0.8.3-b19
 ```
 
 Or **build the image locally** from source:
@@ -26,7 +26,7 @@ docker build \
   --build-arg http_proxy=... \
   --build-arg https_proxy=... \
   --build-arg no_proxy=... \
-  --rm --no-cache -t intelanalytics/ipex-llm-serving-xpu:latest .
+  --rm --no-cache -t vllm-serving:test .
 ```
 
 ---
