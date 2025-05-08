@@ -62,7 +62,7 @@ def qwen2_5_omni_attention_forward(
 
     cos, sin = position_embeddings
     if query_states.device.type == "xpu":
-        from ipex_llm.transformers.model.common import rotary_half_with_cache_inplaced
+        from ipex_llm.transformers.models.common import rotary_half_with_cache_inplaced
         rotary_half_with_cache_inplaced(query_states, key_states, cos, sin)
     else:
         query_states, key_states = apply_multimodal_rotary_pos_emb(

@@ -162,7 +162,7 @@ def llama_attention_forward(
                                                query_states, key_states)
         else:
             # transformers >= 4.46
-            from ipex_llm.transformers.model.common import rotary_half_with_cache_inplaced
+            from ipex_llm.transformers.models.common import rotary_half_with_cache_inplaced
             rotary_half_with_cache_inplaced(query_states, key_states, cos, sin)
     else:
         if position_embeddings is None:
