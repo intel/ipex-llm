@@ -212,7 +212,8 @@ If you want to run benchmarks, we recommend using the official vLLM benchmarking
 
 ```bash
 python /llm/vllm/benchmarks/benchmark_serving.py \
-  --model /llm/models/Qwen2.5-7B-Instruct \
+  --model "/llm/models/Qwen2.5-7B-Instruct" \
+  --served-model-name "Qwen2.5-7B-Instruct" \
   --dataset-name random \
   --trust_remote_code \
   --num_prompt $batch_size \
