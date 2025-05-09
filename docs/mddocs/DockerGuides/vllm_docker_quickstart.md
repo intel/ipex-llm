@@ -216,6 +216,7 @@ python /llm/vllm/benchmarks/benchmark_serving.py \
   --served-model-name "Qwen2.5-7B-Instruct" \
   --dataset-name random \
   --trust_remote_code \
+  --ignore-eos \
   --num_prompt $batch_size \
   --random-input-len=$input_length \
   --random-output-len=$output_length
