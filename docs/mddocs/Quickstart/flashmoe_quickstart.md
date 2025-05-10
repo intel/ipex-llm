@@ -1,10 +1,10 @@
-## FlashMoE
+# FlashMoE
 
 The `FlashMoe` support in `ipex-llm` allows you to run **DeepSeek V3/R1 671B** and **Qwen3Moe 235B** models with 1 or 2 Intel Arc GPU.
 
 ## Install
 
-## Setup
+### Prerequisites
 Requirements: 
 - 380GB CPU Memory
 - 1-8 ARC A770
@@ -15,6 +15,19 @@ Note:
 - For 1 ARC A770 platform, please reduce context length (e.g., 1024) to avoid OOM. Add this option `-c 1024` at the end of below command.
 - For dual-sockets platform, consider enabling `SNC (Sub-NUMA Clustering)` in BIOS and add `numactl --interleave=all` before launch command for *better decoding performance*.
 
+Check your GPU driver version, and update it if needed; we recommend following [Intel client GPU driver installation guide](https://dgpu-docs.intel.com/driver/client/overview.html) to install your GPU driver.
+
+### Step 1: Download and Extract
+
+Download IPEX-LLM llama.cpp portable tgz for Linux from the [link](https://github.com/ipex-llm/ipex-llm/releases/tag/v2.3.0-nightly).
+
+Then, extract the tgz file to a folder.
+
+### Step 2: Runtime Configuration
+- Open a "Terminal", and enter the extracted folder through `cd /PATH/TO/EXTRACTED/FOLDER`
+- For multi-GPUs user, go to [Tips](#multi-gpus-usage) for how to select specific GPU.
+
+### Setup
 Before running, you should download or copy community GGUF model to your local directory. For instance,  `DeepSeek-R1-Q4_K_M.gguf` of [DeepSeek-R1-Q4_K_M.gguf](https://huggingface.co/unsloth/DeepSeek-R1-GGUF/tree/main/DeepSeek-R1-Q4_K_M).
 
 Change `/PATH/TO/DeepSeek-R1-Q4_K_M-00001-of-00009.gguf` to your model path, then run `DeepSeek-R1-Q4_K_M.gguf`
