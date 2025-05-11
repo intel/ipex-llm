@@ -5,7 +5,7 @@ The `FlashMoe` support in `ipex-llm` allows you to run **DeepSeek V3/R1 671B** a
 ### Prerequisites
 Check your GPU driver version, and update it if needed; we recommend following [Intel client GPU driver installation guide](https://dgpu-docs.intel.com/driver/client/overview.html) to install your GPU driver.
 
-### Step 1: Download and Extract
+### Download and Extract
 1. Download IPEX-LLM llama.cpp portable tgz for Linux from the [link](https://github.com/ipex-llm/ipex-llm/releases/tag/v2.3.0-nightly).
 
 2. Extract the tgz file to a folder.
@@ -24,6 +24,8 @@ Before running, you should download or copy community GGUF model to your local d
 Change `/PATH/TO/DeepSeek-R1-Q4_K_M-00001-of-00009.gguf` to your model path, then run `DeepSeek-R1-Q4_K_M.gguf`
 
 ##### cli
+The cli version of `flashmoe` is built on top of `llama.cpp llama-cli`:
+
 ```bash
 ./flash-moe -m /PATH/TO/DeepSeek-R1-Q4_K_M-00001-of-00009.gguf --prompt "What's AI?" -no-cnv
 ```
@@ -75,12 +77,12 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 ```
 
 ##### Serving
+The serving version of `flashmoe` is built on top of `llama.cpp server`:
+
 ```bash
 ./flash-moe -m /PATH/TO/DeepSeek-R1-Q4_K_M-00001-of-00009.gguf --serve -n 512 -np 2 -c 4096
 ```
 > `-n` means number of tokens to predict, `-np` means number of parallel sequences to decode, `-c` means the size of whole context, you can adjust these values based on your requirements.
->
-> Serving function is available from [v2.3.0 nightly build](https://github.com/ipex-llm/ipex-llm/releases/tag/v2.3.0-nightly).
 
 Part of outputs
 
