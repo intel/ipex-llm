@@ -18,13 +18,13 @@ Check your GPU driver version, and update it if needed; we recommend following [
 > - 1-8 ARC A770 or B580
 > - 500GB Disk space
 
-### Run
+## Run
 Before running, you should download or copy community GGUF model to your local directory. For instance,  `DeepSeek-R1-Q4_K_M.gguf` of [DeepSeek-R1-Q4_K_M.gguf](https://huggingface.co/unsloth/DeepSeek-R1-GGUF/tree/main/DeepSeek-R1-Q4_K_M).
 
 Run `DeepSeek-R1-Q4_K_M.gguf`as shown below (change `/PATH/TO/DeepSeek-R1-Q4_K_M-00001-of-00009.gguf` to your model path)
 
-##### cli
-The cli version of `flashmoe` is built on top of `llama.cpp llama-cli`:
+#### CLI
+The CLI version of `flashmoe` is built on top of `llama.cpp llama-cli`:
 
 ```bash
 ./flash-moe -m /PATH/TO/DeepSeek-R1-Q4_K_M-00001-of-00009.gguf --prompt "What's AI?" -no-cnv
@@ -76,7 +76,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 <answer>XXXX</answer> [end of text]
 ```
 
-##### Serving
+#### Serving
 The serving version of `flashmoe` is built on top of `llama.cpp server`:
 
 ```bash
@@ -103,7 +103,7 @@ main: server is listening on http://127.0.0.1:8080 - starting the main loop
 srv  update_slots: all slots are idle
 ```
 
-### Notes 
+## Notes 
 - Larger models and higher precisions may require more resources.
-- For 1 ARC A770 platform, please reduce context length (e.g., 1024) to avoid OOM. Add this option `-c 1024` at the cli command.
+- For 1 ARC A770 platform, please reduce context length (e.g., 1024) to avoid OOM. Add this option `-c 1024` at the CLI command.
 - For dual-sockets Xeon system, consider enabling `SNC (Sub-NUMA Clustering)` in BIOS and add `numactl --interleave=all` before launch command for *better decoding performance*.
