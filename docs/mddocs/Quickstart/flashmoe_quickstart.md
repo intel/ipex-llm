@@ -1,33 +1,24 @@
 # FlashMoE
-
-The `FlashMoe` support in `ipex-llm` allows you to run **DeepSeek V3/R1 671B** and **Qwen3Moe 235B** models with 1 or 2 Intel Arc GPU.
+The `FlashMoe` support in `ipex-llm` allows you to run **DeepSeek V3/R1 671B** and **Qwen3Moe 235B** models with just 1 or 2 Intel Arc GPU.
 
 ## Install
-
 ### Prerequisites
-Requirements: 
-- 380GB CPU Memory
-- 1-8 ARC A770
-- 500GB Disk
-
-Note: 
-- Larger models and other precisions may require more resources.
-- For 1 ARC A770 platform, please reduce context length (e.g., 1024) to avoid OOM. Add this option `-c 1024` at the end of below command.
-- For dual-sockets platform, consider enabling `SNC (Sub-NUMA Clustering)` in BIOS and add `numactl --interleave=all` before launch command for *better decoding performance*.
-
 Check your GPU driver version, and update it if needed; we recommend following [Intel client GPU driver installation guide](https://dgpu-docs.intel.com/driver/client/overview.html) to install your GPU driver.
 
 ### Step 1: Download and Extract
+1. Download IPEX-LLM llama.cpp portable tgz for Linux from the [link](https://github.com/ipex-llm/ipex-llm/releases/tag/v2.3.0-nightly).
 
-Download IPEX-LLM llama.cpp portable tgz for Linux from the [link](https://github.com/ipex-llm/ipex-llm/releases/tag/v2.3.0-nightly).
+2. Extract the tgz file to a folder.
 
-Then, extract the tgz file to a folder.
+3. Open a "Terminal", and enter the extracted folder through `cd /PATH/TO/EXTRACTED/FOLDER`
 
-### Step 2: Runtime Configuration
-- Open a "Terminal", and enter the extracted folder through `cd /PATH/TO/EXTRACTED/FOLDER`
-- For multi-GPUs user, go to [Tips](#multi-gpus-usage) for how to select specific GPU.
+> [!NOTE]
+> Hardware Requirements: 
+> - 380GB CPU Memory for **DeepSeek V3/R1 671B** INT4 
+> - 1-8 ARC A770
+> - 500GB Disk
 
-### Setup
+### Run
 Before running, you should download or copy community GGUF model to your local directory. For instance,  `DeepSeek-R1-Q4_K_M.gguf` of [DeepSeek-R1-Q4_K_M.gguf](https://huggingface.co/unsloth/DeepSeek-R1-GGUF/tree/main/DeepSeek-R1-Q4_K_M).
 
 Change `/PATH/TO/DeepSeek-R1-Q4_K_M-00001-of-00009.gguf` to your model path, then run `DeepSeek-R1-Q4_K_M.gguf`
@@ -109,3 +100,8 @@ main: chat template, chat_template: {% if not add_generation_prompt is defined %
 main: server is listening on http://127.0.0.1:8080 - starting the main loop
 srv  update_slots: all slots are idle
 ```
+
+### Notes 
+- Larger models and other precisions may require more resources.
+- For 1 ARC A770 platform, please reduce context length (e.g., 1024) to avoid OOM. Add this option `-c 1024` at the end of below command.
+- For dual-sockets platform, consider enabling `SNC (Sub-NUMA Clustering)` in BIOS and add `numactl --interleave=all` before launch command for *better decoding performance*.
