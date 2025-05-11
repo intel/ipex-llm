@@ -1,5 +1,5 @@
 # FlashMoE
-The `FlashMoe` support in `ipex-llm` allows you to run **DeepSeek V3/R1 671B** and **Qwen3Moe 235B** models with just 1 or 2 Intel Arc GPU.
+The `FlashMoe` support in `ipex-llm` allows you to run ***DeepSeek V3/R1 671B*** and ***Qwen3Moe 235B*** models with just 1 or 2 Intel Arc GPU.
 
 ## Install
 ### Prerequisites
@@ -14,14 +14,14 @@ Check your GPU driver version, and update it if needed; we recommend following [
 
 > [!NOTE]
 > Hardware Requirements: 
-> - 380GB CPU Memory for **DeepSeek V3/R1 671B** INT4 
-> - 1-8 ARC A770
-> - 500GB Disk
+> - 380GB CPU memory for ***DeepSeek V3/R1 671B*** INT4 model 
+> - 1-8 ARC A770 or B580
+> - 500GB Disk space
 
 ### Run
 Before running, you should download or copy community GGUF model to your local directory. For instance,  `DeepSeek-R1-Q4_K_M.gguf` of [DeepSeek-R1-Q4_K_M.gguf](https://huggingface.co/unsloth/DeepSeek-R1-GGUF/tree/main/DeepSeek-R1-Q4_K_M).
 
-Change `/PATH/TO/DeepSeek-R1-Q4_K_M-00001-of-00009.gguf` to your model path, then run `DeepSeek-R1-Q4_K_M.gguf`
+Run `DeepSeek-R1-Q4_K_M.gguf`as shown below (change `/PATH/TO/DeepSeek-R1-Q4_K_M-00001-of-00009.gguf` to your model path)
 
 ##### cli
 The cli version of `flashmoe` is built on top of `llama.cpp llama-cli`:
@@ -104,6 +104,6 @@ srv  update_slots: all slots are idle
 ```
 
 ### Notes 
-- Larger models and other precisions may require more resources.
-- For 1 ARC A770 platform, please reduce context length (e.g., 1024) to avoid OOM. Add this option `-c 1024` at the end of below command.
-- For dual-sockets platform, consider enabling `SNC (Sub-NUMA Clustering)` in BIOS and add `numactl --interleave=all` before launch command for *better decoding performance*.
+- Larger models and higher precisions may require more resources.
+- For 1 ARC A770 platform, please reduce context length (e.g., 1024) to avoid OOM. Add this option `-c 1024` at the cli command.
+- For dual-sockets Xeon system, consider enabling `SNC (Sub-NUMA Clustering)` in BIOS and add `numactl --interleave=all` before launch command for *better decoding performance*.
