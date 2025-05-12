@@ -9,6 +9,7 @@
 > - ***70+** 模型已经在 `ipex-llm` 上得到优化和验证（如 Llama, Phi, Mistral, Mixtral, DeepSeek, Qwen, ChatGLM, MiniCPM, Qwen-VL, MiniCPM-V 等）, 以获得先进的 **大模型算法优化**, **XPU 加速** 以及 **低比特（FP8FP8/FP6/FP4/INT4）支持**；更多模型信息请参阅[这里](#模型验证)。*
 
 ## 最新更新 🔥 
+- [2025/04] 通过 `ipex-llm` 中的 [FlashMoE](docs/mddocs/Quickstart/flashmoe_quickstart.md)，可使用 1 到 2 张 Intel Arc GPU (如 A770 或 B580) 运行 ***DeepSeek V3/R1 671B*** 和 ***Qwen3MoE 235B*** 模型。
 - [2025/04] 发布 `ipex-llm 2.2.0`, 其中包括 [Ollama Portable Zip 和 llama.cpp Portable Zip](https://github.com/ipex-llm/ipex-llm/releases/tag/v2.2.0)。
 - [2025/04] 新增在 Intel GPU 上对于 [PyTorch 2.6](docs/mddocs/Quickstart/install_pytorch26_gpu.md) 的支持。
 - [2025/03] 通过最新 [llama.cpp Portable Zip](https://github.com/intel/ipex-llm/issues/12963#issuecomment-2724032898) 可运行 **Gemma3** 模型。
