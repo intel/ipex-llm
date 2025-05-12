@@ -15,6 +15,7 @@ Check your GPU driver version, and update it if needed; we recommend following [
 > [!NOTE]
 > Hardware Requirements: 
 > - 380GB CPU memory for ***DeepSeek V3/R1 671B*** INT4 model 
+> - 128GB CPU memory for ***Qwen3MoE 235B*** INT4 model 
 > - 1-8 ARC A770 or B580
 > - 500GB Disk space
 
