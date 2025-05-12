@@ -9,7 +9,7 @@
 > - ***70+ models** have been optimized/verified on `ipex-llm` (e.g., Llama, Phi, Mistral, Mixtral, DeepSeek, Qwen, ChatGLM, MiniCPM, Qwen-VL, MiniCPM-V and more), with state-of-art **LLM optimizations**, **XPU acceleration** and **low-bit (FP8/FP6/FP4/INT4) support**; see the complete list [here](#verified-models).*
 
 ## Latest Update 🔥 
-- [2025/05] The [FlashMoE](docs/mddocs/Quickstart/flashmoe_quickstart.md) support in `ipex-llm` runs ***DeepSeek V3/R1 671B*** and ***Qwen3MoE 235B*** models with just 1 or 2 Intel Arc GPU.
+- [2025/05] You can run ***DeepSeek V3/R1 671B*** and ***Qwen3MoE 235B*** models with just 1 or 2 Intel Arc GPU (such as A770 or B580) using [FlashMoE](docs/mddocs/Quickstart/flashmoe_quickstart.md) in `ipex-llm`.
 - [2025/04] We released `ipex-llm 2.2.0`, which includes [Ollama Portable Zip](docs/mddocs/Quickstart/ollama_portable_zip_quickstart.md) and [llama.cpp Portable Zip](docs/mddocs/Quickstart/llamacpp_portable_zip_gpu_quickstart.md).
 - [2025/04] We added support of [PyTorch 2.6](docs/mddocs/Quickstart/install_pytorch26_gpu.md) for Intel GPU.
 - [2025/03] We added support for **Gemma3** model in the latest [llama.cpp Portable Zip](https://github.com/intel/ipex-llm/issues/12963#issuecomment-2724032898).
