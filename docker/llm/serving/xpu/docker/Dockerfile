@@ -186,5 +186,8 @@ RUN set -eux && \
     # Re-enable sym_int4
     sed -i 's/qtype = ggml_tensor_qtype\["woq_int4"\]/qtype = ggml_tensor_qtype["sym_int4"]/' /usr/local/lib/python3.11/dist-packages/ipex_llm/transformers/convert.py
 
+# Set environment variables to force use batch_forward_new()
+ENV IPEX_LLM_FORCE_BATCH_FORWARD=1
+
 WORKDIR /llm/
 ENTRYPOINT ["bash", "/llm/start-vllm-service.sh"]
