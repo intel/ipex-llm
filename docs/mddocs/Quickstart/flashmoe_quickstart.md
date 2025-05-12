@@ -1,5 +1,5 @@
 # FlashMoE
-The `FlashMoe` support in `ipex-llm` allows you to run ***DeepSeek V3/R1 671B*** and ***Qwen3Moe 235B*** models with just 1 or 2 Intel Arc GPU.
+The `FlashMoe` support in `ipex-llm` allows you to run ***DeepSeek V3/R1 671B*** and ***Qwen3MoE 235B*** models with just 1 or 2 Intel Arc GPU.
 
 ## Install
 ### Prerequisites
