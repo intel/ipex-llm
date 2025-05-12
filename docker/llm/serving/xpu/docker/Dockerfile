@@ -182,8 +182,9 @@ RUN set -eux && \
     pip uninstall -y oneccl oneccl-devel && \
     rm -rf /llm/vllm_for_multi_arc.patch && \
     pip install mpi4py fastapi uvicorn openai && \
-    pip install ray numba
-
+    pip install ray numba && \
+    # Re-enable sym_int4
+    sed -i 's/qtype = ggml_tensor_qtype\["woq_int4"\]/qtype = ggml_tensor_qtype["sym_int4"]/' /usr/local/lib/python3.11/dist-packages/ipex_llm/transformers/convert.py
 
 WORKDIR /llm/
 ENTRYPOINT ["bash", "/llm/start-vllm-service.sh"]
