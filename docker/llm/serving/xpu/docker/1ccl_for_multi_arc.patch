@@ -1,7 +1,7 @@
-From 2124a4b48edccfb9363524850634c81a42e98c7e Mon Sep 17 00:00:00 2001
+From 18916acd35d2a6797d5b6371d949cf3a0c660085 Mon Sep 17 00:00:00 2001
 From: YongZhuIntel <yong.zhu@intel.com>
-Date: Thu, 8 May 2025 10:31:36 +0800
-Subject: [PATCH] oneccl for BMG V2025.0.0.1.1
+Date: Mon, 12 May 2025 14:50:08 +0800
+Subject: [PATCH] oneccl for BMG V2025.0.0.1.2
 
 allreduce optimization with LL256 for BMG dGPU
 
@@ -16,6 +16,7 @@ Build:
     5. ls -al src/libccl*
 
 Changes:
+
 optimize req_workgroup calculate
 
 Revert "optimize req_workgroup calculate" for hang issue
@@ -35,19 +36,27 @@ enable p2p allreduce
 fix_fdset_buffer_overflow_issue
 
 control usm and p2p by env variable
+
 default is p2p,  enable usm:
      export CCL_DG2_USM=1
+
+enable sycl path
+
+move to sycl path (CCL_WORKER_COUNT must be 1)
+
+modify print to log warn
 ---
- src/CMakeLists.txt               |   2 +
- src/coll/coll.cpp                |  30 +-
- src/coll/coll_param.cpp          |   1 +
- src/coll/selection/selection.cpp |   5 +
- src/common/env/env.cpp           |   2 +
- src/common/env/env.hpp           |   2 +
- src/common/env/vars.hpp          |   2 +
- src/dg2/dg2_allreduce.cpp        | 689 +++++++++++++++++++++++++++++++
- src/dg2/dg2_allreduce.hpp        |  13 +
- 9 files changed, 743 insertions(+), 3 deletions(-)
+ src/CMakeLists.txt                           |   2 +
+ src/coll/algorithms/utils/sycl_selection.cpp |   8 +-
+ src/coll/coll.cpp                            |  36 +-
+ src/coll/coll_param.cpp                      |   1 +
+ src/coll/selection/selection.cpp             |   5 +
+ src/common/env/env.cpp                       |   2 +
+ src/common/env/env.hpp                       |   2 +
+ src/common/env/vars.hpp                      |   2 +
+ src/dg2/dg2_allreduce.cpp                    | 690 +++++++++++++++++++
+ src/dg2/dg2_allreduce.hpp                    |  13 +
+ 10 files changed, 755 insertions(+), 6 deletions(-)
  create mode 100644 src/dg2/dg2_allreduce.cpp
  create mode 100644 src/dg2/dg2_allreduce.hpp
 
@@ -64,8 +73,35 @@ index c1f2483..82cbf22 100644
      ${EXTENSIONS_SRC})
  
  if (ENABLE_STUB_BACKEND)
+diff --git a/src/coll/algorithms/utils/sycl_selection.cpp b/src/coll/algorithms/utils/sycl_selection.cpp
+index e4e0271..06be955 100644
+--- a/src/coll/algorithms/utils/sycl_selection.cpp
++++ b/src/coll/algorithms/utils/sycl_selection.cpp
+@@ -64,8 +64,11 @@ bool can_use_sycl_kernels(const ccl_selector_param& param) {
+     RETURN_FALSE_IF(ccl::global_data::env().enable_ze_cache == 0, "ze cache is not enabled");
+     RETURN_FALSE_IF(!param.comm->get_topo_manager().has_p2p_access(),
+                     "no p2p access between devices");
+-    RETURN_FALSE_IF(!param.comm->get_topo_manager().has_all_vertices_connected(),
++    if (param.ctype != ccl_coll_allreduce || !ccl::global_data::env().enable_dg2_allreduce)
++    {
++        RETURN_FALSE_IF(!param.comm->get_topo_manager().has_all_vertices_connected(),
+                     "no connection between vertices");
++    }
+     RETURN_FALSE_IF(!param.comm->get_topo_manager().has_same_ppn(),
+                     "ppn is not the same among the nodes");
+     RETURN_FALSE_IF(!param.comm->get_topo_manager().has_same_domains(),
+@@ -144,7 +147,8 @@ bool can_use_sycl_kernels(const ccl_selector_param& param) {
+     }
+ 
+     if (checkers::is_unknown_device_family(param)) {
+-        LOG_WARN("Applying sycl-kernels, but device family is not recognized");
++        if (!ccl::global_data::env().enable_dg2_allreduce)
++            LOG_WARN("Applying sycl-kernels, but device family is not recognized");
+     }
+ 
+ #endif // CCL_ENABLE_SYCL
 diff --git a/src/coll/coll.cpp b/src/coll/coll.cpp
-index 9bdb88d..2c89711 100644
+index 9bdb88d..56800e2 100644
 --- a/src/coll/coll.cpp
 +++ b/src/coll/coll.cpp
 @@ -62,6 +62,8 @@
@@ -77,24 +113,53 @@ index 9bdb88d..2c89711 100644
  #if defined(CCL_ENABLE_SYCL) && defined(CCL_ENABLE_ZE)
  #include "coll/algorithms/utils/sycl_selection.hpp"
  #include "coll/algorithms/allreduce/sycl/allreduce_sycl.hpp"
-@@ -129,6 +131,16 @@ ccl_request* exec_single_rank_coll(const ccl_coll_param& param) {
+@@ -129,6 +131,18 @@ ccl_request* exec_single_rank_coll(const ccl_coll_param& param) {
      return nullptr;
  }
  
-+static ccl_request* ccl_dg2_allreduce_impl(ccl_coll_param& param, const ccl_coll_attr& in_attr)
++static ccl::event ccl_dg2_allreduce(ccl_selector_param& param,const void* send_buf,void* recv_buf,bool& done)
 +{
-+    dg2_init(param);
++    ccl::event ret;
++    dg2_init(param,send_buf,recv_buf);
 +
-+    dg2_allreduce(param.send_bufs[0], param.recv_bufs[0],
++    ret = dg2_allreduce(send_buf, recv_buf,
 +                  param.count, param.dtype, param.reduction, param.comm);
 +
-+    return nullptr;
++    done = true;
++    return ret;
 +}
 +
  /* param is not const because param.comm can be updated for unordered colls */
  static ccl_request* ccl_coll_create(ccl_coll_param& param, const ccl_coll_attr& in_attr) {
      ccl_coll_attr& attr = const_cast<ccl_coll_attr&>(in_attr);
-@@ -1181,12 +1193,24 @@ ccl_request* ccl_allreduce_impl(const void* send_buf,
+@@ -1148,7 +1162,16 @@ ccl::event ccl_allreduce(const void* send_buf,
+         ccl_stream* op_stream = const_cast<ccl_stream*>(stream);
+         auto q = op_stream->get_native_stream();
+         auto dummy_unused_attr = ccl::create_operation_attr<ccl::allreduce_attr>();
+-        ccl::event ccl_event = allreduce_sycl(q,
++
++        ccl::event ccl_event;
++        std::shared_ptr<atl_base_comm> atl_comm = comm->get_node_comm().get()->get_atl_comm();
++
++	if (ccl::global_data::env().enable_dg2_allreduce
++            && (atl_comm->get_size() >= 2) && (atl_comm->get_size() <= DG2_NUM)
++            && ((dtype == ccl::datatype::float16) || (dtype == ccl::datatype::float32) || (dtype == ccl::datatype::int32))) {
++            ccl_event = ccl_dg2_allreduce(param,send_buf,recv_buf,done);
++         } else {
++             ccl_event = allreduce_sycl(q,
+                                               send_buf,
+                                               recv_buf,
+                                               count,
+@@ -1159,6 +1182,8 @@ ccl::event ccl_allreduce(const void* send_buf,
+                                               dummy_unused_attr,
+                                               deps,
+                                               done);
++        }
++
+         if (done) {
+             if (ccl::global_data::env().enable_op_sync) {
+                 ccl_event.wait();
+@@ -1181,12 +1206,15 @@ ccl_request* ccl_allreduce_impl(const void* send_buf,
                                  ccl_comm* comm,
                                  const ccl_stream* stream,
                                  const std::vector<ccl::event>& deps) {
@@ -106,16 +171,7 @@ index 9bdb88d..2c89711 100644
 -    auto req = ccl_coll_create(param, attr);
 -    LOG_DEBUG(
 -        "coll ", ccl_coll_type_to_str(param.ctype), " created, req ", stream, " count ", count);
-+    std::shared_ptr<atl_base_comm> atl_comm = comm->get_node_comm().get()->get_atl_comm();
-+
-+    if (ccl::global_data::env().enable_dg2_allreduce
-+        && (atl_comm->get_size() >= 2) && (atl_comm->get_size() <= DG2_NUM)
-+        && ((dtype == ccl::datatype::float16) || (dtype == ccl::datatype::float32) || (dtype == ccl::datatype::int32))) {
-+        req = ccl_dg2_allreduce_impl(param, attr);
-+    }
-+    else {
-+        req = ccl_coll_create(param, attr);
-+    }
++    req = ccl_coll_create(param, attr);
 +
 +    LOG_DEBUG("coll ", ccl_coll_type_to_str(param.ctype), " created, req ", req, " count ", count);
 +
@@ -191,10 +247,10 @@ index 73dcf77..a1bc4ca 100644
  constexpr const char* CCL_MIN_CHUNK_SIZE = "CCL_MIN_CHUNK_SIZE";
 diff --git a/src/dg2/dg2_allreduce.cpp b/src/dg2/dg2_allreduce.cpp
 new file mode 100644
-index 0000000..5ea1793
+index 0000000..ac1ed52
 --- /dev/null
 +++ b/src/dg2/dg2_allreduce.cpp
-@@ -0,0 +1,689 @@
+@@ -0,0 +1,690 @@
 +#include <fcntl.h>
 +#include <unistd.h>
 +#include <sys/un.h>
@@ -402,10 +458,10 @@ index 0000000..5ea1793
 +    return nullptr;
 +}
 +
-+void create_shared_buf(void *send_buf, void *recv_buf, size_t byte_count)
++void create_shared_buf(const void *send_buf, void *recv_buf, size_t byte_count)
 +{
 +    bool is_p2p = ccl::global_data::env().enable_dg2_usm ? false : true;
-+    printf("-----> current rank: %d, world size: %d, byte_count: %lu,is_p2p:%d\n", world_rank, world_size, byte_count,is_p2p);
++    LOG_WARN("-----> current rank:",world_rank,", world size:",world_size,",byte_count:",byte_count,",is_p2p:",is_p2p);
 +
 +    pthread_t tid;
 +    char sock_path[64];
@@ -448,15 +504,16 @@ index 0000000..5ea1793
 +    pthread_join(tid, nullptr);
 +}
 +
-+void dg2_init(ccl_coll_param &param)
++void dg2_init(ccl_selector_param &param,const void* send_buf,void* recv_buf)
 +{
 +    size_t byte_count = param.count * param.dtype.size();
 +
 +    ccl_stream *stream = param.stream;
 +    q = stream->get_native_stream();
 +    // init recv_buf in advance to warm up GPU
-+    if (param.send_bufs[0] != param.recv_bufs[0])
-+        q.memcpy(param.recv_bufs[0], param.send_bufs[0], byte_count);
++    if (send_buf != recv_buf)
++        q.memcpy(recv_buf, send_buf, byte_count);
++
 +
 +    /* init already */
 +    if (world_size != 0)
@@ -467,7 +524,7 @@ index 0000000..5ea1793
 +    world_size = atl_comm->get_size();
 +    world_rank = atl_comm->get_rank();
 +
-+    create_shared_buf(param.send_bufs[0], param.recv_bufs[0], byte_count);
++    create_shared_buf(send_buf, recv_buf, byte_count);
 +}
 +
 +
@@ -676,7 +733,7 @@ index 0000000..5ea1793
 +ccl::event dg2_ll256_allreduce(const void *src, void *dst, size_t count,
 +                               const ccl_datatype &dtype, ccl::reduction reduction, ccl_comm *comm)
 +{
-+    ccl::event ret;
++//    ccl::event ret;
 +
 +    //std::cout << "enter " << __func__ << ", rank: " << world_rank <<  ", count: " << count << std::endl;
 +
@@ -704,7 +761,7 @@ index 0000000..5ea1793
 +    /* To avoid pattern not changed when "iters" is 1 */
 +    pattern_t pattern_prefix = ++pattern_counter << 16;
 +
-+    q.submit([&](auto& h) {
++    auto e = q.submit([&](auto& h) {
 +        using namespace sycl::ext::intel::experimental::esimd;
 +
 +        int local_world_rank = world_rank;
@@ -860,7 +917,7 @@ index 0000000..5ea1793
 +        });
 +    });
 +
-+    return ret;
++    return ccl::event::create_from_native(e);
 +}
 +
 +ccl::event dg2_allreduce(const void *src, void *dst, size_t count,
@@ -868,7 +925,7 @@ index 0000000..5ea1793
 +{
 +    ccl::event ret;
 +
-+    dg2_ll256_allreduce(src, dst, count, dtype, reduction, comm);
++    ret = dg2_ll256_allreduce(src, dst, count, dtype, reduction, comm);
 +
 +    return ret;
 +}
@@ -886,19 +943,19 @@ index 0000000..5ea1793
 +}
 diff --git a/src/dg2/dg2_allreduce.hpp b/src/dg2/dg2_allreduce.hpp
 new file mode 100644
-index 0000000..0506445
+index 0000000..9129661
 --- /dev/null
 +++ b/src/dg2/dg2_allreduce.hpp
 @@ -0,0 +1,13 @@
 +#include "oneapi/ccl.hpp"
++#include "coll/selection/selection.hpp"
 +
 +#define DG2_NUM (4)
 +
 +#define LL256_BUF_SIZE (32 * 1024 * 1024)
 +#define GATHER_BUF_OFFSET (LL256_BUF_SIZE / 2)
 +
-+void dg2_init(ccl_coll_param &param);
-+
++void dg2_init(ccl_selector_param &param,const void* send_buf,void* recv_buf);
 +ccl::event dg2_allreduce(const void *src, void *dst, size_t count,
 +                         const ccl_datatype& dtype, ccl::reduction reduction, ccl_comm *comm);
 +

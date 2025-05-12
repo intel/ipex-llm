@@ -18,7 +18,7 @@ echo "Max model length: $MAX_MODEL_LEN"
 echo "Load in low bit: $LOAD_IN_LOW_BIT"
 echo "Port: $PORT"
 
-export CCL_WORKER_COUNT=2
+export CCL_WORKER_COUNT=1
 export SYCL_CACHE_PERSISTENT=1
 export FI_PROVIDER=shm
 export CCL_ATL_TRANSPORT=ofi
