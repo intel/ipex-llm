@@ -66,8 +66,8 @@
   <tr>
     <td align="center" colspan="1"><strong>Intel Core Ultra iGPU</strong></td>
     <td align="center" colspan="1"><strong>Intel Core Ultra NPU</strong></td>
-    <td align="center" colspan="1"><strong>Intel Arc dGPU</strong></td>
     <td align="center" colspan="1"><strong>2-Card Intel Arc dGPUs</strong></td>
+    <td align="center" colspan="1"><strong>Intel Xeon + Arc dGPU</strong></td>
   </tr>
   <tr>
     <td>
@@ -81,29 +81,30 @@
       </a>
     </td>
     <td>
-      <a href="https://llm-assets.readthedocs.io/en/latest/_images/arc_llama3-8B_fp8_textwebui.gif" target="_blank">
-        <img src="https://llm-assets.readthedocs.io/en/latest/_images/arc_llama3-8B_fp8_textwebui.gif" width=100%; />
-      </a>
-    </td>
-    <td>
       <a href="https://llm-assets.readthedocs.io/en/latest/_images/2arc_DeepSeek-R1-Distill-Qwen-32B-Q4_K_M.gif" target="_blank">
         <img src="https://llm-assets.readthedocs.io/en/latest/_images/2arc_DeepSeek-R1-Distill-Qwen-32B-Q4_K_M.gif" width=100%; />
       </a>
     </td>
+    <td>
+      <a href="https://llm-assets.readthedocs.io/en/latest/_images/FlashMoE-Qwen3-235B.gif" target="_blank">
+        <img src="https://llm-assets.readthedocs.io/en/latest/_images/FlashMoE-Qwen3-235B.gif" width=100%; />
+      </a>
+    </td>    
   </tr>
   <tr>
     <td align="center" width="25%">
-      <a href="docs/mddocs/Quickstart/ollama_portable_zip_quickstart.zh-CN.md">Ollama <br> (Mistral-7B, Q4_K) </a>
+      <a href="docs/mddocs/Quickstart/ollama_portable_zip_quickstart.md">Ollama <br> (Mistral-7B, Q4_K) </a>
     </td>
     <td align="center" width="25%">
       <a href="docs/mddocs/Quickstart/npu_quickstart.md">HuggingFace <br> (Llama3.2-3B, SYM_INT4)</a>
     </td>
     <td align="center" width="25%">
-      <a href="docs/mddocs/Quickstart/webui_quickstart.md">TextGeneration-WebUI <br> (Llama3-8B, FP8) </a>
+      <a href="docs/mddocs/Quickstart/llamacpp_portable_zip_gpu_quickstart.md">llama.cpp <br> (DeepSeek-R1-Distill-Qwen-32B, Q4_K)</a>
     </td>
     <td align="center" width="25%">
-      <a href="docs/mddocs/Quickstart/llamacpp_portable_zip_gpu_quickstart.zh-CN.md">llama.cpp <br> (DeepSeek-R1-Distill-Qwen-32B, Q4_K)</a>
-    </td>  </tr>
+      <a href="docs/mddocs/Quickstart/flashmoe_quickstart.md">FlashMoE <br> (Qwen3MoE-235B, Q4_K) </a>
+    </td>
+  </tr>
 </table>
 
 <!--
