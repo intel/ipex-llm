@@ -340,7 +340,7 @@ def quantize_linear(weight: torch.Tensor, in_features: int, precision: str):
 
 
 def moe_group_topk(scores: torch.Tensor, e_score_correction_bias: torch.Tensor,
-                   n_group: int, topk_group: int, top_k: int, norm_topk_prob: float,
+                   n_group: int, topk_group: int, top_k: int, norm_topk_prob: bool,
                    routed_scaling_factor: float):
     import xe_addons
     topk_idx, topk_weight = xe_addons.moe_group_topk(
@@ -367,7 +367,7 @@ def rotary_half_with_cache_inplaced(query_states: torch.Tensor, key_states: torc
     xe_addons.rotary_half_with_cache_inplaced(query_states, key_states, cos, sin)
 
 
-def moe_softmax_topk(router_logits: torch.Tensor, top_k: int, norm_topk_prob: float):
+def moe_softmax_topk(router_logits: torch.Tensor, top_k: int, norm_topk_prob: bool):
     import xe_addons
     selected_experts, routing_weights = xe_addons.moe_softmax_topk(
         router_logits, top_k, norm_topk_prob
