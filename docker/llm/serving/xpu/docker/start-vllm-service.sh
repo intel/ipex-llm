@@ -18,22 +18,21 @@ echo "Max model length: $MAX_MODEL_LEN"
 echo "Load in low bit: $LOAD_IN_LOW_BIT"
 echo "Port: $PORT"
 
-export CCL_WORKER_COUNT=2
+export USE_XETLA=OFF
 export SYCL_CACHE_PERSISTENT=1
+export SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS=2
 export FI_PROVIDER=shm
+export TORCH_LLM_ALLREDUCE=0
+
+export CCL_WORKER_COUNT=2        # On BMG, set CCL_WORKER_COUNT=1; otherwise, internal-oneccl will not function properly
 export CCL_ATL_TRANSPORT=ofi
 export CCL_ZE_IPC_EXCHANGE=sockets
 export CCL_ATL_SHM=1
-
-export USE_XETLA=OFF
-export SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS=2
-export TORCH_LLM_ALLREDUCE=0
-
 export CCL_SAME_STREAM=1
 export CCL_BLOCKING_WAIT=0
 
-export VLLM_USE_V1=0
-export IPEX_LLM_LOWBIT=$LOAD_IN_LOW_BIT
+export VLLM_USE_V1=0       # Used to select between V0 and V1 engine
+export IPEX_LLM_LOWBIT=$LOAD_IN_LOW_BIT        # Ensures low-bit info is used for MoE; otherwise, IPEX's default MoE will be used
 
 source /opt/intel/1ccl-wks/setvars.sh
 
