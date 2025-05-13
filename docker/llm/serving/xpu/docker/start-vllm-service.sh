@@ -30,6 +30,7 @@ export CCL_ZE_IPC_EXCHANGE=sockets
 export CCL_ATL_SHM=1
 export CCL_SAME_STREAM=1
 export CCL_BLOCKING_WAIT=0
+# export CCL_DG2_USM=1         # Needed on Core to enable USM (Shared Memory GPUDirect). Xeon supports P2P and doesn't need this.
 
 export VLLM_USE_V1=0       # Used to select between V0 and V1 engine
 export IPEX_LLM_LOWBIT=$LOAD_IN_LOW_BIT        # Ensures low-bit info is used for MoE; otherwise, IPEX's default MoE will be used
