@@ -23,7 +23,7 @@ You can either pull a prebuilt Docker image from DockerHub, depending on your ha
 * **For Intel Arc BMG GPUs**, use:
 
   ```bash
-  docker pull intelanalytics/multi-arc-serving:0.2.0-b1
+  docker pull intelanalytics/ipex-llm-serving-xpu:0.2.0-b2
   ```
 
 
@@ -116,20 +116,21 @@ root@ws-arc-001:/llm# sycl-ls
 
 ```bash
 export USE_XETLA=OFF
-export SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS=2
-export TORCH_LLM_ALLREDUCE=0
 export SYCL_CACHE_PERSISTENT=1
-
+export SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS=2
 export FI_PROVIDER=shm
-export CCL_WORKER_COUNT=2
+export TORCH_LLM_ALLREDUCE=0
+
+export CCL_WORKER_COUNT=2        # On BMG, set CCL_WORKER_COUNT=1; otherwise, internal-oneccl will not function properly
 export CCL_ATL_TRANSPORT=ofi
 export CCL_ZE_IPC_EXCHANGE=sockets
 export CCL_ATL_SHM=1
 export CCL_SAME_STREAM=1
 export CCL_BLOCKING_WAIT=0
 
-export VLLM_USE_V1=0
-export IPEX_LLM_LOWBIT="fp8"
+export LOAD_IN_LOW_BIT="fp8"
+export IPEX_LLM_LOWBIT=$LOAD_IN_LOW_BIT        # Ensures low-bit info is used for MoE; otherwise, IPEX's default MoE will be used
+export VLLM_USE_V1=0        # Used to select between V0 and V1 engine
 
 source /opt/intel/1ccl-wks/setvars.sh
 
@@ -142,7 +143,7 @@ numactl -C 0-11 python -m ipex_llm.vllm.xpu.entrypoints.openai.api_server \
   --device xpu \
   --dtype float16 \
   --enforce-eager \
-  --load-in-low-bit "fp8" \
+  --load-in-low-bit $LOAD_IN_LOW_BIT \
   --max-model-len "2000" \
   --max-num-batched-tokens "3000" \
   --max-num-seqs "256" \
