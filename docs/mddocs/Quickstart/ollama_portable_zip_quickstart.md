@@ -28,6 +28,7 @@ This guide demonstrates how to use [Ollama portable zip](https://github.com/ipex
   - [Increase context length in Ollama](#increase-context-length-in-ollama)
   - [Select specific GPU(s) to run Ollama when multiple ones are available](#select-specific-gpus-to-run-ollama-when-multiple-ones-are-available)
   - [Tune performance](#tune-performance)
+  - [Save VRAM](#save-vram)
   - [Additional models supported after Ollama v0.6.2](#additional-models-supported-after-ollama-v062)
   - [Signature Verification](#signature-verification)
 - [More details](ollama_quickstart.md)
@@ -138,6 +139,9 @@ For example, if you would like to run `deepseek-r1:7b` but the download speed fr
 > ```
 > Except for `ollama run` and `ollama pull`, the model should be identified through its actual id, e.g. `ollama rm modelscope.cn/unsloth/DeepSeek-R1-Distill-Qwen-7B-GGUF:Q4_K_M`
 
+> [!NOTE]
+> For versions earlier than `2.3.0b20250429`, please use `IPEX_LLM_MODEL_SOURCE` instead.
+
 ### Increase context length in Ollama
 
 By default, Ollama runs model with a context window of 2048 tokens. That is, the model can "remember" at most 2048 tokens of context.
@@ -160,7 +164,7 @@ To increase the context length, you could set environment variable `OLLAMA_NUM_C
 > `OLLAMA_NUM_CTX` has a higher priority than the `num_ctx` settings in a models' `Modelfile`.
 
 > [!NOTE]
-> For versions earlier than 2.7.0b20250429, please use the `IPEX_LLM_NUM_CTX` instead.
+> For versions earlier than `2.3.0b20250429`, please use `IPEX_LLM_NUM_CTX` instead.
 
 ### Select specific GPU(s) to run Ollama when multiple ones are available
 
@@ -210,6 +214,39 @@ To enable `SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS`, set it **before start
 
 > [!TIP]
 > You could refer to [here](https://www.intel.com/content/www/us/en/developer/articles/guide/level-zero-immediate-command-lists.html) regarding more information about Level Zero Immediate Command Lists.
+
+### Save VRAM
+
+To save VRAM, you could set environment variable `OLLAMA_NUM_PARALLEL` as `1` **before starting Ollama Serve**, as follows (if Ollama serve is already running, please make sure to stop it first):
+
+- For **Windows** users:
+
+  - Open "Command Prompt", and navigate to the extracted folder through `cd /d PATH\TO\EXTRACTED\FOLDER`
+  - Run `set OLLAMA_NUM_PARALLEL=1` in "Command Prompt"
+  - Start Ollama serve through `start-ollama.bat`
+
+- For **Linux** users:
+
+  - In a terminal, navigate to the extracted folder through `cd PATH\TO\EXTRACTED\FOLDER`
+  - Run `export OLLAMA_NUM_PARALLEL=1` in the terminal
+  - Start Ollama serve through `./start-ollama.sh`
+
+For **MoE model** (such as `qwen3:30b`), you could save VRAM by moving experts to CPU through setting environment variable `OLLAMA_SET_OT`, as follows (if Ollama serve is already running, please make sure to stop it first):
+
+- For **Windows** users:
+
+  - Open "Command Prompt", and navigate to the extracted folder through `cd /d PATH\TO\EXTRACTED\FOLDER`
+  - Run `set OLLAMA_SET_OT="exps=CPU"` in "Command Prompt" to put all experts on CPU; `OLLAMA_SET_OT` can also be set through regular expression, such as `set OLLAMA_SET_OT="(2[4-9]|[3-9][0-9])\.ffn_.*_exps\.=CPU"` to put experts at level `24` to `99` on CPU
+  - Start Ollama serve through `start-ollama.bat`
+
+- For **Linux** users:
+
+  - In a terminal, navigate to the extracted folder through `cd PATH\TO\EXTRACTED\FOLDER`
+  - Run `export OLLAMA_SET_OT="exps=CPU"` in the terminal; `OLLAMA_SET_OT` can also be set through regular expression, such as `export OLLAMA_SET_OT="(2[4-9]|[3-9][0-9])\.ffn_.*_exps\.=CPU"` to put experts at layer `24` to `99` on CPU
+  - Start Ollama serve through `./start-ollama.sh`
+
+> [!NOTE]
+> `OLLAMA_SET_OT` is only effective for version `2.3.0b20250429` and later.
 
 ### Additional models supported after Ollama v0.6.2
 

@@ -29,6 +29,7 @@
   - [在 Ollama 中增加上下文长度](#在-ollama-中增加上下文长度)
   - [在多块 GPU 可用时选择特定的 GPU 来运行 Ollama](#在多块-gpu-可用时选择特定的-gpu-来运行-ollama)
   - [性能调优](#性能调优)
+  - [节省 VRAM](#节省-vram)
   - [Ollama v0.6.2 之后新增模型支持](#ollama-v062-之后新增模型支持)
   - [签名验证](#签名验证)
 - [更多信息](ollama_quickstart.zh-CN.md)
@@ -136,6 +137,9 @@ Ollama 默认从 Ollama 库下载模型。通过在**运行 Ollama 之前**设�
 > ```
 > 除了 `ollama run` 和 `ollama pull`，其他操作中模型应通过其实际 ID 进行识别，例如： `ollama rm modelscope.cn/unsloth/DeepSeek-R1-Distill-Qwen-7B-GGUF:Q4_K_M`
 
+> [!NOTE]
+> 对早于 `2.3.0b20250429` 的版本，请改用 `IPEX_LLM_MODEL_SOURCE` 变量。
+
 ### 在 Ollama 中增加上下文长度
 
 默认情况下，Ollama 使用 2048 个 token 的上下文窗口运行模型。也就是说，模型最多能 “记住” 2048 个 token 的上下文。
@@ -158,7 +162,7 @@ Ollama 默认从 Ollama 库下载模型。通过在**运行 Ollama 之前**设�
 > `OLLAMA_NUM_CTX` 的优先级高于模型 `Modelfile` 中设置的 `num_ctx`。
 
 > [!NOTE]
-> 对早于 2.7.0b20250429 的版本，请改用 IPEX_LLM_NUM_CTX 变量。
+> 对早于 `2.3.0b20250429` 的版本，请改用 `IPEX_LLM_NUM_CTX` 变量。
 
 ### 在多块 GPU 可用时选择特定的 GPU 来运行 Ollama
 
@@ -208,6 +212,39 @@ Ollama 默认从 Ollama 库下载模型。通过在**运行 Ollama 之前**设�
 
 > [!TIP]
 > 参考[此处文档](https://www.intel.com/content/www/us/en/developer/articles/guide/level-zero-immediate-command-lists.html)以获取更多 Level Zero Immediate Command Lists 相关信息。
+
+### 节省 VRAM
+
+你可以通过在**启动 Ollama serve 之前**设置环境变量 `OLLAMA_NUM_PARALLEL` 为 `1` 来节约显存，步骤如下（如果 Ollama serve 已经在运行，请确保先将其停止）：
+
+- 对于 **Windows** 用户：
+
+  - 打开命令提示符，并通过 `cd /d PATH\TO\EXTRACTED\FOLDER` 命令进入解压后的文件夹
+  - 在命令提示符中设置 `set OLLAMA_NUM_PARALLEL=1`
+  - 通过运行 `start-ollama.bat` 启动 Ollama serve
+
+- 对于 **Linux** 用户：
+
+  - 在终端中输入指令 `cd PATH/TO/EXTRACTED/FOLDER` 进入解压后的文件夹
+  - 在终端中设置 `export OLLAMA_NUM_PARALLEL=1`
+  - 通过运行 `./start-ollama.sh` 启动 Ollama serve
+
+对于 **MoE 模型**（比如 `qwen3:30b`），你可以通过在**启动 Ollama serve 之前**设置环境变量 `OLLAMA_SET_OT` 把 experts 移到 CPU 运行上来节约显存（如果 Ollama serve 已经在运行，请确保先将其停止）：
+
+- 对于 **Windows** 用户：
+
+  - 打开命令提示符，并通过 `cd /d PATH\TO\EXTRACTED\FOLDER` 命令进入解压后的文件夹
+  - 在命令提示符中设置 `set OLLAMA_SET_OT="exps=CPU"` 把所有的 experts 放在 CPU 上；也可以通过设置正则表达式，如 `set OLLAMA_SET_OT="(2[4-9]|[3-9][0-9])\.ffn_.*_exps\.=CPU"` 把 `24` 到 `99` 层的 experts 放到 CPU 上
+  - 通过运行 `start-ollama.bat` 启动 Ollama serve
+
+- 对于 **Linux** 用户：
+
+  - 在终端中输入指令 `cd PATH/TO/EXTRACTED/FOLDER` 进入解压后的文件夹
+  - 在终端中设置 `export OLLAMA_SET_OT="exps=CPU"` 把所有的 experts 放在 CPU 上；也可以通过设置正则表达式，如 `export OLLAMA_SET_OT="(2[4-9]|[3-9][0-9])\.ffn_.*_exps\.=CPU"` 把 `24` 到 `99` 层的 experts 放到 CPU 上
+  - 通过运行 `./start-ollama.sh` 启动 Ollama serve
+
+> [!NOTE]
+> `OLLAMA_SET_OT` 仅对于 `2.3.0b20250429` 及以后的版本生效。
 
 ### Ollama v0.6.2 之后新增模型支持
 
