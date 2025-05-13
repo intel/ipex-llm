@@ -236,7 +236,7 @@ For **MoE model** (such as `qwen3:30b`), you could save VRAM by moving experts t
 - For **Windows** users:
 
   - Open "Command Prompt", and navigate to the extracted folder through `cd /d PATH\TO\EXTRACTED\FOLDER`
-  - Run `set OLLAMA_SET_OT="exps=CPU"` in "Command Prompt" to put all experts on CPU; `OLLAMA_SET_OT` can also be set through regular expression, such as `set OLLAMA_SET_OT="(2[4-9]|[3-9][0-9])\.ffn_.*_exps\.=CPU"` to put experts at level `24` to `99` on CPU
+  - Run `set OLLAMA_SET_OT="exps=CPU"` in "Command Prompt" to put all experts on CPU; `OLLAMA_SET_OT` can also be set through regular expression, such as `set OLLAMA_SET_OT="(2[4-9]|[3-9][0-9])\.ffn_.*_exps\.=CPU"` to put experts at layer `24` to `99` on CPU
   - Start Ollama serve through `start-ollama.bat`
 
 - For **Linux** users:
