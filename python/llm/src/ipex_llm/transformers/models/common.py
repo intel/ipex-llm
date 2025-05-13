@@ -340,7 +340,7 @@ def quantize_linear(weight: torch.Tensor, in_features: int, precision: str):
 
 
 def moe_group_topk(scores: torch.Tensor, e_score_correction_bias: torch.Tensor,
-                   n_group: int, topk_group: int, top_k: int, norm_topk_prob: bool,
+                   n_group: int, topk_group: int, top_k: int, norm_topk_prob: float,
                    routed_scaling_factor: float):
     import xe_addons
     topk_idx, topk_weight = xe_addons.moe_group_topk(
