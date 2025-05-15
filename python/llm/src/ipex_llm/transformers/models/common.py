@@ -373,3 +373,29 @@ def moe_softmax_topk(router_logits: torch.Tensor, top_k: int, norm_topk_prob: bo
         router_logits, top_k, norm_topk_prob
     )
     return selected_experts, routing_weights
+
+
+def merge_quantized_qkv(q_proj, k_proj, v_proj, module):
+    from ipex_llm.transformers.low_bit_linear import FP4Params
+    q_proj.weight = q_proj.weight.to('cpu')
+    k_proj.weight = k_proj.weight.to('cpu')
+    v_proj.weight = v_proj.weight.to('cpu')
+    linears = [q_proj, k_proj, v_proj]
+    new_weight = torch.cat(list(linear.weight.data for linear in linears), dim=0)
+    if q_proj.has_bias:
+        new_bias = torch.cat(list(linear.bias.data for linear in linears), dim=0)
+        q_proj.bias = torch.nn.Parameter(new_bias, requires_grad=False)
+    new_out_features = sum(layer.out_features for layer in linears)
+    new_params_low_bit = FP4Params(data=new_weight.data,
+                            requires_grad=False,
+                            quantized=True,
+                            _shape=[new_out_features, q_proj.in_features],
+                            convert_shape_only=False,
+                            qtype=q_proj.weight.qtype,
+                            in_features=q_proj.in_features,
+                            enable_scale_search=False)
+    q_proj.out_features = new_out_features
+    q_proj.weight = new_params_low_bit.to('xpu')
+    del module.q_proj.weight
+    module.qkv_proj = module.q_proj
+    del module.k_proj, module.v_proj, module.q_proj
