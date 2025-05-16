@@ -375,8 +375,19 @@ def moe_softmax_topk(router_logits: torch.Tensor, top_k: int, norm_topk_prob: bo
     return selected_experts, routing_weights
 
 
+# q,k,v_proj should be ipex-llm quantized linears
 def merge_quantized_qkv(q_proj, k_proj, v_proj, module):
     from ipex_llm.transformers.low_bit_linear import FP4Params
+    from ipex_llm.ggml.quantize import ggml_tensor_qtype
+    has_qtype = (hasattr(q_proj.weight, 'qtype')
+                 and hasattr(k_proj.weight, 'qtype')
+                 and hasattr(v_proj.weight, 'qtype'))
+    invalidInputError((has_qtype
+                       and q_proj.weight.qtype == k_proj.weight.qtype
+                       and q_proj.weight.qtype == v_proj.weight.qtype
+                       and q_proj.weight.qtype in ggml_tensor_qtype.values()),
+                      f"{q_proj.weight.qtype} is not supported, "
+                      f"only {ggml_tensor_qtype.values()} are supported now.")
     origin_device = q_proj.weight.device
     q_proj.weight = q_proj.weight.to('cpu')
     k_proj.weight = k_proj.weight.to('cpu')
