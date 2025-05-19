@@ -124,6 +124,8 @@ def get_load_function(low_bit):
                     modules = ["vision_model", "mlp1"]
                 if "deepseek-v2" in self.vllm_config.model_config.model.lower():
                     modules = ["down_proj"]
+                if "whisper" in self.vllm_config.model_config.model.lower():
+                    modules = ["proj_out"]
                 optimize_model(self.model,
                                low_bit=low_bit,
                                torch_dtype=self.vllm_config.model_config.dtype,
