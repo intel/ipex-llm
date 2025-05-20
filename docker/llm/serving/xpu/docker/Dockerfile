@@ -53,7 +53,7 @@ RUN set -eux && \
     dpkg -i *.deb && \
     #
     # Install Intel PyTorch extension for LLM inference
-    pip install --pre --upgrade ipex-llm[xpu_2.6] --extra-index-url https://download.pytorch.org/whl/xpu && \
+    pip install --pre --upgrade 'ipex-llm[xpu_2.6]>=2.3.0b0,<2.3.0rc1' --extra-index-url https://download.pytorch.org/whl/xpu && \
     pip install intel-extension-for-pytorch==2.6.10+xpu --extra-index-url=https://pytorch-extension.intel.com/release-whl/stable/xpu/cn/ && \
     #
     # Build torch-ccl
@@ -124,7 +124,7 @@ RUN set -eux && \
     wget https://bootstrap.pypa.io/get-pip.py -O get-pip.py && \
     python3 get-pip.py && rm get-pip.py && \
     pip install --upgrade requests argparse urllib3 && \
-    pip install --pre --upgrade ipex-llm[xpu_2.6] --extra-index-url https://download.pytorch.org/whl/xpu && \
+    pip install --pre --upgrade 'ipex-llm[xpu_2.6]>=2.3.0b0,<2.3.0rc1' --extra-index-url https://download.pytorch.org/whl/xpu && \
     pip install transformers_stream_generator einops tiktoken && \
     pip install --upgrade colorama && \
     # 
