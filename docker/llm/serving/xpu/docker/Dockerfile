@@ -125,7 +125,7 @@ RUN set -eux && \
     python3 get-pip.py && rm get-pip.py && \
     pip install --upgrade requests argparse urllib3 && \
     pip install --pre --upgrade 'ipex-llm[xpu_2.6]>=2.3.0b0,<2.3.0rc1' --extra-index-url https://download.pytorch.org/whl/xpu && \
-    pip install transformers_stream_generator einops tiktoken && \
+    pip install transformers_stream_generator einops tiktoken librosa && \
     pip install --upgrade colorama && \
     # 
     git clone https://github.com/intel/ipex-llm.git && \
