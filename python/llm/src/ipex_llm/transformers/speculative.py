@@ -161,7 +161,8 @@ def logits_to_probs(logits, top_k: int=50, top_p: float=0.7, temperature: float=
             from trl.core import top_k_top_p_filtering
         except ModuleNotFoundError:
             log4Error.invalidInputError(False,
-                                        "For transformers version >= 4.39.0, pip install trl==0.11.0")
+                                        "For transformers version >= 4.39.0, "
+                                        "pip install trl==0.11.0")
     else:
         from transformers import top_k_top_p_filtering
     _logits = top_k_top_p_filtering(logits.view(-1, logits.size(-1)) / temperature,
