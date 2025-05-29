@@ -117,18 +117,18 @@ def ggml_convert_qtype(tensor: torch.Tensor, qtype: int,
         block_size_in_bytes = ggml.ggml_type_size(qtype)
 
         invalidInputError(tensor.dtype == torch.float,
-                        "Input tensor must be float32")
+                          "Input tensor must be float32")
         src = tensor.data.data_ptr()
         src = ctypes.cast(src, ctypes.POINTER(ctypes.c_float))
         n = tensor.numel()  # all elements
         k = tensor.shape[-1]
         invalidInputError(k % QK == 0,
-                        f"Last dim of input tensor must be multiple of {QK}")
+                          f"Last dim of input tensor must be multiple of {QK}")
 
         dst_size = (n // QK) * block_size_in_bytes
         if qtype in [SYM_INT8_RTN, SYM_INT4_RTN, ASYM_INT4_RTN]:
             dst_tensor = torch.empty(dst_size, dtype=RTN_DTYPE[qtype],
-                                    device=device)
+                                     device=device)
             dst_tensor = dst_tensor.reshape(tensor.shape[0], tensor.shape[-1] // QK)
             if qtype == ASYM_INT4_RTN:
                 scale = torch.empty((n // k) * 2, dtype=torch.float32,
@@ -142,10 +142,10 @@ def ggml_convert_qtype(tensor: torch.Tensor, qtype: int,
             # dst_size above is computed based on uint8, and for bfloat16,
             # buffer size should be half
             dst_tensor = torch.empty(dst_size // 2, dtype=torch.bfloat16,
-                                    device=device)
+                                     device=device)
         else:
             dst_tensor = torch.empty(dst_size, dtype=torch.uint8,
-                                    device=device)
+                                     device=device)
 
     if not convert_shape_only and device != 'meta':
         dst = ctypes.c_void_p(dst_tensor.data.data_ptr())
@@ -450,7 +450,7 @@ class FP4Params(torch.nn.Parameter):
             self.data = ggml_q_format_convet_cpu2xpu(self.data,
                                                      reduce(mul, self._shape, 1),
                                                      self.qtype)
-            new_torch_fp8_scale = None if self.torch_fp8_scale is None else self.torch_fp8_scale.to(device=device)
+            fp8_scale = None if self.torch_fp8_scale is None else self.torch_fp8_scale.to(device)
             new_param = FP4Params(super().to(device=device,
                                              dtype=dtype,
                                              non_blocking=non_blocking),
@@ -459,9 +459,10 @@ class FP4Params(torch.nn.Parameter):
                                   _shape=self._shape,
                                   qtype=self.qtype,
                                   enable_scale_search=self.enable_scale_search,
-                                  torch_fp8_scale=new_torch_fp8_scale)
+                                  torch_fp8_scale=fp8_scale)
             return new_param
         elif (device is not None and device.type == "cpu" and self.data.device.type == "xpu"):
+            fp8_scale = None if self.torch_fp8_scale is None else self.torch_fp8_scale.to(device)
             new_param = FP4Params(super().to(device=device,
                                              dtype=dtype,
                                              non_blocking=non_blocking),
@@ -470,7 +471,7 @@ class FP4Params(torch.nn.Parameter):
                                   _shape=self._shape,
                                   qtype=self.qtype,
                                   enable_scale_search=self.enable_scale_search,
-                                  torch_fp8_scale=self.torch_fp8_scale.to(device=device))
+                                  torch_fp8_scale=fp8_scale)
             ggml_xpu = new_param.data
             new_param.data = ggml_q_format_convet_xpu2cpu(ggml_xpu,
                                                           reduce(mul, new_param._shape, 1),
@@ -723,7 +724,8 @@ class LowBitLinear(nn.Linear):
         else:
             # CPU logic
             # todo may need to set a different number on different platforms
-            invalidInputError(self.qtype not in [NF3, NF4, FP8E4, FP4, FP8E5, TORCH_FP8E5, TORCH_FP8E4],
+            invalidInputError(self.qtype not in [NF3, NF4, FP8E4, FP4, FP8E5,
+                                                 TORCH_FP8E5, TORCH_FP8E4],
                               "NF3, NF4, FP4 and FP8 quantization are currently not"
                               " supported on CPU")
             if self.training and x.requires_grad:
