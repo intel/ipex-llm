@@ -451,6 +451,8 @@ class FP4Params(torch.nn.Parameter):
                                                      reduce(mul, self._shape, 1),
                                                      self.qtype)
             fp8_scale = None if self.torch_fp8_scale is None else self.torch_fp8_scale.to(device)
+            if self.qtype in [TORCH_FP8E5, TORCH_FP8E4]:
+                dtype = None
             new_param = FP4Params(super().to(device=device,
                                              dtype=dtype,
                                              non_blocking=non_blocking),
@@ -645,9 +647,6 @@ class LowBitLinear(nn.Linear):
         # we should check both self.training and torch.is_inference_mode_enabled().
         is_training = self.training and not torch.is_inference_mode_enabled()
 
-        invalidInputError(is_training and self.qtype in [TORCH_FP8E5, TORCH_FP8E4],
-                          "TORCH_FP8 training is not supported.")
-
         if is_training:
             # below logic is only for training
             autocast_dtype = get_autocast_dtype(x.device.type)
@@ -676,7 +675,7 @@ class LowBitLinear(nn.Linear):
         x_2d = x.contiguous().view(-1, x.shape[-1])
 
         if self.weight.device.type == "xpu":
-            if is_training and x_2d.requires_grad:
+            if is_training and x_2d.requires_grad and self.weight.qtype not in [TORCH_FP8E5, TORCH_FP8E4]:
                 result = MatMulLowBit.apply(x_2d, self.weight, self.out_len)
             else:
                 do_empty_cache = self.low_memory_mode and x_2d.shape[0] >= 1024
@@ -690,6 +689,8 @@ class LowBitLinear(nn.Linear):
 
                 if self.weight.qtype in [TORCH_FP8E5, TORCH_FP8E4]:
                     import xe_linear
+                    # print("run_linear_fp8 w = ", w)
+                    print("run_linear_fp8")
                     result = xe_linear.run_linear_fp8(x, w, self.bias, self.weight.torch_fp8_scale)
                 elif use_batch_forward(x_2d, self.weight.qtype, self.out_len) and \
                         (x_2d.dtype == torch.half or self.conver_to_half):
