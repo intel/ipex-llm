@@ -675,7 +675,9 @@ class LowBitLinear(nn.Linear):
         x_2d = x.contiguous().view(-1, x.shape[-1])
 
         if self.weight.device.type == "xpu":
-            if is_training and x_2d.requires_grad and self.weight.qtype not in [TORCH_FP8E5, TORCH_FP8E4]:
+            if is_training and x_2d.requires_grad:
+                invalidInputError(self.weight.qtype not in [TORCH_FP8E5, TORCH_FP8E4],
+                                  "TORCH_FP8 training is not supported.")
                 result = MatMulLowBit.apply(x_2d, self.weight, self.out_len)
             else:
                 do_empty_cache = self.low_memory_mode and x_2d.shape[0] >= 1024
@@ -689,7 +691,8 @@ class LowBitLinear(nn.Linear):
 
                 if self.weight.qtype in [TORCH_FP8E5, TORCH_FP8E4]:
                     import xe_linear
-                    result = xe_linear.run_linear_fp8(x_2d, w, self.bias, self.weight.torch_fp8_scale)
+                    result = xe_linear.run_linear_fp8(x_2d, w, self.bias,
+                                                      self.weight.torch_fp8_scale)
                 elif use_batch_forward(x_2d, self.weight.qtype, self.out_len) and \
                         (x_2d.dtype == torch.half or self.conver_to_half):
                     import xe_batch
