@@ -440,6 +440,8 @@ class FP4Params(torch.nn.Parameter):
 
     def to(self, *args, **kwargs):
         device, dtype, non_blocking, convert_to_format = torch._C._nn._parse_to(*args, **kwargs)
+        if self.qtype in [TORCH_FP8E5, TORCH_FP8E4]:
+            dtype = None
         if (device is not None and device.type == "cpu" and self.data.device.type == "cpu"):
             return self.quantize(device.type)
         elif device is not None and device.type == "meta" and self.data.device.type == "meta":
@@ -451,8 +453,6 @@ class FP4Params(torch.nn.Parameter):
                                                      reduce(mul, self._shape, 1),
                                                      self.qtype)
             fp8_scale = None if self.torch_fp8_scale is None else self.torch_fp8_scale.to(device)
-            if self.qtype in [TORCH_FP8E5, TORCH_FP8E4]:
-                dtype = None
             new_param = FP4Params(super().to(device=device,
                                              dtype=dtype,
                                              non_blocking=non_blocking),
@@ -636,12 +636,6 @@ class LowBitLinear(nn.Linear):
                 torch.tensor([i for i in range(self.in_len)], dtype=torch.int64))
 
     def forward(self, x: torch.Tensor):
-        if self.weight.qtype in [TORCH_FP8E5, TORCH_FP8E4]:
-            print(f"training {self.training}, is_inference_mode_enabled {torch.is_inference_mode_enabled()}")
-            import xe_linear
-            result = xe_linear.run_linear_fp8(x, self.weight.data, self.bias, self.weight.torch_fp8_scale)
-            return result.to(x.dtype)
-
         # empty cache before and after lm_head at first token when input > 1024
         # on arc or IPEX_LLM_LOW_MEM is set to 1 at inference time.
         if self.device is None:
@@ -693,7 +687,10 @@ class LowBitLinear(nn.Linear):
                 else:
                     w = self.weight.data
 
-                if use_batch_forward(x_2d, self.weight.qtype, self.out_len) and \
+                if self.weight.qtype in [TORCH_FP8E5, TORCH_FP8E4]:
+                    import xe_linear
+                    result = xe_linear.run_linear_fp8(x_2d, w, self.bias, self.weight.torch_fp8_scale)
+                elif use_batch_forward(x_2d, self.weight.qtype, self.out_len) and \
                         (x_2d.dtype == torch.half or self.conver_to_half):
                     import xe_batch
                     result = xe_batch.batch_forward(x_2d, w, self.qtype)
