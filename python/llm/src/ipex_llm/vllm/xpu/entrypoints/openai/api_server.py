@@ -1157,8 +1157,6 @@ if __name__ == "__main__":
     # NOTE(simon):
     # This section should be in sync with vllm/entrypoints/cli/main.py for CLI
     # entrypoints.
-    logger.warning("Warning: Please use `ipex_llm.vllm.xpu.entrypoints.openai.api_server` "
-                   "instead of `vllm.entrypoints.openai.api_server` to start the API server")
     cli_env_setup()
     parser = FlexibleArgumentParser(
         description="vLLM OpenAI-Compatible RESTful API server.")
