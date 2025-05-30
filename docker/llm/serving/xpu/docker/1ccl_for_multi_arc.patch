@@ -1,7 +1,7 @@
-From dfe1851b59df6859829b447353307b7c916ccee0 Mon Sep 17 00:00:00 2001
-From: junhansh <junhan.shi@intel.com>
-Date: Mon, 28 Apr 2025 23:33:11 +0800
-Subject: [PATCH] oneccl for Arc770 V2025.0.0.6.7
+From c205e7d25a4b0a57214b0cebec0b0b30ae4c9d0f Mon Sep 17 00:00:00 2001
+From: YongZhuIntel <yong.zhu@intel.com>
+Date: Tue, 6 May 2025 13:06:06 +0800
+Subject: [PATCH] oneccl for Arc770 V2025.0.0.6.8
 
 allreduce optimization with LL256 for Arc770 dGPU
 
@@ -23,17 +23,19 @@ Revert "optimize req_workgroup calculate" for hang issue
 This reverts commit 20bfd0e0a37f93dfb8bb9c092cd5a0b35e868bfa.
 
 fix_fdset_buffer_overflow_issue
+
+control usm and p2p by env variable
 ---
  src/CMakeLists.txt               |   2 +
  src/coll/coll.cpp                |  30 +-
  src/coll/coll_param.cpp          |   1 +
  src/coll/selection/selection.cpp |   5 +
- src/common/env/env.cpp           |   1 +
- src/common/env/env.hpp           |   1 +
- src/common/env/vars.hpp          |   1 +
- src/dg2/dg2_allreduce.cpp        | 640 +++++++++++++++++++++++++++++++
+ src/common/env/env.cpp           |   2 +
+ src/common/env/env.hpp           |   2 +
+ src/common/env/vars.hpp          |   2 +
+ src/dg2/dg2_allreduce.cpp        | 644 +++++++++++++++++++++++++++++++
  src/dg2/dg2_allreduce.hpp        |  13 +
- 9 files changed, 691 insertions(+), 3 deletions(-)
+ 9 files changed, 698 insertions(+), 3 deletions(-)
  create mode 100644 src/dg2/dg2_allreduce.cpp
  create mode 100644 src/dg2/dg2_allreduce.hpp
 
@@ -137,47 +139,50 @@ index 5deae74..f4d9302 100644
          LOG_WARN("Applying topo algorithm, but device family is not recognized");
  #ifndef CCL_BF16_GPU_TRUNCATE
 diff --git a/src/common/env/env.cpp b/src/common/env/env.cpp
-index 11413cf..b00641c 100644
+index 11413cf..0c3f7d8 100644
 --- a/src/common/env/env.cpp
 +++ b/src/common/env/env.cpp
-@@ -468,6 +468,7 @@ void env_data::parse() {
+@@ -468,6 +468,8 @@ void env_data::parse() {
      }
      p.env_2_enum(CCL_STAGING_BUFFER, staging_buffer_names, staging_buffer);
      p.env_2_type(CCL_OP_SYNC, enable_op_sync);
 +    p.env_2_type(CCL_DG2_ALLREDUCE, enable_dg2_allreduce);
++    p.env_2_type(CCL_DG2_USM, enable_dg2_usm);
  
      p.env_2_type(CCL_CHUNK_COUNT, chunk_count);
      CCL_THROW_IF_NOT(chunk_count >= 1, "incorrect ", CCL_CHUNK_COUNT, " ", chunk_count);
 diff --git a/src/common/env/env.hpp b/src/common/env/env.hpp
-index baff33f..538d8e5 100644
+index baff33f..a5785e9 100644
 --- a/src/common/env/env.hpp
 +++ b/src/common/env/env.hpp
-@@ -177,6 +177,7 @@ public:
+@@ -177,6 +177,8 @@ public:
      bool enable_strict_order;
      ccl_staging_buffer staging_buffer;
      bool enable_op_sync;
 +    int enable_dg2_allreduce;
++    int enable_dg2_usm;
  
      size_t chunk_count;
      size_t min_chunk_size;
 diff --git a/src/common/env/vars.hpp b/src/common/env/vars.hpp
-index 73dcf77..84ab518 100644
+index 73dcf77..a1bc4ca 100644
 --- a/src/common/env/vars.hpp
 +++ b/src/common/env/vars.hpp
-@@ -579,6 +579,7 @@ constexpr const char* CCL_BUFFER_CACHE = "CCL_BUFFER_CACHE";
+@@ -579,6 +579,8 @@ constexpr const char* CCL_BUFFER_CACHE = "CCL_BUFFER_CACHE";
  constexpr const char* CCL_STRICT_ORDER = "CCL_STRICT_ORDER";
  constexpr const char* CCL_STAGING_BUFFER = "CCL_STAGING_BUFFER";
  constexpr const char* CCL_OP_SYNC = "CCL_OP_SYNC";
 +constexpr const char* CCL_DG2_ALLREDUCE = "CCL_DG2_ALLREDUCE";
++constexpr const char* CCL_DG2_USM = "CCL_DG2_USM";
  
  constexpr const char* CCL_CHUNK_COUNT = "CCL_CHUNK_COUNT";
  constexpr const char* CCL_MIN_CHUNK_SIZE = "CCL_MIN_CHUNK_SIZE";
 diff --git a/src/dg2/dg2_allreduce.cpp b/src/dg2/dg2_allreduce.cpp
 new file mode 100644
-index 0000000..73e114b
+index 0000000..84f84b4
 --- /dev/null
 +++ b/src/dg2/dg2_allreduce.cpp
-@@ -0,0 +1,640 @@
+@@ -0,0 +1,644 @@
 +#include <fcntl.h>
 +#include <unistd.h>
 +#include <sys/un.h>
@@ -355,7 +360,7 @@ index 0000000..73e114b
 +        if (ret <= 0) {
 +	   std::cerr << "poll failed: " << strerror(errno) << "\n";
 +	   break;
-+        }
++	}
 +
 +        if (pfd.revents & POLL_IN) {
 +           int peer_rank;
@@ -382,7 +387,8 @@ index 0000000..73e114b
 +
 +void create_shared_buf(void *send_buf, void *recv_buf, size_t byte_count)
 +{
-+    printf("-----> current rank: %d, world size: %d, byte_count: %lu\n", world_rank, world_size, byte_count);
++    bool is_p2p = ccl::global_data::env().enable_dg2_usm ? false : true;
++    printf("-----> current rank: %d, world size: %d, byte_count: %lu,is_p2p:%d\n", world_rank, world_size, byte_count,is_p2p);
 +
 +    pthread_t tid;
 +    char sock_path[64];
@@ -395,7 +401,10 @@ index 0000000..73e114b
 +    pthread_create(&tid, nullptr, thread_func, &world_rank);
 +
 +    size_t buf_size = LL256_BUF_SIZE;
-+    host_buf = sycl::aligned_alloc_device(getpagesize(), buf_size, q);
++    if(is_p2p)
++        host_buf = sycl::aligned_alloc_device(getpagesize(), buf_size, q);
++    else
++        host_buf = sycl::aligned_alloc_host(getpagesize(), buf_size, q);
 +
 +    host_bufs[world_rank] = host_buf;
 +
@@ -838,5 +847,5 @@ index 0000000..0506445
 +
 +void dg2_clear();
 -- 
-2.34.1
+2.25.1
 
