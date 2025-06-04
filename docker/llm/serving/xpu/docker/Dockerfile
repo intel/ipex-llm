@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 # First stage: build oneccl
-FROM intel/oneapi-basekit:2025.0.1-0-devel-ubuntu24.04 AS build
+FROM intel/oneapi-basekit:2025.1.3-0-devel-ubuntu24.04 AS build
 
 ARG http_proxy
 ARG https_proxy
