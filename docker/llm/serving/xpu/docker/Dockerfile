@@ -83,7 +83,7 @@ RUN set -eux && \
 
 
 # Second stage: Final runtime image
-FROM intel/oneapi-basekit:2025.0.1-0-devel-ubuntu24.04
+FROM intel/oneapi-basekit:2025.1.3-0-devel-ubuntu24.04
 
 # Copy the built torch-ccl package from the build stage
 COPY --from=build /build/torch-ccl/dist/oneccl_bind_pt-2.6.0+xpu-cp311-cp311-linux_x86_64.whl /opt/
