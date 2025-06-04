@@ -129,7 +129,7 @@ def get_load_function(low_bit):
                 if "glm-4v" in self.vllm_config.model_config.model.lower() and \
                         low_bit in ("sym_int4", "woq_int4"):
                     modules = ["dense_4h_to_h"]
-                if "phi4mm" in self.vllm_config.model_config.model.lower():
+                if "phi4mm" in self.vllm_config.model_config.hf_config.model_type:
                     modules = ["vision_encoder", "embed_tokens_extend"]
                 if low_bit == "fp16":
                     # to fix qwen2.5-vl and glm-4v
