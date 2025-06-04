@@ -10,6 +10,7 @@ model_path = "/llm/models/glm-4v-9b"
 model_path = "/llm/models/InternVL2-8B"
 model_path = "/llm/models/gemma-3-12b-it"
 model_path = "/llm/models/Qwen2.5-VL-7B-Instruct"
+model_path = "/llm/models/Phi-4-multimodal-instruct"
 
 prompt = "What is in the image?"
 
@@ -77,6 +78,18 @@ def run_qwen2_vl(question, modality):
     stop_token_ids = None
     return prompt, stop_token_ids
 
+# Phi-4-multimodal-instruct
+def run_phi4mm(question, modality):
+    """
+    Phi-4-multimodal-instruct supports both image and audio inputs. Here, we
+    show how to process image inputs.
+    """
+    assert modality == "image"
+
+    prompt = f"<|user|><|image_1|>{question}<|end|><|assistant|>"
+    stop_token_ids = None   
+    return prompt, stop_token_ids
+
 model_example_map = {
     "minicpmv": run_minicpmv,
     "qwen2_vl": run_qwen2_vl,
@@ -85,6 +98,7 @@ model_example_map = {
     "chatglm": run_glm4v,
     "internvl_chat": run_internvl,
     "gemma3": run_gemma3,
+    "phi4mm": run_phi4mm,
 }
 
 if "glm-4v" in model_path:
