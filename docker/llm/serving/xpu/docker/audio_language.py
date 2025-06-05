@@ -50,7 +50,7 @@ if "whisper" in model_path:
     model_len=448
     low_bit="fp16"
 else:
-    model_len = 5000
+    model_len = 5500
     low_bit="sym_int4"
 
 def main(args):

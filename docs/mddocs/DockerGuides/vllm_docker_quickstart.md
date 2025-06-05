@@ -438,6 +438,8 @@ docker logs CONTAINER_NAME
 ## 8. Advanced Features
 
 #### Multi-modal Model
+
+##### Vision model
 <details>
 vLLM serving with IPEX-LLM supports multi-modal models, such as [MiniCPM-V-2_6](https://huggingface.co/openbmb/MiniCPM-V-2_6), which can accept image and text input at the same time and respond.
 
@@ -475,6 +477,40 @@ curl http://localhost:8000/v1/chat/completions \
 
 ```bash
 {"id":"chat-0c8ea64a2f8e42d9a8f352c160972455","object":"chat.completion","created":1728373105,"model":"MiniCPM-V-2_6","choices":[{"index":0,"message":{"role":"assistant","content":"这幅图片展示了一个小孩，可能是女孩，根据服装和发型来判断。她穿着一件有红色和白色条纹的连衣裙，一个可见的白色蝴蝶结，以及一个白色的 头饰，上面有红色的点缀。孩子右手拿着一个白色泰迪熊，泰迪熊穿着一个粉色的裙子，带有褶边，它的左脸颊上有一个红色的心形图案。背景模糊，但显示出一个自然户外的环境，可能是一个花园或庭院，有红花和石头墙。阳光照亮了整个场景，暗示这可能是正午或下午。整体氛围是欢乐和天真。","tool_calls":[]},"logprobs":null,"finish_reason":"stop","stop_reason":null}],"usage":{"prompt_tokens":225,"total_tokens":353,"completion_tokens":128}}
+```
+</details>
+
+##### Audio model
+<details>
+vLLM serving with IPEX-LLM supports multi-modal models, such as [Phi-4-multimodal-instruct](https://huggingface.co/microsoft/Phi-4-multimodal-instruct)(only offine now) and whisper series model([whisper-large-v3-turbo](https://huggingface.co/openai/whisper-large-v3-turbo) and [whisper-medium](https://huggingface.co/openai/whisper-medium)), which can accept audio input and respond text output.
+
+Offline test:
+```bash
+export VLLM_USE_V1=0
+python3 audio_language.py
+```
+
+Online test:
+1. Start vLLM service: change the `model` and `served_model_name` value in `/llm/start-vllm-service.sh`
+
+2. Download or get a audio file first.
+```python
+# python3 load.py
+from vllm.assets.audio import AudioAsset
+import soundfile as sf
+
+audio, sr = AudioAsset("winning_call").audio_and_sample_rate
+
+sf.write("output.wav", audio, sr)
+```
+
+3. Send request with audio file and prompt text(optional). 
+
+```bash
+curl http://localhost:8000/v1/audio/transcriptions \
+-H "Content-Type: multipart/form-data" \
+-F file="@/llm/models/test/output.wav" \
+-F model="whisper-large-v3-turbo"
 ```
 </details>
 
