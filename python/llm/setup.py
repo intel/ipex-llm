@@ -304,10 +304,10 @@ def setup_package():
                         "torchvision==0.21.0+xpu",
                         "torchaudio==2.6.0+xpu",
                         "bigdl-core-xe-all==" + CORE_XE_VERSION,
-                        "onednn-devel==2025.0.1",
-                        "onednn==2025.0.1",
+                        "onednn-devel==2025.0.1;platform_system=='Windows'",
+                        "onednn==2025.0.1;platform_system=='Windows'",
                         "dpcpp-cpp-rt==2025.0.2"]
-    
+
     # Add for testing purposes for now, for Arrow Lake-H with AOT on Windows
     # Linux keeps the same as xpu_2.6
     xpu_26_arl_requires = copy.deepcopy(all_requires)
@@ -320,8 +320,8 @@ def setup_package():
                             "torchvision==0.21.0+xpu;platform_system=='Linux'",
                             "torchaudio==2.6.0+xpu;platform_system=='Linux'",
                             "bigdl-core-xe-all==" + CORE_XE_VERSION,
-                            "onednn-devel==2025.0.1",
-                            "onednn==2025.0.1",
+                            "onednn-devel==2025.0.1;platform_system=='Windows'",
+                            "onednn==2025.0.1;platform_system=='Windows'",
                             "dpcpp-cpp-rt==2025.0.2"]
 
     cpp_requires = ["bigdl-core-cpp==" + CORE_XE_VERSION,
