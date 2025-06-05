@@ -133,7 +133,11 @@ def get_load_function(low_bit):
                     modules = ["vision_encoder", "embed_tokens_extend"]
                 if low_bit == "fp16":
                     # to fix qwen2.5-vl and glm-4v
-                    modules = ["vision", "visual"]
+                    if modules is None:
+                        modules = ["vision", "visual"]
+                    else:
+                        modules.append("vision")
+                        modules.append("visual")
                 optimize_model(self.model,
                                low_bit=low_bit,
                                torch_dtype=self.vllm_config.model_config.dtype,
