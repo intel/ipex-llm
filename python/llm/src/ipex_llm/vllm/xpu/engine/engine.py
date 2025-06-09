@@ -385,5 +385,5 @@ def run_mp_engine(vllm_config: VllmConfig, usage_context: UsageContext,
         engine_alive.value = False
         raise e  # noqa
 
-if os.getenv("VLLM_USE_V1") == 1:
+if os.getenv("VLLM_USE_V1") == "1":
     IPEXLLMAsyncLLMEngine = IPEXLLMAsyncV1Engine
