@@ -10389,7 +10389,7 @@ index bd52fc90b..7d4e3555a 100644
                  if capability < quant_config.get_min_capability():
                      raise ValueError(
 diff --git a/vllm/engine/arg_utils.py b/vllm/engine/arg_utils.py
-index 89c9b6747..a5be57ce0 100644
+index 89c9b6747..feba4f69f 100644
 --- a/vllm/engine/arg_utils.py
 +++ b/vllm/engine/arg_utils.py
 @@ -210,6 +210,8 @@ class EngineArgs:
@@ -10420,7 +10420,7 @@ index 89c9b6747..a5be57ce0 100644
          parser.add_argument(
              "--disable-cascade-attn",
              action="store_true",
-@@ -1061,6 +1075,8 @@ class EngineArgs:
+@@ -1061,10 +1075,16 @@ class EngineArgs:
              override_generation_config=self.override_generation_config,
              enable_sleep_mode=self.enable_sleep_mode,
              model_impl=self.model_impl,
@@ -10429,7 +10429,26 @@ index 89c9b6747..a5be57ce0 100644
          )
  
      def create_load_config(self) -> LoadConfig:
-@@ -1504,12 +1520,13 @@ class EngineArgs:
+ 
++        use_low_bit_loader = False
++
++        if self.low_bit_model_path is not None:
++            use_low_bit_loader = True
+         if(self.qlora_adapter_name_or_path is not None) and \
+             self.quantization != "bitsandbytes":
+             raise ValueError(
+@@ -1079,8 +1099,10 @@ class EngineArgs:
+             model_loader_extra_config=self.model_loader_extra_config,
+             ignore_patterns=self.ignore_patterns,
+             use_tqdm_on_load=self.use_tqdm_on_load,
++            use_low_bit_loader=use_low_bit_loader,
+         )
+ 
++
+     def create_speculative_config(
+         self,
+         target_model_config: ModelConfig,
+@@ -1504,12 +1526,13 @@ class EngineArgs:
              _raise_or_fallback(feature_name=name, recommend_to_remove=True)
              return False
  
