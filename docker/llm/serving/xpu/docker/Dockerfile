@@ -32,7 +32,7 @@ RUN set -eux && \
     # 
     # Install Python 3.11
     add-apt-repository ppa:deadsnakes/ppa -y && \
-    apt-get install -y --no-install-recommends python3.11 python3.11-dev python3.11-distutils python3-wheel && \
+    apt-get install -y --no-install-recommends python3.11 python3.11-dev python3.11-distutils && \
     rm /usr/bin/python3 && ln -s /usr/bin/python3.11 /usr/bin/python3 && \
     ln -s /usr/bin/python3 /usr/bin/python && \
     # 
@@ -43,13 +43,17 @@ RUN set -eux && \
     # Install Intel GPU OpenCL Driver and Compute Runtime
     mkdir -p /tmp/neo && \
     cd /tmp/neo && \
-    wget https://github.com/intel/intel-graphics-compiler/releases/download/v2.5.6/intel-igc-core-2_2.5.6+18417_amd64.deb && \
-    wget https://github.com/intel/intel-graphics-compiler/releases/download/v2.5.6/intel-igc-opencl-2_2.5.6+18417_amd64.deb && \
-    wget https://github.com/intel/compute-runtime/releases/download/24.52.32224.5/intel-level-zero-gpu-dbgsym_1.6.32224.5_amd64.ddeb && \
-    wget https://github.com/intel/compute-runtime/releases/download/24.52.32224.5/intel-level-zero-gpu_1.6.32224.5_amd64.deb && \
-    wget https://github.com/intel/compute-runtime/releases/download/24.52.32224.5/intel-opencl-icd-dbgsym_24.52.32224.5_amd64.ddeb && \
-    wget https://github.com/intel/compute-runtime/releases/download/24.52.32224.5/intel-opencl-icd_24.52.32224.5_amd64.deb && \
-    wget https://github.com/intel/compute-runtime/releases/download/24.52.32224.5/libigdgmm12_22.5.5_amd64.deb && \
+    wget https://github.com/intel/intel-graphics-compiler/releases/download/v2.11.7/intel-igc-core-2_2.11.7+19146_amd64.deb && \
+    wget https://github.com/intel/intel-graphics-compiler/releases/download/v2.11.7/intel-igc-opencl-2_2.11.7+19146_amd64.deb && \
+    wget https://github.com/intel/compute-runtime/releases/download/25.18.33578.6/intel-ocloc-dbgsym_25.18.33578.6-0_amd64.ddeb && \
+    wget https://github.com/intel/compute-runtime/releases/download/25.18.33578.6/intel-ocloc_25.18.33578.6-0_amd64.deb && \
+    wget https://github.com/intel/compute-runtime/releases/download/25.18.33578.6/intel-opencl-icd-dbgsym_25.18.33578.6-0_amd64.ddeb && \
+    wget https://github.com/intel/compute-runtime/releases/download/25.18.33578.6/intel-opencl-icd_25.18.33578.6-0_amd64.deb && \
+    wget https://github.com/intel/compute-runtime/releases/download/25.18.33578.6/libigdgmm12_22.7.0_amd64.deb && \
+    wget https://github.com/intel/compute-runtime/releases/download/25.18.33578.6/libze-intel-gpu1-dbgsym_25.18.33578.6-0_amd64.ddeb && \
+    wget https://github.com/intel/compute-runtime/releases/download/25.18.33578.6/libze-intel-gpu1_25.18.33578.6-0_amd64.deb && \
+    # dpkg -r intel-level-zero-gpu intel-ocloc && \
+    dpkg -r intel-level-zero-gpu && \
     dpkg -i *.deb && \
     #
     # Install Intel PyTorch extension for LLM inference
@@ -64,8 +68,6 @@ RUN set -eux && \
     git checkout ccl_torch2.6.0+xpu && \
     git submodule sync && \
     git submodule update --init --recursive && \
-    # This patch will enable build torch-ccl with pytorch 2.6 environment
-    # git apply /tmp/ccl_torch.patch && \
     USE_SYSTEM_ONECCL=ON COMPUTE_BACKEND=dpcpp python setup.py bdist_wheel && \
     # File path: /build/torch-ccl/dist/oneccl_bind_pt-2.6.0+xpu-cp311-cp311-linux_x86_64.whl
     # Build oneCCL
@@ -116,7 +118,7 @@ RUN set -eux && \
     # 
     # Install Python 3.11
     add-apt-repository ppa:deadsnakes/ppa -y && \
-    apt-get install -y --no-install-recommends python3.11 python3.11-dev python3.11-distutils python3-wheel && \
+    apt-get install -y --no-install-recommends python3.11 python3.11-dev python3.11-distutils && \
     rm /usr/bin/python3 && ln -s /usr/bin/python3.11 /usr/bin/python3 && \
     ln -s /usr/bin/python3 /usr/bin/python && \
     # 
@@ -159,18 +161,17 @@ RUN set -eux && \
     # Install compute runtime
     mkdir -p /tmp/neo && \
     cd /tmp/neo && \
-    wget https://github.com/intel/intel-graphics-compiler/releases/download/v2.8.3/intel-igc-core-2_2.8.3+18762_amd64.deb && \
-    wget https://github.com/intel/intel-graphics-compiler/releases/download/v2.8.3/intel-igc-opencl-2_2.8.3+18762_amd64.deb && \
-    wget https://github.com/intel/intel-graphics-compiler/releases/download/v2.8.3/intel-igc-opencl-devel_2.8.3+18762_amd64.deb && \
+    wget https://github.com/intel/intel-graphics-compiler/releases/download/v2.11.7/intel-igc-core-2_2.11.7+19146_amd64.deb && \
+    wget https://github.com/intel/intel-graphics-compiler/releases/download/v2.11.7/intel-igc-opencl-2_2.11.7+19146_amd64.deb && \
+    wget https://github.com/intel/compute-runtime/releases/download/25.18.33578.6/intel-ocloc-dbgsym_25.18.33578.6-0_amd64.ddeb && \
+    wget https://github.com/intel/compute-runtime/releases/download/25.18.33578.6/intel-ocloc_25.18.33578.6-0_amd64.deb && \
+    wget https://github.com/intel/compute-runtime/releases/download/25.18.33578.6/intel-opencl-icd-dbgsym_25.18.33578.6-0_amd64.ddeb && \
+    wget https://github.com/intel/compute-runtime/releases/download/25.18.33578.6/intel-opencl-icd_25.18.33578.6-0_amd64.deb && \
+    wget https://github.com/intel/compute-runtime/releases/download/25.18.33578.6/libigdgmm12_22.7.0_amd64.deb && \
+    wget https://github.com/intel/compute-runtime/releases/download/25.18.33578.6/libze-intel-gpu1-dbgsym_25.18.33578.6-0_amd64.ddeb && \
+    wget https://github.com/intel/compute-runtime/releases/download/25.18.33578.6/libze-intel-gpu1_25.18.33578.6-0_amd64.deb && \
+    dpkg -r intel-level-zero-gpu && \
     dpkg -i *.deb && \
-    rm -rf *.deb && \
-    wget https://github.com/intel/compute-runtime/releases/download/25.09.32961.7/libigdgmm12_22.6.0_amd64.deb && \
-    wget https://github.com/intel/compute-runtime/releases/download/25.09.32961.7/intel-level-zero-gpu-dbgsym_1.6.32961.7_amd64.ddeb && \
-    wget https://github.com/intel/compute-runtime/releases/download/25.09.32961.7/intel-level-zero-gpu_1.6.32961.7_amd64.deb && \
-    wget https://github.com/intel/compute-runtime/releases/download/25.09.32961.7/intel-opencl-icd-dbgsym_25.09.32961.7_amd64.ddeb && \
-    wget https://github.com/intel/compute-runtime/releases/download/25.09.32961.7/intel-opencl-icd_25.09.32961.7_amd64.deb && \
-    dpkg -i *.deb && \
-    dpkg -i *.ddeb && \
     mkdir -p /llm && \
     cd /llm && \
     rm -rf /tmp/neo && \
@@ -183,7 +184,6 @@ RUN set -eux && \
     pip install --upgrade cmake && \
     pip install -v -r requirements/xpu.txt && \
     VLLM_TARGET_DEVICE=xpu python setup.py install && \
-    pip install intel-extension-for-pytorch==2.6.10+xpu --extra-index-url=https://pytorch-extension.intel.com/release-whl/stable/xpu/cn/ && \
     pip uninstall -y oneccl oneccl-devel && \
     pip install intel-opencl-rt==2025.0.2 intel-openmp==2025.0.2 && \
     rm -rf /llm/vllm_for_multi_arc.patch && \
