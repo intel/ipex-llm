@@ -53,7 +53,7 @@ from functools import reduce
 from ipex_llm.transformers.xpu_customize_fwd import custom_fwd, custom_bwd
 from ipex_llm.transformers.utils import is_autocast_enabled, get_autocast_dtype
 from ipex_llm.transformers.utils import get_xpu_device_name
-from ipex_llm.transformers.convert import is_deepspeed_available, get_use_vllm
+from ipex_llm.transformers.convert import is_deepspeed_available, get_use_vllm, get_use_sglang
 
 T = TypeVar("T", bound="torch.nn.Module")
 
@@ -938,6 +938,41 @@ class vLLMFP16Linear(FP16Linear):
 
 
 class vLLMBF16Linear(BF16Linear):
+    def __init__(self, input_features, output_features, bias=True, mp_group=None,
+                 compute_dtype=None, optimize_lm_head=False):
+        super().__init__(input_features, output_features, bias, mp_group, compute_dtype,
+                         optimize_lm_head)
+
+    def forward(self, x: torch.Tensor):
+        result = super().forward(x)
+        return result, None
+
+
+class SGLangLowBitLinear(LowBitLinear):
+    def __init__(self, input_features, output_features, qtype, bias=True,
+                 conver_to_half=True, mp_group=None,
+                 optimize_lm_head=False, act_order=False,
+                 enable_scale_search=False):
+        super().__init__(input_features, output_features, qtype, bias, conver_to_half, mp_group,
+                         optimize_lm_head, act_order, enable_scale_search)
+
+    def forward(self, x: torch.Tensor):
+        result = super().forward(x)
+        return result, None
+
+
+class SGLangFP16Linear(FP16Linear):
+    def __init__(self, input_features, output_features, bias=True, mp_group=None, weight_type=1,
+                 optimize_lm_head=False):
+        super().__init__(input_features, output_features, bias, mp_group, weight_type,
+                         optimize_lm_head)
+
+    def forward(self, x: torch.Tensor):
+        result = super().forward(x)
+        return result, None
+
+
+class SGLangBF16Linear(BF16Linear):
     def __init__(self, input_features, output_features, bias=True, mp_group=None,
                  compute_dtype=None, optimize_lm_head=False):
         super().__init__(input_features, output_features, bias, mp_group, compute_dtype,
