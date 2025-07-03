@@ -216,7 +216,8 @@ def is_linear_module(module):
 
     if is_sglang_available():
         from sglang.srt.layers.linear import QKVParallelLinear, RowParallelLinear, ColumnParallelLinear
-        SGLANG_LINEAR_LIST = [QKVParallelLinear, RowParallelLinear, ColumnParallelLinear] # may add ParallelLMHead
+        from sglang.srt.layers.vocab_parallel_embedding import ParallelLMHead
+        SGLANG_LINEAR_LIST = [QKVParallelLinear, RowParallelLinear, ColumnParallelLinear, ParallelLMHead] # may add ParallelLMHead
         if is_module_in_classes(module, SGLANG_LINEAR_LIST):
             from sglang.srt.distributed.parallel_state import get_tensor_model_parallel_group, \
                 get_tensor_model_parallel_world_size
@@ -224,11 +225,17 @@ def is_linear_module(module):
                 tp_size = get_tensor_model_parallel_world_size()
             else:
                 tp_size = 1
-            in_features = module.input_size
-            out_features = module.output_size
             result = True
             mp_group = None
             _USE_SGLANG = True
+            if isinstance(module, ParallelLMHead):
+                in_features = module.embedding_dim
+                out_features = module.num_embeddings_per_partition
+                result = True
+                mp_group = None
+                return result, (in_features, out_features, mp_group)
+            in_features = module.input_size
+            out_features = module.output_size
             if isinstance(module, RowParallelLinear) and tp_size >= 2:
                 mp_group = get_tensor_model_parallel_group()
                 in_features = module.input_size_per_partition
@@ -334,34 +341,63 @@ def convert_vllm(module, qtype, in_features, out_features, mp_group, cur_qtype,
 def convert_sglang(module, qtype, in_features, out_features, mp_group, cur_qtype,
                    optimize_lm_head, enable_scale_search):
     from ipex_llm.transformers.low_bit_linear import SGLangLowBitLinear, \
-        SGLangFP16Linear, SGLangBF16Linear
+        SGLangFP16Linear, SGLangBF16Linear, FP16Linear, BF16Linear, LowBitLinear
+    from sglang.srt.layers.vocab_parallel_embedding import ParallelLMHead
     optimize_lm_head = False
-    if qtype == ggml_tensor_qtype["fp16"]:
-        new_linear = SGLangFP16Linear(
-            in_features,
-            out_features,
-            module.bias is not None,
-            mp_group=mp_group,
-            optimize_lm_head=optimize_lm_head
-        )
-    elif qtype == ggml_tensor_qtype["bf16"]:
-        new_linear = SGLangBF16Linear(
-            in_features,
-            out_features,
-            module.bias is not None,
-            mp_group=mp_group,
-            optimize_lm_head=optimize_lm_head
-        )
+    if isinstance(module, ParallelLMHead):
+        if qtype == ggml_tensor_qtype["fp16"]:
+            new_linear = FP16Linear(
+                in_features,
+                out_features,
+                module.bias is not None,
+                mp_group=mp_group,
+                optimize_lm_head=optimize_lm_head
+            )
+        elif qtype == ggml_tensor_qtype["bf16"]:
+            new_linear = BF16Linear(
+                in_features,
+                out_features,
+                module.bias is not None,
+                mp_group=mp_group,
+                optimize_lm_head=optimize_lm_head
+            )
+        else:
+            new_linear = LowBitLinear(
+                in_features,
+                out_features,
+                cur_qtype,
+                module.bias is not None,
+                mp_group=mp_group,
+                optimize_lm_head=optimize_lm_head,
+                enable_scale_search=enable_scale_search,
+            )
     else:
-        new_linear = SGLangLowBitLinear(
-            in_features,
-            out_features,
-            cur_qtype,
-            module.bias is not None,
-            mp_group=mp_group,
-            optimize_lm_head=optimize_lm_head,
-            enable_scale_search=enable_scale_search,
-        )
+        if qtype == ggml_tensor_qtype["fp16"]:
+            new_linear = SGLangFP16Linear(
+                in_features,
+                out_features,
+                module.bias is not None,
+                mp_group=mp_group,
+                optimize_lm_head=optimize_lm_head
+            )
+        elif qtype == ggml_tensor_qtype["bf16"]:
+            new_linear = SGLangBF16Linear(
+                in_features,
+                out_features,
+                module.bias is not None,
+                mp_group=mp_group,
+                optimize_lm_head=optimize_lm_head
+            )
+        else:
+            new_linear = SGLangLowBitLinear(
+                in_features,
+                out_features,
+                cur_qtype,
+                module.bias is not None,
+                mp_group=mp_group,
+                optimize_lm_head=optimize_lm_head,
+                enable_scale_search=enable_scale_search,
+            )
     return new_linear
 
 
