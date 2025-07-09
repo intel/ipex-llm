@@ -12,9 +12,10 @@
 > For installation on Intel Arc B-Series GPU (such as **B580**), please refer to this [guide](./bmg_quickstart.md).
 
 > [!NOTE]
-> Our latest version is consistent with [d7cfe1f](https://github.com/ggml-org/llama.cpp/commit/d7cfe1ffe0f435d0048a6058d529daf76e072d9c) of llama.cpp.
+> Our latest version is consistent with [4ad2436](https://github.com/ggml-org/llama.cpp/commit/4ad2436) of llama.cpp.
+
 >
-> `ipex-llm[cpp]==2.2.0b20250320` is consistent with [ba1cb19](https://github.com/ggml-org/llama.cpp/commit/ba1cb19cdd0d92e012e0f6e009e0620f854b6afd) of llama.cpp.
+> `ipex-llm[cpp]==2.2.0b20250629` is consistent with [d7cfe1f](https://github.com/ggml-org/llama.cpp/commit/d7cfe1ffe0f435d0048a6058d529daf76e072d9c) of llama.cpp.
 
 See the demo of running LLaMA2-7B on Intel Arc GPU below.
 
