@@ -13,7 +13,6 @@
 
 > [!NOTE]
 > Our latest version is consistent with [4ad2436](https://github.com/ggml-org/llama.cpp/commit/4ad2436) of llama.cpp.
-
 >
 > `ipex-llm[cpp]==2.2.0b20250629` is consistent with [d7cfe1f](https://github.com/ggml-org/llama.cpp/commit/d7cfe1ffe0f435d0048a6058d529daf76e072d9c) of llama.cpp.
 
