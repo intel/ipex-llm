@@ -713,7 +713,7 @@ class LowBitLinear(nn.Linear):
             result = result.view(new_shape)
 
             if self.mp_group is not None:
-                if get_use_vllm():
+                if get_use_vllm() or get_use_sglang():
                     result = self.mp_group.all_reduce(result)
                 elif is_deepspeed_available():
                     from deepspeed import comm as dist
@@ -790,7 +790,7 @@ class FP16Linear(nn.Linear):
             result = F.linear(x, self.weight, self.bias)
 
             if self.mp_group is not None:
-                if get_use_vllm():
+                if get_use_vllm() or get_use_sglang():
                     result = self.mp_group.all_reduce(result)
                 elif is_deepspeed_available():
                     from deepspeed import comm as dist
@@ -827,7 +827,7 @@ class FP16Linear(nn.Linear):
             new_shape = x_shape[:-1] + (self.out_len,)
             result = result.view(new_shape)
             if self.mp_group is not None:
-                if get_use_vllm():
+                if get_use_vllm() or get_use_sglang():
                     result = self.mp_group.all_reduce(result)
                 elif is_deepspeed_available():
                     from deepspeed import comm as dist
