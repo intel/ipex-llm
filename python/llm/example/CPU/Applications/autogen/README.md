@@ -34,7 +34,7 @@ pip3 install --upgrade pip  # enable PEP 660 support
 pip3 install -e ".[model_worker,webui]"
 
 # setup AutoGen environment
-pip install pyautogen==0.2.7
+pip install ag2==0.2.7
 ```
 
 **After setting up the environment, the folder structure should be:**
