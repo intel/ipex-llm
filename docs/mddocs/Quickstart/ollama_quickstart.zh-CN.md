@@ -86,7 +86,6 @@ IPEX-LLM 现在已支持在 Linux 和 Windows 系统上运行 `Ollama`。
   export ZES_ENABLE_SYSMAN=1
   
   source /opt/intel/oneapi/setvars.sh
-  export SYCL_CACHE_PERSISTENT=1
   # [optional] under most circumstances, the following environment variable may improve performance, but sometimes this may also cause performance degradation
   export SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS=1
   # [optional] if you want to run on single GPU, use below command to limit GPU may improve performance
@@ -103,7 +102,6 @@ IPEX-LLM 现在已支持在 Linux 和 Windows 系统上运行 `Ollama`。
   set OLLAMA_NUM_GPU=999
   set no_proxy=localhost,127.0.0.1
   set ZES_ENABLE_SYSMAN=1
-  set SYCL_CACHE_PERSISTENT=1
   rem under most circumstances, the following environment variable may improve performance, but sometimes this may also cause performance degradation
   set SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS=1
 

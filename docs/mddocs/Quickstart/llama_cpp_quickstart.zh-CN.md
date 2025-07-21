@@ -124,7 +124,6 @@ cd llama-cpp
   
   ```bash
   source /opt/intel/oneapi/setvars.sh
-  export SYCL_CACHE_PERSISTENT=1
   # [optional] under most circumstances, the following environment variable may improve performance, but sometimes this may also cause performance degradation
   export SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS=1
   # [optional] if you want to run on single GPU, use below command to limit GPU may improve performance
@@ -136,7 +135,6 @@ cd llama-cpp
   请在 Miniforge Prompt 中运行下列命令。
 
   ```cmd
-  set SYCL_CACHE_PERSISTENT=1
   rem under most circumstances, the following environment variable may improve performance, but sometimes this may also cause performance degradation
   set SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS=1
   ```
