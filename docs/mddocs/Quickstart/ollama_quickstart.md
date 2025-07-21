@@ -244,3 +244,9 @@ When you start `ollama serve` and execute `ollama run <model_name>`, but `ollama
 
 1. On Linux, you may run `systemctl stop ollama` to stop all ollama processes, and then rerun `ollama serve` in your current directory.
 2. On Windows, you may `set OLLAMA_HOST=0.0.0.0` to ensure that the ollama commands run on the current `ollama serve`.
+
+#### 11. Error `The program was built for 1 devices[/+]` when executing `ollama serve`
+When you start `ollama serve` and execute `ollama run <model_name>`, but encounter the error `The program was built for 1 devices[/+]
+[+]Build program log for 'Intel(R) Arc(TM) A770 Graphics':`. This may be caused by the command `set/export SYCL_CACHE_PERSISTENT=1`. Please run commands as below:
+
+run `unset SYCL_CACHE_PERSISTENT` in the terminal; if the variable has been written into a configuration file such as `~/.bashrc`, you need to manually delete or comment out the conrresponding line.

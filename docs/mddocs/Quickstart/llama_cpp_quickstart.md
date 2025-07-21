@@ -382,3 +382,10 @@ If you meet this error, please check your Linux kernel version first. You may en
 
 #### 16. `backend buffer base cannot be NULL` error
 If you meet `ggml-backend.c:96: GGML_ASSERT(base != NULL && "backend buffer base cannot be NULL") failed`, simply adding `-c xx` parameter during inference, for example `-c 1024` would resolve this problem.
+
+#### 17. `The program was built for 1 devices[/+]` error
+
+If you meet the error `The program was built for 1 devices[/+]
+[+]Build program log for 'Intel(R) Arc(TM) A770 Graphics':`. This may be caused by the command `set/export SYCL_CACHE_PERSISTENT=1`. Please run commands as below:
+
+run `unset SYCL_CACHE_PERSISTENT` in the terminal; if the variable has been written into a configuration file such as `~/.bashrc`, you need to manually delete or comment out the conrresponding line.

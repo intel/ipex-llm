@@ -383,3 +383,9 @@ llama_perf_context_print:       total time =      xx.xx ms /    62 tokens
 
 #### 16. `backend buffer base cannot be NULL` 错误
 如果你遇到`ggml-backend.c:96: GGML_ASSERT(base != NULL && "backend buffer base cannot be NULL") failed`错误，在推理时传入参数`-c xx`，如`-c 1024`即可解决。
+
+#### 17.  `The program was built for 1 devices` 错误
+如果遇到错误`The program was built for 1 devices[/+]
+[+]Build program log for 'Intel(R) Arc(TM) A770 Graphics':`， 这是因为设置了`SYCL_CACHE_PERSISTENT=1`。请按照以下命令操作：
+
+在命令行中输入`unset SYCL_CACHE_PERSISTENT`；如果写入了配置文件，比如`~.bashrc`等，需要手动删去或注释掉对应的行。
