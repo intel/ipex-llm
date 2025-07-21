@@ -131,7 +131,6 @@ llama_perf_context_print:       total time =   xxxxx.xx ms /  1385 tokens
 ### 步骤 2：运行时配置
 
 - 开启一个终端，输入命令 `cd /PATH/TO/EXTRACTED/FOLDER` 进入解压缩后的文件夹。
-- 要使用 GPU 加速，在运行 `llama.cpp` 之前，建议设置如下环境变量。
 - 对于多 GPU 用户，请转至[提示](#多-gpu-配置)了解如何选择特定的 GPU。
 
 ### 步骤 3：运行 GGUF 模型

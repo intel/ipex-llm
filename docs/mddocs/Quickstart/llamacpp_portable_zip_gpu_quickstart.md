@@ -49,7 +49,6 @@ Then, extract the zip file to a folder.
 ### Step 2: Runtime Configuration
 
 - Open "Command Prompt" (cmd), and enter the extracted folder through `cd /d PATH\TO\EXTRACTED\FOLDER`
-- To use GPU acceleration, several environment variables are required or recommended before running `llama.cpp`.
 - For multi-GPUs user, go to [Tips](#multi-gpus-usage) for how to select specific GPU.
 
 ### Step 3: Run GGUF models
@@ -130,7 +129,6 @@ Then, extract the tgz file to a folder.
 ### Step 2: Runtime Configuration
 
 - Open a "Terminal", and enter the extracted folder through `cd /PATH/TO/EXTRACTED/FOLDER`
-- To use GPU acceleration, several environment variables are required or recommended before running `llama.cpp`.
 - For multi-GPUs user, go to [Tips](#multi-gpus-usage) for how to select specific GPU.
 
 ### Step 3: Run GGUF models

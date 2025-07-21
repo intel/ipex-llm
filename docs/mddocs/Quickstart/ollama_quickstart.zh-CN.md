@@ -241,7 +241,6 @@ Ollama 默认每 5 分钟从 GPU 内存卸载一次模型。针对 ollama 的最
 在 Windows 上，你可以运行 `set OLLAMA_HOST=0.0.0.0` 以确保 ollama 命令通过当前的 `ollama serve` 上运行。
 
 #### 11. 执行 `ollama serve` 时报 `The program was built for 1 devices` 错误
-当启动`ollama serve`或者`ollama run <model_name>`时，产生报错`The program was built for 1 devices[/+]
-[+]Build program log for 'Intel(R) Arc(TM) A770 Graphics':`， 这是因为设置了`SYCL_CACHE_PERSISTENT=1`。请按照以下命令操作：
+当启动`ollama serve`或者`ollama run <model_name>`时，产生报错`The program was built for 1 devices. Build program log for 'Intel(R) Arc(TM) A770 Graphics':`， 这是因为设置了`SYCL_CACHE_PERSISTENT=1`。请按照以下命令操作：
 
 在命令行中输入`unset SYCL_CACHE_PERSISTENT`；如果写入了配置文件，比如`~.bashrc`等，需要手动删去或注释掉对应的行。
