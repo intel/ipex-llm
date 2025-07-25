@@ -308,6 +308,15 @@ def setup_package():
                         "onednn==2025.0.1;platform_system=='Windows'",
                         "dpcpp-cpp-rt==2025.0.2"]
 
+    xpu_27_requires = copy.deepcopy(all_requires)
+    for exclude_require in cpu_torch_version:
+        xpu_27_requires.remove(exclude_require)
+
+    xpu_27_requires += ["torch==2.7.0+xpu",
+                        "torchvision==0.22.0+xpu",
+                        "torchaudio==2.7.0+xpu",
+                        ]
+
     # Add for testing purposes for now, for Arrow Lake-H with AOT on Windows
     # Linux keeps the same as xpu_2.6
     xpu_26_arl_requires = copy.deepcopy(all_requires)
@@ -367,6 +376,7 @@ def setup_package():
                         "npu": npu_requires,
                         "xpu-2-1": xpu_21_requires,
                         "xpu-2-6": xpu_26_requires,
+                        "xpu-2-7": xpu_27_requires,
                         "xpu-2-6-arl": xpu_26_arl_requires,
                         "serving": serving_requires,
                         "cpp": cpp_requires,

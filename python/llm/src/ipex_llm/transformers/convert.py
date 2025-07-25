@@ -235,7 +235,7 @@ def is_linear_module(module):
 
 
 def convert_vllm(module, qtype, in_features, out_features, mp_group, cur_qtype,
-                 optimize_lm_head, enable_scale_search):
+                 optimize_lm_head, enable_scale_search, hidden_size=None):
     from vllm.model_executor.layers.vocab_parallel_embedding import ParallelLMHead
     from ipex_llm.transformers.low_bit_linear import LowBitLinear, \
         FP16Linear, BF16Linear, vLLMLowBitLinear, vLLMFP16Linear, vLLMBF16Linear
@@ -294,6 +294,7 @@ def convert_vllm(module, qtype, in_features, out_features, mp_group, cur_qtype,
                 optimize_lm_head=optimize_lm_head,
                 enable_scale_search=enable_scale_search,
                 conver_to_half=False,
+                hidden_size=hidden_size
             )
     return new_linear
 
@@ -636,7 +637,8 @@ def _replace_with_low_bit_linear(model, qtype, modules_to_not_convert=None,
                                                   mp_group,
                                                   cur_qtype,
                                                   optimize_lm_head,
-                                                  enable_scale_search)
+                                                  enable_scale_search,
+                                                  module.hidden_size if hasattr(module, "hidden_size") else None)
                     else:
                         new_linear = LowBitLinear(
                             in_features,
@@ -698,7 +700,7 @@ def _replace_with_low_bit_linear(model, qtype, modules_to_not_convert=None,
                             mp_group,
                             None,
                             optimize_lm_head,
-                            None
+                            None,
                         )
                     else:
                         new_linear = BF16Linear(

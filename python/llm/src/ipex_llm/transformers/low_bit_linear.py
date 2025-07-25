@@ -917,9 +917,11 @@ class vLLMLowBitLinear(LowBitLinear):
     def __init__(self, input_features, output_features, qtype, bias=True,
                  conver_to_half=True, mp_group=None,
                  optimize_lm_head=False, act_order=False,
-                 enable_scale_search=False):
+                 enable_scale_search=False,
+                 hidden_size=None):
         super().__init__(input_features, output_features, qtype, bias, conver_to_half, mp_group,
                          optimize_lm_head, act_order, enable_scale_search)
+        self.hidden_size = hidden_size
 
     def forward(self, x: torch.Tensor):
         result = super().forward(x)

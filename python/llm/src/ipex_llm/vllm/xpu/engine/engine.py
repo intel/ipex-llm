@@ -24,6 +24,7 @@ from vllm.config import VllmConfig
 from ipex_llm.vllm.xpu.model_convert import _ipex_llm_convert
 from vllm.usage.usage_lib import UsageContext
 from vllm.engine.metrics import StatLoggerBase
+from vllm.v1.metrics.loggers import StatLoggerFactory
 from vllm.engine.multiprocessing.engine import MQLLMEngine
 import signal
 from vllm.engine.arg_utils import (EngineArgs, HfOverrides, PoolerConfig,
@@ -47,20 +48,21 @@ class IPEXLLMAsyncLLMEngine(AsyncLLMEngine):
     def from_engine_args(
         cls,
         engine_args: AsyncEngineArgs,
-        engine_config: Optional[VllmConfig] = None,
         start_engine_loop: bool = True,
         usage_context: UsageContext = UsageContext.ENGINE_CONTEXT,
-        load_in_low_bit: str = "sym_int4",
-        stat_loggers: Optional[Dict[str, StatLoggerBase]]=None,
+        load_in_low_bit: str = "woq_int4",
+        stat_loggers: Optional[Dict[str, StatLoggerBase]] = None,
     ) -> "AsyncLLMEngine":
         """Creates an async LLM engine from the engine arguments."""
         # Create the engine configs.
         if not cls._is_converted:
             _ipex_llm_convert(load_in_low_bit)
             cls._is_converted = True
-        return super().from_engine_args(engine_args=engine_args, engine_config=engine_config,
+
+        return super().from_engine_args(engine_args=engine_args,
                                         start_engine_loop=start_engine_loop,
-                                        usage_context=usage_context, stat_loggers=stat_loggers)
+                                        usage_context=usage_context,
+                                        stat_loggers=stat_loggers)
 
     @classmethod
     def from_vllm_config(
@@ -71,18 +73,19 @@ class IPEXLLMAsyncLLMEngine(AsyncLLMEngine):
         stat_loggers: Optional[dict[str, StatLoggerBase]]=None,
         disable_log_requests: bool = False,
         disable_log_stats: bool = False,
-        load_in_low_bit: str = "sym_int4",
+        load_in_low_bit: str = "woq_int4",
     ) -> "AsyncLLMEngine":
         if not cls._is_converted:
             _ipex_llm_convert(load_in_low_bit)
             cls._is_converted = True
-        return super().from_vllm_config(
+        return cls(
             vllm_config=vllm_config,
+            executor_class=cls._get_executor_cls(vllm_config),
             start_engine_loop=start_engine_loop,
+            log_requests=not disable_log_requests,
+            log_stats=not disable_log_stats,
             usage_context=usage_context,
             stat_loggers=stat_loggers,
-            disable_log_requests=disable_log_requests,
-            disable_log_stats=disable_log_stats,
         )
 
 
@@ -96,16 +99,15 @@ class IPEXLLMAsyncV1Engine(AsyncLLM):
     def from_engine_args(
         cls,
         engine_args: AsyncEngineArgs,
-        engine_config: Optional[VllmConfig] = None,
         start_engine_loop: bool = True,
         usage_context: UsageContext = UsageContext.ENGINE_CONTEXT,
-        load_in_low_bit: str = "sym_int4",
-        stat_loggers: Optional[Dict[str, StatLoggerBase]]=None,  # noqa
+        stat_loggers: Optional[list[StatLoggerFactory]] = None,
+        load_in_low_bit: str = "woq_int4",
     ) -> "AsyncLLM":
         if not cls._is_converted:
             _ipex_llm_convert(load_in_low_bit)
             cls._is_converted = True
-        return super().from_engine_args(engine_args=engine_args, engine_config=engine_config,
+        return super().from_engine_args(engine_args=engine_args,
                                         start_engine_loop=start_engine_loop,
                                         usage_context=usage_context, stat_loggers=stat_loggers)
 
@@ -115,10 +117,12 @@ class IPEXLLMAsyncV1Engine(AsyncLLM):
         vllm_config: VllmConfig,
         start_engine_loop: bool = True,
         usage_context: UsageContext = UsageContext.ENGINE_CONTEXT,
-        stat_loggers: Optional[dict[str, StatLoggerBase]]=None,
+        stat_loggers: Optional[list[StatLoggerFactory]] = None,
         disable_log_requests: bool = False,
         disable_log_stats: bool = False,
-        load_in_low_bit: str = "sym_int4",
+        client_addresses: Optional[dict[str, str]] = None,
+        client_index: int = 0,
+        load_in_low_bit: str = "woq_int4",
     ) -> "AsyncLLM":
         if not cls._is_converted:
             _ipex_llm_convert(load_in_low_bit)
@@ -130,6 +134,8 @@ class IPEXLLMAsyncV1Engine(AsyncLLM):
             stat_loggers=stat_loggers,
             disable_log_requests=disable_log_requests,
             disable_log_stats=disable_log_stats,
+            client_addresses=client_addresses,
+            client_index=client_index
         )
 
 
@@ -363,7 +369,7 @@ def signal_handler(*_) -> None:
 
 def run_mp_engine(vllm_config: VllmConfig, usage_context: UsageContext,
                   ipc_path: str, disable_log_stats: bool,
-                  disable_log_requests: bool, load_in_low_bit, engine_alive):
+                  disable_log_requests: bool, load_in_low_bit: str, engine_alive):
     try:
         # Ensure we can serialize transformer config before spawning
         maybe_register_config_serialize_by_value()
