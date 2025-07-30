@@ -24,6 +24,10 @@ Check your GPU driver version, and update it if needed; we recommend following [
 > - 500GB Disk space
 
 ## Run
+
+> [!NOTE]
+> Do not source oneAPI when using flash-moe.
+
 Before running, you should download or copy community GGUF model to your local directory. For instance,  `DeepSeek-R1-Q4_K_M.gguf` of [DeepSeek-R1-Q4_K_M.gguf](https://huggingface.co/unsloth/DeepSeek-R1-GGUF/tree/main/DeepSeek-R1-Q4_K_M).
 
 Run `DeepSeek-R1-Q4_K_M.gguf`as shown below (change `/PATH/TO/DeepSeek-R1-Q4_K_M-00001-of-00009.gguf` to your model path)
