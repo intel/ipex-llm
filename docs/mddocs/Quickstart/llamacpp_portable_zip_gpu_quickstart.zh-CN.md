@@ -220,10 +220,10 @@ FlashMoE 是一款基于 `llama.cpp` 构建的命令行工具，针对 DeepSeek 
 
 请将 `/PATH/TO/DeepSeek-R1-Q4_K_M-00001-of-00009.gguf` 更改为您的模型路径，然后运行 `DeepSeek-R1-Q4_K_M.gguf`
 
-##### 命令行
-
 > [!注意]
 > 使用flash-moe不需要source oneAPI.
+
+##### 命令行
 
 ```bash
 ./flash-moe -m /PATH/TO/DeepSeek-R1-Q4_K_M-00001-of-00009.gguf --prompt "What's AI?" -no-cnv

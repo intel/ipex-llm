@@ -219,10 +219,10 @@ Before running, you should download or copy community GGUF model to your local d
 
 Change `/PATH/TO/DeepSeek-R1-Q4_K_M-00001-of-00009.gguf` to your model path, then run `DeepSeek-R1-Q4_K_M.gguf`
 
-##### cli
-
 > [!NOTE]
 > Do not source oneAPI when using flash-moe.
+
+##### cli
 
 ```bash
 ./flash-moe -m /PATH/TO/DeepSeek-R1-Q4_K_M-00001-of-00009.gguf --prompt "What's AI?" -no-cnv
