@@ -120,7 +120,7 @@ def get_load_function(low_bit):
                     modules = None
                 if "minicpm" in self.vllm_config.model_config.model.lower():
                     modules = ["vpm", "resampler"]
-                if "internvl2" in self.vllm_config.model_config.model.lower():
+                if "internvl" in self.vllm_config.model_config.model.lower():
                     modules = ["vision_model", "mlp1"]
                 if "deepseek-v2" in self.vllm_config.model_config.model.lower():
                     modules = ["down_proj"]
