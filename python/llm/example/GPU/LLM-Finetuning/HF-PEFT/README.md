@@ -17,7 +17,7 @@ pip install --pre --upgrade ipex-llm[xpu] --extra-index-url https://pytorch-exte
 pip install transformers==4.45.0 "trl<0.12.0" datasets
 pip install bitsandbytes==0.45.1 scipy
 pip install fire peft==0.10.0
-pip install oneccl_bind_pt==2.1.100 --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/xpu/us/ # necessary to run distributed finetuning
+pip install oneccl_bind_pt==2.1.100 --index-url https://pytorch-extension.intel.com/release-whl/stable/xpu/us/ # necessary to run distributed finetuning
 ```
 
 ### 2. Configures OneAPI environment variables

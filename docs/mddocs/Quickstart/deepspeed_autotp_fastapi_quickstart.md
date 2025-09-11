@@ -20,7 +20,7 @@ conda create -n llm python=3.11
 conda activate llm
 # below command will install intel_extension_for_pytorch==2.1.10+xpu as default
 pip install --pre --upgrade ipex-llm[xpu] --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/xpu/us/
-pip install oneccl_bind_pt==2.1.100 --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/xpu/us/
+pip install oneccl_bind_pt==2.1.100 --index-url https://pytorch-extension.intel.com/release-whl/stable/xpu/us/
 # configures OneAPI environment variables
 source /opt/intel/oneapi/setvars.sh
 pip install git+https://github.com/microsoft/DeepSpeed.git@ed8aed5
