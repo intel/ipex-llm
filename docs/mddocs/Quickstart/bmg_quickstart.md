@@ -35,7 +35,9 @@ This guide demonstrates how to install and use IPEX-LLM on the Intel Arc B-Serie
 > [!NOTE]
 > Ensure that **Resizable BAR** is enabled in your system's BIOS before proceeding. This is essential for optimal GPU performance and to avoid potential issues such as `Bus error (core dumped)`. For detailed steps, please refer to the official guidance [here](https://www.intel.com/content/www/us/en/support/articles/000090831/graphics.html).
 
-We recommend using Ubuntu 24.10 and kernel version 6.11 or above, as support for Battle Mage has been backported from kernel version 6.12 to version 6.11, which is included in Ubuntu 24.10, according to the official documentation [here](https://dgpu-docs.intel.com/driver/client/overview.html#installing-client-gpus-on-ubuntu-desktop-24-10). However, since this version of Ubuntu does not include the latest compute and media-related packages, we offer the intel-graphics Personal Package Archive (PPA). The PPA provides early access to newer packages, along with additional tools and features such as EU debugging.
+For Ubuntu 25.04, we offer the intel-graphics Personal Package Archive (PPA). This PPA provides early access to the latest packages, along with additional tools and features, such as EU debugging. Follow these steps to install the intel-graphics PPA and the required compute and media packages. Refer to the official documentation [here](https://dgpu-docs.intel.com/driver/client/overview.html#ubuntu-latest).
+
+> ⚠️ **Warning**: Ubuntu 24.10 reached end-of-life (EOL) in July 2025. The previous documentation recommended Ubuntu 24.10, which has been internally validated. This documentation has been updated to recommend **Ubuntu 25.04**; however, this version has **not yet been validated**. Use at your own discretion until Ubuntu 25.10 becomes available.
 
 Use the following commands to install the intel-graphics PPA and the necessary compute and media packages:
 
