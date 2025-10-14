@@ -11,6 +11,12 @@
 ## Latest Update 🔥 
 - [2025/05] You can now run ***DeepSeek V3/R1 671B*** and ***Qwen3MoE 235B*** models with just 1 or 2 Intel Arc GPU (such as A770 or B580) using [FlashMoE](docs/mddocs/Quickstart/flashmoe_quickstart.md) in `ipex-llm`.
 - [2025/04] We released `ipex-llm 2.2.0`, which includes [Ollama Portable Zip](docs/mddocs/Quickstart/ollama_portable_zip_quickstart.md) and [llama.cpp Portable Zip](docs/mddocs/Quickstart/llamacpp_portable_zip_gpu_quickstart.md).
+  > ⚠️ **Warning (for llama.cpp Portable Zip)**  
+  > `mmap`-based model loading in *llama.cpp* may leak data via side-channels in multi-tenant or shared-host environments.  
+  > To disable `mmap`, add:  
+  > ```bash
+  > --no-mmap
+  > ```
 - [2025/04] We added support of [PyTorch 2.6](docs/mddocs/Quickstart/install_pytorch26_gpu.md) for Intel GPU.
 - [2025/03] We added support for **Gemma3** model in the latest [llama.cpp Portable Zip](https://github.com/intel/ipex-llm/issues/12963#issuecomment-2724032898).
 - [2025/03] We can now run **DeepSeek-R1-671B-Q4_K_M** with 1 or 2 Arc A770 on Xeon using the latest [llama.cpp Portable Zip](docs/mddocs/Quickstart/llamacpp_portable_zip_gpu_quickstart.md#flashmoe-for-deepseek-v3r1).
