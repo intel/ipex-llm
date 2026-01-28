@@ -1,3 +1,8 @@
+# THIS PROJECT IS ARCHIVED  
+Intel will not provide or guarantee development of or support for this project, including but not limited to, maintenance, bug fixes, new releases or updates.  
+Patches to this project are no longer accepted by Intel.  
+This project has been identified as having known security issues. 
+
 #  💫 Intel® LLM Library for PyTorch* 
 <p>
   <b>< English</b> | <a href='./README.zh-CN.md'>中文</a> >
