@@ -30,10 +30,10 @@ RUN set -eux && \
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
     echo $TZ > /etc/timezone && \
     # 
-    # Install Python 3.11
+    # Install Python 3.12
     add-apt-repository ppa:deadsnakes/ppa -y && \
-    apt-get install -y --no-install-recommends python3.11 python3-pip python3.11-dev python3.11-distutils python3-wheel && \
-    rm /usr/bin/python3 && ln -s /usr/bin/python3.11 /usr/bin/python3 && \
+    apt-get install -y --no-install-recommends python3.12 python3-pip python3.12-dev python3-wheel && \
+    rm /usr/bin/python3 && ln -s /usr/bin/python3.12 /usr/bin/python3 && \
     ln -s /usr/bin/python3 /usr/bin/python && \
     # 
     # Install pip and essential Python packages
@@ -114,10 +114,10 @@ RUN set -eux && \
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
     echo $TZ > /etc/timezone && \
     # 
-    # Install Python 3.11
+    # Install Python 3.12
     add-apt-repository ppa:deadsnakes/ppa -y && \
-    apt-get install -y --no-install-recommends python3.11 python3-pip python3.11-dev python3.11-distutils python3-wheel && \
-    rm /usr/bin/python3 && ln -s /usr/bin/python3.11 /usr/bin/python3 && \
+    apt-get install -y --no-install-recommends python3.12 python3-pip python3.12-dev python3-wheel && \
+    rm /usr/bin/python3 && ln -s /usr/bin/python3.12 /usr/bin/python3 && \
     ln -s /usr/bin/python3 /usr/bin/python && \
     # 
     # Install pip and essential Python packages
